@@ -3,9 +3,9 @@ baseurl: ""
 url: "https://sarthakmakhija.github.io"
 
 # THEME-SPECIFIC CONFIGURATION
-title: tech-lessons                                    # site's title
-description: "A website with blog posts and pages"      # used by search engines
-avatar: assets/img/triangle.png                         # Empty for no avatar in navbar
+title: tech-lessons                                     # site's title
+description: Sarthak's blogs                            # used by search engines
+avatar:                                                 # Empty for no avatar in navbar
 favicon: assets/favicon.ico                             # Icon displayed in the tab
 
 # Header and footer text
@@ -29,7 +29,7 @@ authors:                                                # In _data/authors.yml
 language:                                               # In _data/language.yml
 
 # PAGINATION
-paginate: 5
+paginate: 4
 paginate_path: "blog/page:num"
 
 # PORTFOLIO
@@ -48,5 +48,3 @@ plugins: [jekyll-paginate, jekyll-seo-tag, jekyll-feed]
 exclude: [".jekyll-cache", "Gemfile", "Gemfile.lock", "type-on-strap.gemspec", "*.gem", ".idea", "vendor/*",
           "LICENSE", "README.md", "screenshot.png", "assets/package.json", "assets/node_modules", "assets/gulpfile.js"]
 
-# theme: type-on-strap                                  # if using the theme as a jekyll theme gem
-remote_theme: sylhare/Type-on-Strap                     # If using as a remote_theme in github
