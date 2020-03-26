@@ -1,0 +1,199 @@
+---
+layout: post
+title: Kotlin DSL
+date: 2018-05-27 17:29:36.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Kotlin
+tags:
+- Domain Specific Language
+- DSL
+- Kotlin
+- Lambda
+- Lambda With Receiver
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '30'
+  _layout: inherit
+  _yoast_wpseo_primary_category: '16'
+  _yoast_wpseo_focuskw_text_input: Kotlin DSL
+  _yoast_wpseo_focuskw: Kotlin DSL
+  _yoast_wpseo_linkdex: '81'
+  _thumbnail_id: '224'
+  _yoast_wpseo_metadesc: Kotlin provides first class support for DSL which allows
+    us to express domain-specific operation much more concisely than an equivalent
+    piece of code in a general-purpose language. Kotlin DSL is type safe and concise.
+  _liked: '3'
+  classic-editor-remember: block-editor
+author:
+  login: sarthakmakhija
+  email: sarthak.makhija@gmail.com
+  display_name: sarthakmakhija
+permalink: "/kotlin-dsl/"
+excerpt: A domain-specific language (DSL) is a computer language specialized to a particular application domain. This is in contrast to a general-purpose language (GPL), which is broadly applicable across domains. There are a wide variety of DSLs, ranging from widely used languages for common domains, such as HTML for web pages, down to languages used by only one or a few pieces of software. Let's explore DSL in Kotlin together.
+---
+<p style="text-align: left;">A domain-specific language (DSL) is a computer language specialized to a particular application domain. This is in contrast to a general-purpose language (GPL), which is broadly applicable across domains. There are a wide variety of DSLs, ranging from widely used languages for common domains, such as HTML for web pages, down to languages used by only one or a few pieces of software.</p>
+<h3>Kotlin DSL</h3>
+<p style="text-align: left;">Kotlin provides first class support for DSL which allows us to express domain-specific operations much more concisely than an equivalent piece of code in a general-purpose language.</p>
+<p>Let's try and build a simple DSL in Kotlin -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true" title="DSL">dependencies {
+   compile("io.arrow-kt:arrow-data:0.7.1")
+   compile("io.arrow-kt:arrow-instances-core:0.7.1")
+   testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.0")
+}</pre></div>
+<p style="text-align: left;">This should be familiar to people using <em>gradle</em> as their build tool. Above DSL specifies compile and testCompile dependencies for a gradle project in very concise and expressive form.</p>
+<h3>How does Kotlin support DSL</h3>
+<p>Before we get in to Kotlin's support for DSL, let's look at lambdas in Kotlin.</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true" title="Lambda in Kotlin">fun buildString(action: (StringBuilder) -&gt; Unit): String {
+   val sb = StringBuilder()
+   action(sb)
+   return sb.toString()
+}
+</pre></div>
+<p>buildString() takes a lambda as a parameter (called action) and invokes it by passing an instance of StringBuilder. Any client code which invokes buildString() will look like the below code -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true" title="Invoking buildString">val str = buildString {
+    it.append("Hello")
+    it.append(" ")
+    it.append("World")
+}</pre></div>
+<p>A few things to note here -</p>
+<ul>
+<li>buildString() takes lambda as the last parameter. If a function takes lambda as the last parameter, Kotlin allows you to invoke the function using braces { .. }, no need of using parentheses</li>
+<li><strong>it </strong>is the implicit parameter available in lambda body which is an instance of StringBuilder in this example</li>
+</ul>
+<p>This information is good enough to write a <em>gradle dependencies DSL.</em></p>
+<h3>First Attempt at DSL</h3>
+<p>In order to build a gradle dependencies DSL we <em>need a function called dependencies</em> which should take a lambda of type T as a parameter where T provides compile and testCompile functions.</p>
+<p>Let's try -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">fun dependencies(action: (DependencyHandler) -&gt; Unit): DependencyHandler {
+    val dependencies = DependencyHandler()
+    action(dependencies)
+    return dependencies
+}
+
+class DependencyHandler {
+    fun compile(coordinate: String){
+        //add coordinate to some collection
+    }
+    fun testCompile(coordinate: String){
+        //add coordinate to some collection
+    }
+}</pre></div>
+<p>dependencies is a simple function which takes a lambda accepting an instance of DependencyHandler as an parameter and returning Unit. DependencyHandler is the type T which has compile and testCompile functions.</p>
+<p>Client code for the above concept will look like -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">dependencies {
+   it.compile("") //it is an instance of DependencyHandler
+   it.testCompile("")
+}</pre></div>
+<p>Are we done? Not really. The problem is the implicit parameter <strong>it </strong>used in the client code. Can we remove <strong>it</strong>? In order to remove implicit parameter, we need to look at "Lambda With Receiver".</p>
+<h3>Lambda With Receiver</h3>
+<p>Receiver is a simple type in Kotlin which is extended.</p>
+<p>Let's see this with an example -</p>
+<div class="highlighter-rouge"><pre class="lang:default decode:true">fun String.lastChar() : Char =
+                   this.toCharArray().get(this.length - 1)</pre></div>
+<p>We have extended String to have lastChar() as a function which means we can always invoke it as -</p>
+<pre class="lang:default decode:true ">"Kotlin".lastChar()</pre>
+<p><em>Here, <span style="text-decoration: underline;">String is the receiver type</span> and <span style="text-decoration: underline;">this</span> used in the body of lastChar() is the receiver object. </em>Can we combine these 2 concepts - lambda and receiver?</p>
+<p>Let's rewrite our buildString function using lambda with receiver -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true ">fun buildString(action: StringBuilder.() -&gt; Unit): String {
+    val sb = StringBuilder()
+    sb.action()
+    return sb.toString()
+}</pre></div>
+<p>A few things to note here -</p>
+<ul>
+<li>buildString() takes a lambda with receiver as an parameter</li>
+<li>StringBuilder is the receiver type in the lambda</li>
+<li>the way we invoke action function is different this time. Because <strong>action</strong> is an extension function on StringBuilder we invoke it using <strong>sb.action()</strong>, where sb is an instance of StringBuilder</li>
+</ul>
+<p>Let's create a client of buildString function -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">val str = buildString {
+    this.append("Hello") //this here is an instance of StringBuilder
+    append(" ")
+    append("World")
+}</pre></div>
+<p>Isn't this brilliant? Client code will always have access to <strong>this</strong> while invoking a function which takes <em>lambda with receiver</em> as a parameter.</p>
+<p>Shall we rewrite our <em>gradle</em> <em>dependencies DSL</em> code?</p>
+<h3>Another Attempt at DSL</h3>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">fun dependencies(action: DependencyHandler.() -&gt; Unit): DependencyHandler {
+    val dependencies = DependencyHandler()
+    dependencies.action()
+    return dependencies
+}
+
+class DependencyHandler {
+    fun compile(coordinate: String){
+        //add coordinate to some collection
+    }
+    fun testCompile(coordinate: String){
+        //add coordinate to some collection
+    }
+}</pre></div>
+<p>The only change we have done here is in <em>dependencies</em> function which <em>takes a lambda with receiver as the parameter</em>. <em>DependencyHandler is the receiver type</em> in <em>action</em> parameter which means the <em>client code will always have access to the instance of DependencyHandler.</em></p>
+<p>Let's see the client code -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">dependencies {
+   compile("")     //same as this.compile("")
+   testCompile("")
+}</pre></div>
+<p>We are  able to create a DSL using <em>Lambda with Receiver</em> as a parameter to a function.</p>
+<h3>Operator Function invoke()</h3>
+<p>Kotlin provides an interesting function called <strong>invoke</strong> which is an operator function. Specifying invoke operator on a class allows it to be called on <strong>any instances of the class without a method name</strong>.</p>
+<p>Let's see this in action -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true ">class Greeter(val greeting: String) {
+    operator fun invoke(name: String) {
+        println("$greeting $name")
+    }
+}
+
+fun main(args: Array&lt;String&gt;) {
+    val greeter = Greeter(greeting = "Welcome")
+    greeter(name = "Kotlin")  //this calls the invoke function which takes String as a parameter
+}</pre></div>
+<p>A few things to note about <strong>invoke()</strong> here -</p>
+<ul>
+<li>is an operator function</li>
+<li>takes parameter</li>
+<li>can be overloaded</li>
+<li>is being called on the instance of Greeter class without method name</li>
+</ul>
+<p>Let's use <strong>invoke</strong> in building DSL -</p>
+<h3>Building DSL using invoke function</h3>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">class DependencyHandler {
+    fun compile(coordinate: String){
+        //add coordinate to some collection
+    }
+    fun testCompile(coordinate: String){
+        //add coordinate to some collection
+    }
+    operator fun invoke(action: DependencyHandler.() -&gt; Unit): DependencyHandler {
+        this.action()
+        return this
+    }
+}</pre></div>
+<p>We have defined an <em>operator function in DependencyHandler which takes a lambda with receiver as a parameter</em>. This means <strong>invoke</strong> will automatically be called on instance(s) of DependencyHandler and client code will have access to instance of DependencyHandler.</p>
+<p>Let's write the client code -</p>
+<div class="highlighter-rouge"><pre class="lang:java decode:true">val dependencies = DependencyHandler()
+dependencies { //as good as dependencies.invoke(..)
+   compile("")
+   testCompile("")
+}</pre></div>
+<p>invoke() can come in handy while building DSL.</p>
+<h3>Conclusion</h3>
+<ul>
+<li>Kotlin provides a first class support for DSL which is type safe</li>
+<li>One can create a DSL in Kotlin using -
+<ul>
+<li>Lambda as function parameters</li>
+<li>Lambda With Receiver as function parameter</li>
+<li>operator function invoke along with Lambda With Receiver as function parameter</li>
+</ul>
+</li>
+</ul>
+<h3>References</h3>
+<ul>
+<li>Kotlin In Action</li>
+</ul>
