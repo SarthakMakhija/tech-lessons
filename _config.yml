@@ -3,7 +3,7 @@ baseurl: ""
 url: "https://sarthakmakhija.github.io"
 
 # THEME-SPECIFIC CONFIGURATION
-title: tech-lessons                                     # site's title
+title: tech-lessons.in                                  # site's title
 description: Sarthak's blogs                            # used by search engines
 avatar: assets/img/pexels/header.jpg                    # Empty for no avatar in navbar
 favicon: assets/favicon.ico                             # Icon displayed in the tab
