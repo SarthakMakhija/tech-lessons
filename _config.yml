@@ -19,7 +19,7 @@ post_navigation: true
 color_image: /assets/img/lineart.png                    # A bit transparent for color posts.
 
 # Features
-katex: true                                             # Enable if using math markup
+katex: false                                            # Enable if using math markup
 google_analytics:                                       # Tracking ID, e.g. "UA-000000-01"
 disqus_shortname:                                       # Your discus shortname for comments
 layout_variables:                                       # Open the "_sass > base" folder, and open "_variables.scss"
