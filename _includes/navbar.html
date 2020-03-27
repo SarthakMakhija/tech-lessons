@@ -1,26 +1,10 @@
 <header class="site-header">
 
-    <!-- Logo and title -->
-    <div class="branding">
-        {% if site.avatar %}
-        <a href="{{ '/' | relative_url }}">
-            <img alt="logo img" class="avatar" src="{{ site.avatar | relative_url }}"/>
-        </a>
-        {% endif %}
-
-        <h1 class="site-title">
-            <a aria-label="{{ site.title }}" href="{{ '/' | relative_url }}">
-                {{ site.title }}
-            </a>
-        </h1>
-    </div>
-
     <!-- Toggle menu -->
     <nav class="clear">
         <a aria-label="pull" id="pull" class="toggle" href="#">
             <i class="fa fa-bars fa-lg"></i>
         </a>
-
         <!-- Menu -->
         <ul class="hide">
             {% assign name_page = "" %}
