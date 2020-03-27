@@ -73,6 +73,10 @@
     }
 
     a {
+      font-weight: bold;
+      font-size: 18px;
+      color: #444;
+
       &:hover {
         color: $link-color;
       }
