@@ -115,7 +115,7 @@ excerpt: Serverless is a paradigm which lays its foundations on the fact that "W
 <p><!-- wp:code --></p>
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
 export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
-     //your code goes here
+    <code style="color: darkorange">//your code goes here</code>
 };</code></pre></div>
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
@@ -131,7 +131,7 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
 
 export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
-    return new OrderController().handle(new OrderRequest(event)); //invoke controller
+    return new OrderController().handle(new OrderRequest(event)); <code style="color: darkorange">//invoke controller</code>
 };
 
 export class OrderController {
@@ -229,7 +229,7 @@ export class OrderController {
     }
 
     private findAnOrderBy(id: string): Order {
-        return this.orderService.findAnOrderBy(id); //invoke service
+        return this.orderService.findAnOrderBy(id); <code style="color: darkorange">//invoke service</code>
     }
 }</code></pre>
 <p><!-- /wp:code --></p>
@@ -277,7 +277,7 @@ export class OrderRequest {
     }
 
     findAnOrderBy(id: string) {
-        return this.repository.findAnOrderBy(id); //invoke repository
+        return this.repository.findAnOrderBy(id); <code style="color: darkorange">//invoke repository</code>
     }
 }
 
@@ -367,7 +367,7 @@ export class OrderRepository {
                 "orderId": {S: id}
             }
         };
-        //get an item from dynamoDb
+        <code style="color: darkorange">//get an item from dynamoDb</code>
         const response = await dynamoDb.getItem(getItemInputOptions).promise(); 
         return response.Item ? Order.from(response.Item) : null;
     }
@@ -466,12 +466,12 @@ export class OrderRequest {
 <p>Let's introduce async and await in handler, controller and service.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>//handler.ts
+<div class="highlighter-rouge"><pre class="wp-block-code"><code><code style="color: darkorange">//handler.ts</code>
 export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
     return await new OrderController().handle(new OrderRequest(event));
 };
 
-//OrderController.ts
+<code style="color: darkorange">//OrderController.ts</code>
 async handle(orderRequest: OrderRequest) {
     if (orderRequest.isAGetOrder()) {
         return await this.findAnOrderBy(orderRequest.orderId())
@@ -483,7 +483,7 @@ private async findAnOrderBy(id: string) {
     return await this.orderService.findAnOrderBy(id);
 }
 
-//OrderService.ts
+<code style="color: darkorange">//OrderService.ts</code>
 async findAnOrderBy(id: string) {
     return await this.repository.findAnOrderBy(id);
 }</code></pre></div>
@@ -539,9 +539,9 @@ export class OrderController {
     async handle(orderRequest: OrderRequest): Promise&lt;Response&lt;Order | unknown>> {
         if (orderRequest.isAGetOrder()) {
             const order = await this.findAnOrderBy(orderRequest.orderId());
-            return Response.ok&lt;Order>(HttpStatus.OK, order); //return Ok
+            return Response.ok&lt;Order>(HttpStatus.OK, order); <code style="color: darkorange">//return Ok</code>
         }
-        return Response.notFound(); //return NotFound
+        return Response.notFound(); <code style="color: darkorange">//return NotFound</code>
     }
 
     private async findAnOrderBy(id: string) {
@@ -560,7 +560,7 @@ export class Response&lt;T> {
         return new Response(HttpStatus.NOT_FOUND);
     }
     get() {
-        //return JSON response
+        <code style="color: darkorange">//return JSON response</code>
         return this.body === null ? {"statusCode": this.status} : {
             "statusCode": this.status,
             "body": JSON.stringify(this.body)
