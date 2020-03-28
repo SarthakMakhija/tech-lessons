@@ -24,24 +24,24 @@ excerpt: There is no doubt that Java has enjoyed a superior position when it com
 <p>Java 9 promotes immutability by introducing factory methods to create collections. It would be great to see immutable collections embedded in the language, rather than relying on wrappers to generate immutable collections. <em>existingDepartments()</em> is a function that returns an immutable list of Strings in Kotlin.</p>
 <div class="highlighter-rouge"><pre class="lang:default decode:true ">//Kotlin
 fun existingDepartments(): List =
-    listOf("Human Resources", "Learning & Development", "Research")</pre></div>
+    listOf("Human Assets", "Learning & Development", "Research")</pre></div>
 <p>Java 9 comes closest to returning an immutable list by throwing an UnsupportedOperationException when an attempt is made to add or remove an element from the list. It would be great to have a separate hierarchy of mutable and immutable collections and avoid exposing add/remove or any other mutating methods from immutable collections.</p>
 <div class="highlighter-rouge"><pre class="lang:java decode:true ">//pre Java 8
 public List existingDepartments() {
     return new ArrayList(){{
-        add("Human Resources");
+        add("Human Assets");
         add("Learning & Development");
         add("Research");
     }};
 }
 //Java 8
 public List existingDepartments() {
-    return Stream.of("Human Resources", "Learning & Development", "Research")
+    return Stream.of("Human Assets", "Learning & Development", "Research")
                  .collect(Collectors.toList());
 }
 //Java 9
 public List existingDepartments() {
-    return List.of("Human Resources", 
+    return List.of("Human Assets", 
                    "Learning & Development",
                    "Research");
 }</pre></div>
