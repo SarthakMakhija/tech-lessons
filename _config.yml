@@ -21,7 +21,7 @@ color_image: /assets/img/lineart.png                    # A bit transparent for 
 # Features
 katex: false                                            # Enable if using math markup
 google_analytics:                                       # Tracking ID, e.g. "UA-000000-01"
-disqus_shortname:                                       # Your discus shortname for comments
+disqus_shortname: techlessons                           # Your discus shortname for comments
 layout_variables:                                       # Open the "_sass > base" folder, and open "_variables.scss"
 footer_icons:                                           # In _data/social.yml
 share_buttons:                                          # In _data/social.yml
