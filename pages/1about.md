@@ -4,7 +4,7 @@ layout: page
 permalink: /about/
 feature-img: "assets/img/pexels/circuit.jpeg"
 ---
-<p style="padding-left: 420px;"><img alt="Sarthak Makhija" src="/assets/self.png"></p> 
+<p style="padding-left: 420px;"><img alt="Sarthak Makhija" src="/assets/img/pexels/self.png"></p> 
 <p style="padding-left: 470px;">Sarthak Makhija</p>
 <hr/>
 I am an application developer at ThoughtWorks. It has been a little more than 8 years that I have been writing software. I had worked with Citigroup and TCS before I joined ThoughtWorks.
@@ -22,4 +22,4 @@ I love working on my personal projects in free time. Some of my projects include
 I love reading technical books and sharing my ideas and learnings with the community.
 
 ## Get In Touch
-<a href="https://www.linkedin.com/in/sarthak-makhija-7a165a55/"><img style="padding-left: 0" alt="Happy to connect" src="/assets/linkedin.png"></a>
+<a href="https://www.linkedin.com/in/sarthak-makhija-7a165a55/"><img style="padding-left: 0" alt="Happy to connect" src="/assets/img/pexels/linkedin.png"></a>
