@@ -147,7 +147,7 @@ export class OrderServiceInfraStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        new Function(this, "order-service-function", null); //compilation error
+        new Function(this, "order-service-function", null); <code style="color: darkorange">//compilation error</code>
     }
 }</code></pre>
 </div>
@@ -179,7 +179,7 @@ export class OrderServiceInfraStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        //create FunctionProps
+        <code style="color: darkorange">//create FunctionProps</code>
         const functionProperties: FunctionProps = {
             code: Code.fromAsset("../dist"),
             handler: "handler.ordersHandler",
@@ -269,7 +269,7 @@ export class OrderServiceInfraStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        //create FunctionProps
+        <code style="color: darkorange">//create FunctionProps</code>
         const functionProperties: FunctionProps = {
             code: Code.fromAsset("../dist"),
             handler: "handler.ordersHandler",
@@ -279,7 +279,7 @@ export class OrderServiceInfraStack extends Stack {
         };
         new Function(this, "order-service-function", functionProperties);
 
-        //create TableProps
+        <code style="color: darkorange">//create TableProps</code>
         const tableProps: TableProps = {
             partitionKey: {
                 name: "orderId",
@@ -376,7 +376,7 @@ test("stack should contain a dynamodb table with orderId as the Hash key", () =>
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>import {Code, Function, FunctionProps, Runtime} from "@aws-cdk/aws-lambda";
 import {Construct} from "@aws-cdk/core";
 
-//inherit from Function
+<code style="color: darkorange">//inherit from Function</code>
 export class Node10LambdaFunction extends Function {
     constructor(scope: Construct, properties: Node10FunctionProperties) {
         super(scope, properties.functionName, properties.toFunctionProps())
@@ -384,14 +384,14 @@ export class Node10LambdaFunction extends Function {
 }
 
 class Node10LambdaFunctionProperties {
-    //attributes that make sense at this stage
+    <code style="color: darkorange">//attributes that make sense at this stage</code>
     constructor(private readonly code: Code,
                 private readonly handler: string,
                 readonly functionName: string,
                 private readonly environmentVariables?: { &#91;key: string]: string }) {
     }
 
-    //return FunctionProps
+    <code style="color: darkorange">//return FunctionProps</code>
     toFunctionProps(): FunctionProps {
         return {
             code: this.code,
@@ -486,7 +486,7 @@ import {Construct} from "@aws-cdk/core";
 import {Node10LambdaFunction} from "../../function/Node10LambdaFunction";
 import {IFunction} from "@aws-cdk/aws-lambda";
 
-//inherit from LambdaRestApi
+<code style="color: darkorange">//inherit from LambdaRestApi</code>
 class LambdaBackedPublicRestApi extends LambdaRestApi {
 
     constructor(scope: Construct, properties: LambdaBackedPublicRestApiProperties) {
@@ -501,7 +501,7 @@ class LambdaBackedPublicRestApiProperties {
                 private handler: Node10LambdaFunction) {
     }
 
-    //return LambdaRestApiProps
+    <code style="color: darkorange">//return LambdaRestApiProps</code>
     toLambdaRestApiProps(): LambdaRestApiProps {
         return {
             restApiName: this.apiName,
@@ -541,7 +541,7 @@ class LambdaBackedPublicRestApi extends LambdaRestApi {
         super(scope, properties.apiName, properties.toLambdaRestApiProps());
     }
 
-    //add resource say, orders/{orderId} and a method GET against {orderId}
+    <code style="color: darkorange">//add resource say, orders/{orderId} and a method GET against {orderId}</code>
     addEndpoint(resourcePath: string, httpMethod: HttpMethod) {
         if (resourcePath.startsWith("/"))
             throw new IllegalArgumentException(
@@ -552,7 +552,7 @@ class LambdaBackedPublicRestApi extends LambdaRestApi {
         resource.addMethod(httpMethod);
     }
 
-    //add resources recursively
+    <code style="color: darkorange">//add resources recursively</code>
     private addAllResourcesUsing(resourcePath: string): Resource {
         function add(resources: string[], rootResource: Resource): Resource {
             if (resources.length === 0)
@@ -695,7 +695,7 @@ test("stack should contain a public api with a resource", () => {
     const api = new LambdaBackedPublicRestApi(stack, properties);
     api.addEndpoint("article/serverless", HttpMethod.GET);
 
-    //assert a resource
+    <code style="color: darkorange">//assert a resource</code>
     const articleResource = api.root.getResource("article");
     expect(articleResource).toBeDefined();
 
@@ -721,7 +721,7 @@ test("stack should contain a public api with an http method added to the resourc
     const api = new LambdaBackedPublicRestApi(stack, properties);
     api.addEndpoint("article/serverless", HttpMethod.GET);
 
-    //get a resource and a CfnMethod against that resource
+    <code style="color: darkorange">//get a resource and a CfnMethod against that resource</code>
     const serverlessResource = api.root.getResource("article")?.getResource("serverless");
     const method = serverlessResource?.node.findChild("GET") as CfnMethod;
 
@@ -758,7 +758,7 @@ export class OrderServiceInfraStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        //use the newly prepared classes
+        <code style="color: darkorange">//use the newly prepared classes</code>
         const ordersFunction = this.ordersFunction();
         const ordersTable    = this.ordersTable();
         const restApi        = this.lambdaBackedPublicRestApi(ordersFunction);
@@ -831,7 +831,7 @@ import {StackProps} from "@aws-cdk/core";
 import cdk = require("@aws-cdk/core");
 
 const app = new cdk.App();
-//pass stack name
+<code style="color: darkorange">//pass stack name</code>
 const stackProps:StackProps = {
     stackName: "order-service-stack"
 };
