@@ -30,7 +30,7 @@ share:
   tumblr:
   pinterest:
   pocket:
-  reddit: true
-  linkedin:
+  reddit: false
+  linkedin: true
   wordpress:
-  email: true
+  email: false
