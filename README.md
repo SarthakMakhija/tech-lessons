@@ -18,8 +18,8 @@
 
 ## Publish to Github Pages
 
-    # Create a local gh-pages branch which contains only the assets that need to be published
-    JEKYLL_ENV=production bundle exec rake site:publish
+    # Creates a local gh-pages branch which will contain only the assets that need to be published
+    bundle exec rake site:publish
 
     # Switch to this new branch
     git checkout gh-pages
@@ -28,13 +28,13 @@
     git push website gh-pages:master --force
 
     # Once successfully published, tag the current branch
-    git checkout -b gh-pages-rel-x
+    git checkout -b gh-pages-release-x
 
     # Delete the local gh-pages branch.. since we don't need it anymore
     git branch -D gh-pages
 
     # Push backup to github
-    git push origin gh-pages-rel-x
+    git push origin gh-pages-release-x
 
 
 ## Jekyll Related Links
