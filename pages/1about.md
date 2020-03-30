@@ -4,8 +4,10 @@ layout: page
 permalink: /about/
 feature-img: "assets/img/pexels/circuit.jpeg"
 ---
-<p style="padding-left: 420px;"><img alt="Sarthak Makhija" src="/assets/img/pexels/self.png"></p> 
-<p style="padding-left: 470px;">Sarthak Makhija</p>
+<div class="self-container">
+    <p><img class="self-image" alt="Sarthak Makhija" src="/assets/img/pexels/self.png"></p> 
+    <p class="self">Sarthak Makhija</p>
+</div>
 <hr/>
 I am an application developer at ThoughtWorks. It has been a little more than 8 years that I have been writing software. I had worked with Citigroup and TCS before I joined ThoughtWorks.
 
