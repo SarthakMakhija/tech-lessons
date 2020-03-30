@@ -46,7 +46,7 @@ sass:
   style: :compressed
 plugins: [jekyll-paginate, jekyll-seo-tag, jekyll-feed]
 exclude: [".jekyll-cache", "Gemfile", "Gemfile.lock", "type-on-strap.gemspec", "*.gem", ".idea", "vendor/*",
-          "LICENSE", "README.md", "screenshot.png", "assets/package.json", "assets/node_modules", "assets/gulpfile.js"]
+          "LICENSE", "README.md", "assets/package.json", "assets/node_modules", "assets/gulpfile.js"]
 
 compress_html:
   clippings: []
