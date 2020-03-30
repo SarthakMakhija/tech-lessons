@@ -44,7 +44,7 @@
 + [Configuring Go Daddy with your domain to point to Github pages] (http://andrewsturges.com/blog/jekyll/tutorial/2014/11/06/github-and-godaddy.html)
 + [Understanding difference between master and gh-pages](http://octopress.org/docs/deploying/github/)
 
-Referenced [Gurpreet's README.md](https://github.com/gsluthra/my_blog/blob/master/README.md)
+Referenced [Gurpreet's README.md](https://github.com/gsluthra/my_blog/blob/master/README.md). Thank you!.
 
 ## Thanks
 
