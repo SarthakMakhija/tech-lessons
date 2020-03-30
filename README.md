@@ -48,4 +48,4 @@ Referenced [Gurpreet's README.md](https://github.com/gsluthra/my_blog/blob/maste
 
 ## Thanks
 
-[Sarthak] This blog was forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap). Thank you!
+[Sarthak] This theme was forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap). Thank you!
