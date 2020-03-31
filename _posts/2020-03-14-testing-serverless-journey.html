@@ -235,7 +235,7 @@ echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
 <p><!-- wp:code --></p>
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>> aws dynamodb scan --table-name orders --endpoint-url http://localhost:4569
 
-<code style="color: darkorange">##Output##</code>
+<code class="code-comments">##Output##</code>
 {
     "Count": 0,
     "Items": [],
@@ -257,7 +257,7 @@ echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
 import {Order} from "../model/Order";
 import {dynamoDbClient} from "../DynamoDbConfiguration";
 
-const dynamoDb = dynamoDbClient(); <code style="color: darkorange">//get dynamoDbClient from DynamoDbConfiguration</code>
+const dynamoDb = dynamoDbClient(); <code class="code-comments">//get dynamoDbClient from DynamoDbConfiguration</code>
 
 export class OrderRepository {
 
@@ -447,9 +447,9 @@ Resources:
       Runtime: "nodejs10.x"
       Handler: "handler.ordersHandler"
       Code:
-        S3Bucket: "serverless-order-service"   <code style="color: darkorange">//created earlier</code>
-        S3Key: "serverless-order-service.zip"  <code style="color: darkorange">//uploaded earlier</code>
-        Role: !GetAtt "OrdersRole.Arn"         <code style="color: darkorange">//refer to a dummy role created below</code>
+        S3Bucket: "serverless-order-service"   <code class="code-comments">//created earlier</code>
+        S3Key: "serverless-order-service.zip"  <code class="code-comments">//uploaded earlier</code>
+        Role: !GetAtt "OrdersRole.Arn"         <code class="code-comments">//refer to a dummy role created below</code>
 
   OrdersRole:
     Type: AWS::IAM::Role
@@ -482,7 +482,7 @@ Resources:
 <p><!-- wp:code --></p>
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>>  aws lambda list-functions --endpoint-url http://localhost:4574/
 
-<code style="color: darkorange">##Output</code>
+<code class="code-comments">##Output</code>
 {
     "FunctionArn": "arn:aws:lambda:us-east-1:000000000000:function:order-service-function", 
     "Handler": "handler.ordersHandler", 
@@ -503,7 +503,7 @@ Resources:
 <p><!-- wp:code --></p>
 <div class="highlighter-rouge"><pre class="wp-block-code"><code>AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  <code style="color: darkorange">## Content Trimmed</code>
+  <code class="code-comments">## Content Trimmed</code>
 
   OrdersApiGateway:
     Type: AWS::ApiGateway::RestApi
@@ -556,7 +556,7 @@ Resources:
 --output text --region us-east-1 \
 --endpoint-url=http://localhost:4567
 
-<code style="color: darkorange">##Should print Api Id</code></code></pre></div>
+<code class="code-comments">##Should print Api Id</code></code></pre></div>
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p><strong>Step 8: Adding Integration Test for the application</strong></p>
@@ -595,12 +595,12 @@ import {Order} from "../src/model/Order";
 
 import * as fs from "fs";
 import * as path from "path";
-import Axios from "axios"; <code style="color: darkorange">//add axios as dev-dependency</code>
+import Axios from "axios"; <code class="code-comments">//add axios as dev-dependency</code>
 
 let apiId = "";
 
 beforeEach(() => {
-    <code style="color: darkorange">//read rest api id</code>
+    <code class="code-comments">//read rest api id</code>
     apiId = fs.readFileSync(path.resolve("test/infra/rest_api_id"), "utf8").trim();
 });
 
@@ -635,7 +635,7 @@ const executionEnvironment = () => {
 const isExecutionEnvironmentLocal = () => executionEnvironment() === "local";
 
 export const dynamoDbClient = () => {
-    if (isExecutionEnvironmentLocal()) {<code style="color: darkorange">
+    if (isExecutionEnvironmentLocal()) {<code class="code-comments">
         /** LOCALSTACK_HOSTNAME:
         *     for accessing the hostname from inside the container
         *   localhost: 

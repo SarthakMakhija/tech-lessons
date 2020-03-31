@@ -46,7 +46,7 @@ excerpt: This article is in continuation with the previous article "Let’s Def
         String result = "Rental Record for " + getName() + "\n";
         for (Rental each : rentals) {
             double thisAmount = 0;
-            <code style="color: darkorange">//determine amounts for each line</code>
+            <code class="code-comments">//determine amounts for each line</code>
             switch (each.getMovie().getPriceCode()) {
                 case Movie.REGULAR:
                     thisAmount += 2;
@@ -59,12 +59,12 @@ excerpt: This article is in continuation with the previous article "Let’s Def
                         thisAmount += (each.getDaysRented() - 3) * 1.5;
                     break;
             }
-            <code style="color: darkorange">//show figures for this Rental</code>
+            <code class="code-comments">//show figures for this Rental</code>
             result += "\t" + each.getMovie().getTitle() + "\t" +
                     String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
-        <code style="color: darkorange">//add footer lines result</code>
+        <code class="code-comments">//add footer lines result</code>
         result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
         return result;
     }
@@ -81,7 +81,7 @@ public class Movie {
         this.title = title;
         this.priceCode = priceCode;
     }
-    <code style="color: darkorange">//getters ignored</code>
+    <code class="code-comments">//getters ignored</code>
 }
 
 public class Rental {
@@ -92,7 +92,7 @@ public class Rental {
         this.movie = movie;
         this.daysRented = daysRented;
     }
-    <code style="color: darkorange">//getters ignored</code>
+    <code class="code-comments">//getters ignored</code>
 }
 </pre></div>
 <p>The team decides to discuss different ways to handle this new requirement in legacy code.</p>
@@ -164,13 +164,13 @@ Amount owed is 6.5
     double totalAmount = 0;
     String result = "Rental Record for " + getName() + "\n";
     for (Rental each : Rentals) {
-        <code style="color: darkorange">//determine amounts for each line</code>
+        <code class="code-comments">//determine amounts for each line</code>
         double thisAmount = amount(each);
-        <code style="color: darkorange">//show figures for this Rental</code>
+        <code class="code-comments">//show figures for this Rental</code>
         result += "\t" + each.getMovie().getTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code style="color: darkorange">//add footer lines result</code>
+    <code class="code-comments">//add footer lines result</code>
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
@@ -203,11 +203,11 @@ private double amount(Rental each) {
     String result = "Rental Record for " + getName() + "\n";
     for (Rental rental : Rentals) {
         double thisAmount = amount(rental);
-        <code style="color: darkorange">//show figures for this Rental</code>
+        <code class="code-comments">//show figures for this Rental</code>
         result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code style="color: darkorange">//add footer lines result</code>
+    <code class="code-comments">//add footer lines result</code>
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
@@ -231,27 +231,27 @@ private double amount(Rental rental) {
 <p><em>Remove comments from legacy code when you have captured their complete essence . Though I did take some liberty to rename variable along with removing comment, it is always ideal to take smaller steps when you are beginning to understand legacy code. As you grow in confidence, you might want to take bigger steps but one test failure and the reality reveals itself.</em></p>
 <p id="49cd" class="graf graf--p graf-after--blockquote">Scott&gt; Let’s look at amount() method. It depends on priceCode from movie but is placed in Customer. We should move this method to the place where it belongs.</p>
 <p id="e000" class="graf graf--p graf-after--p">Jessica&gt; Yes, let’s do a few method movements (in the interest of this article).</p>
-<div class="highlighter-rouge"><pre><code style="color: darkorange">//Customer</code>
+<div class="highlighter-rouge"><pre><code class="code-comments">//Customer</code>
 public String statement() {
     double totalAmount = 0;
     String result = "Rental Record for " + getName() + "\n";
     for (Rental rental : Rentals) {
         double thisAmount = rental.amount();
-        <code style="color: darkorange">//show figures for this Rental</code>
+        <code class="code-comments">//show figures for this Rental</code>
         result += "\t" + rental.movieTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code style="color: darkorange">//add footer lines result</code>
+    <code class="code-comments">//add footer lines result</code>
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
 
-<code style="color: darkorange">//Rental</code>
+<code class="code-comments">//Rental</code>
 double amount() {
   return movie.amount(this.daysRented);
 }
 
-<code style="color: darkorange">//Movie</code>
+<code class="code-comments">//Movie</code>
 double amount(int daysRented) {
     double thisAmount = 0.0;
     switch (this.getPriceCode()) {

@@ -60,16 +60,16 @@ excerpt: A domain-specific language (DSL) is a computer language specialized to 
 
 class DependencyHandler {
     fun compile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
     fun testCompile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
 }</pre></div>
 <p>dependencies is a simple function which takes a lambda accepting an instance of DependencyHandler as an parameter and returning Unit. DependencyHandler is the type T which has compile and testCompile functions.</p>
 <p>Client code for the above concept will look like -</p>
 <div class="highlighter-rouge"><pre class="lang:java decode:true">dependencies {
-    it.compile("") <code style="color: darkorange">//it is an instance of DependencyHandler</code>
+    it.compile("") <code class="code-comments">//it is an instance of DependencyHandler</code>
     it.testCompile("")
 }</pre></div>
 <p>Are we done? Not really. The problem is the implicit parameter <strong>it </strong>used in the client code. Can we remove <strong>it</strong>? In order to remove implicit parameter, we need to look at "Lambda With Receiver".</p>
@@ -95,7 +95,7 @@ class DependencyHandler {
 </ul>
 <p>Let's create a client of buildString function -</p>
 <div class="highlighter-rouge"><pre class="lang:java decode:true">val str = buildString {
-    this.append("Hello") <code style="color: darkorange">//this here is an instance of StringBuilder</code>
+    this.append("Hello") <code class="code-comments">//this here is an instance of StringBuilder</code>
     append(" ")
     append("World")
 }</pre></div>
@@ -110,16 +110,16 @@ class DependencyHandler {
 
 class DependencyHandler {
     fun compile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
     fun testCompile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
 }</pre></div>
 <p>The only change we have done here is in <em>dependencies</em> function which <em>takes a lambda with receiver as the parameter</em>. <em>DependencyHandler is the receiver type</em> in <em>action</em> parameter which means the <em>client code will always have access to the instance of DependencyHandler.</em></p>
 <p>Let's see the client code -</p>
 <div class="highlighter-rouge"><pre class="lang:java decode:true">dependencies {
-    compile("") <code style="color: darkorange">//same as this.compile("")</code>
+    compile("") <code class="code-comments">//same as this.compile("")</code>
     testCompile("")
 }</pre></div>
 <p>We are  able to create a DSL using <em>Lambda with Receiver</em> as a parameter to a function.</p>
@@ -134,7 +134,7 @@ class DependencyHandler {
 
 fun main(args: Array&lt;String&gt;) {
     val greeter = Greeter(greeting = "Welcome")
-    greeter(name = "Kotlin")  <code style="color: darkorange">//this calls the invoke function which takes String as a parameter</code>
+    greeter(name = "Kotlin")  <code class="code-comments">//this calls the invoke function which takes String as a parameter</code>
 }</pre></div>
 <p>A few things to note about <strong>invoke()</strong> here -</p>
 <ul>
@@ -147,10 +147,10 @@ fun main(args: Array&lt;String&gt;) {
 <h3>Building DSL using invoke function</h3>
 <div class="highlighter-rouge"><pre class="lang:java decode:true">class DependencyHandler {
     fun compile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
     fun testCompile(coordinate: String){
-        <code style="color: darkorange">//add coordinate to some collection</code>
+        <code class="code-comments">//add coordinate to some collection</code>
     }
     operator fun invoke(action: DependencyHandler.() -&gt; Unit): DependencyHandler {
         this.action()
