@@ -15,8 +15,10 @@
             <li>
                 <a class="clear" aria-label="{{ page.title }}" title="{{ page.title }}"
                    href="{{ page.url | relative_url }}">
-                    {% if page.icon %} <i class="fa {{ page.icon }}" aria-hidden="true"></i>
-                    {% else %} {{ page.title }} {% endif%}
+                    {% if page.icon %}
+                        <i class="fa fa-fw {{ page.icon }}" aria-hidden="true"></i>
+                        {{ page.title }}
+                    {% endif%}
                 </a>
             </li>
             {% endunless %}
