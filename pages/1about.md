@@ -2,6 +2,7 @@
 title: About Me
 layout: page
 permalink: /about/
+icon: "fa-male"
 feature-img: "assets/img/pexels/about.jpg"
 ---
 <div class="self-container">
