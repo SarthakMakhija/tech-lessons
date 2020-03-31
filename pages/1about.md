@@ -2,7 +2,7 @@
 title: About Me
 layout: page
 permalink: /about/
-feature-img: "assets/img/pexels/circuit.jpeg"
+feature-img: "assets/img/pexels/about.jpg"
 ---
 <div class="self-container">
     <p><img class="self-image" alt="Sarthak Makhija" src="/assets/img/pexels/self.png"></p> 
