@@ -18,7 +18,7 @@
 %padding-post {
   padding: $padding-x-small $padding-x-large;
   @media (max-width: $xl-break) {
-    padding: $padding-x-small ($padding-large * 2);
+    padding: $padding-x-small-xl-break ($padding-large * 2);
   }
   @media (max-width: $l-break) {
     padding: $padding-x-small $padding-large;
