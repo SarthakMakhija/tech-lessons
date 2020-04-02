@@ -4,7 +4,7 @@ url: "https://sarthakmakhija.github.io"
 
 # THEME-SPECIFIC CONFIGURATION
 title: tech-lessons.in                                  # site's title
-description: learnings by a developer                   # used by search engines
+description: Sarthak's blog                             # used by search engines
 avatar:                                                 # Empty for no avatar in navbar
 favicon: assets/favicon.png                             # Icon displayed in the tab
 
