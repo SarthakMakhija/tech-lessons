@@ -11,6 +11,7 @@ favicon: assets/favicon.png                             # Icon displayed in the 
 # Header and footer text
 header_text: tech-lessons.in  # Change Blog header text
 header_feature_image: assets/img/pexels/header.jpg
+header_slogan_text: learnings by a developer
 
 
 # Blog

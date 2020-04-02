@@ -5,7 +5,8 @@ layout: default
 <div class="home">
     <div id="main" class="call-out"
          style="background-image: url('{{ site.header_feature_image | relative_url }}')">
-        <h1 style="margin: 0.40em 0; font-size: 1.9em">{{ site.header_text }}</h1>
+        <div class="header-text">{{ site.header_text }}</div>
+        <div class="header-slogan-text">{{ site.header_slogan_text }}</div>
     </div>
     {% include blog.html %}
 </div>
