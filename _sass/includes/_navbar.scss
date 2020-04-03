@@ -105,13 +105,6 @@
 }
 
 /* ---- Responsive ---- */
-
-@media (min-width: $break) {
-  a#pull {
-    display: none;
-  }
-}
-
 @media screen and (max-width: $break) {
   .site-header {
     img.avatar {
@@ -176,3 +169,10 @@
     }
   }
 }
+
+@media (min-width: $m-break) {
+  a#pull {
+    display: none;
+  }
+}
+
