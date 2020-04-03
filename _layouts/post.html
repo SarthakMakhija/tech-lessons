@@ -5,10 +5,9 @@ layout: default
 
 <article {% if page.feature-img or page.color %}class="feature-image"{% endif %}>
   <header id="main" style=""></header>
-
   <section class="post-content">
     {% unless page.hide_title %}
-    <h1 id="{{ page.title | cgi_escape }}" class="title">{{ page.title }}</h1>
+      <h1 id="{{ page.title | cgi_escape }}" class="title">{{ page.title }}</h1>
     {% endunless %}
 
   {% if page.bootstrap %}

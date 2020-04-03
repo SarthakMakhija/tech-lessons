@@ -4,6 +4,7 @@ layout: page
 permalink: /about/
 icon: "fa-male"
 feature-img: "assets/img/pexels/about.jpg"
+hide_title: true
 ---
 <div class="self-container">
     <p><img class="self-image" alt="Sarthak Makhija" src="/assets/img/pexels/self.png"></p> 

@@ -5,9 +5,11 @@ layout: default
 
 <article {% if page.feature-img %}class="feature-image" {% endif %}>
     <header id="main" style="background-image: url('{{ page.feature-img | relative_url }}')">
-        <h1 id="{{ page.title | default: "" | cgi_escape }}" class="title">
-        {{ page.title }}
-        </h1>
+        {% unless page.hide_title %}
+            <h1 id="{{ page.title | default: "" | cgi_escape }}" class="title">
+                {{ page.title }}
+            </h1>
+        {% endunless %}
 
         {% if page.subtitle %}
         <h2 class="subtitle">{{ page.subtitle }}</h2>
