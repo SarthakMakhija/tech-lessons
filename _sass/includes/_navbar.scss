@@ -56,11 +56,12 @@
 
   .navbar-brand {
     float: left;
-    width: 150px;
+    width: 192px;
     padding: 10px 0 10px 13px;
 
     img {
       display: block;
+      padding: 0;
     }
   }
 
@@ -125,8 +126,8 @@
       margin: 0 auto;
       display: block;
       float: none;
-      width: 96px;
-      padding: 8px 0;
+      width: 145px;
+      padding: 10px 0;
     }
 
     nav {
