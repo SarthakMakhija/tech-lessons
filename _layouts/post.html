@@ -4,13 +4,13 @@ layout: default
 {% include share_thumbnail.html page=page %}
 
 <article {% if page.feature-img or page.color %}class="feature-image"{% endif %}>
-  <header id="main" style="">
-    {% unless page.hide_title %}
-      <h1 id="{{ page.title | cgi_escape }}" class="title">{{ page.title }}</h1>
-      {% include post_info.html author=page.author date=page.date %}
-    {% endunless %}
-  </header>
+  <header id="main" style=""></header>
+
   <section class="post-content">
+    {% unless page.hide_title %}
+    <h1 id="{{ page.title | cgi_escape }}" class="title">{{ page.title }}</h1>
+    {% endunless %}
+
   {% if page.bootstrap %}
     <div class="bootstrap-iso">
     {% endif %}

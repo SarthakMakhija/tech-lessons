@@ -90,7 +90,11 @@ header {
   header {
     color: $feature-image-text-color;
     margin-bottom: 0;
-    padding: $padding-large/2.5 $padding-large;
+    padding-top: 30%;
+    max-height: 400px;
+    position: relative;
+    background-size: cover;
+    background-position: center center;
 
     .meta {
       color: rgba($feature-image-text-color, .7);
@@ -110,19 +114,8 @@ header {
 
 /*-- feature-image Responsive scrolling --*/
 .feature-image header {
-  @media screen and (max-width: $break) {
-    padding: $padding-large*1.5 $padding-small;
-  }
-
-  @media screen and (min-width: $break) {
-    background-size: 100% auto;
-  }
-
-  @media screen and (max-width: $break) {
-    background-size: 200% auto;
-  }
-
-  @media screen and (max-width: $sm-break) {
-    background-size: 400% auto;
+  @media screen and (max-width: 767px) {
+    padding-top: 50.25%;
   }
 }
+
