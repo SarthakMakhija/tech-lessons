@@ -72,7 +72,7 @@ excerpt: Serverless is a paradigm which lays its foundations on the fact that "W
 <p>As a final step, add <code>tsconfig.json</code> with a very simple configuration as mentioned below -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:preformatted --></p>
-<div class="highlighter-rouge"><pre class="wp-block-preformatted">{
+{% highlight typescript %}{
   "compilerOptions": {
     "noEmitOnError": true,
     "moduleResolution": "node",
@@ -81,7 +81,7 @@ excerpt: Serverless is a paradigm which lays its foundations on the fact that "W
     "outDir": "dist",
     "inlineSourceMap": true
   }
-}</pre></div>
+}{% endhighlight %}
 <p><!-- /wp:preformatted --></p>
 <p><!-- wp:paragraph --></p>
 <p>That should be it. Our project set up is done and we are ready to make our first commit.</p>
@@ -113,10 +113,10 @@ excerpt: Serverless is a paradigm which lays its foundations on the fact that "W
 <p>After the dependency is installed we are ready to code our handler. Let's put this in a file named <code>handler.ts</code> under <code>src</code> directory.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
-export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
-    <code class="code-comments">//your code goes here</code>
-};</code></pre></div>
+{% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
+export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
+    //your code goes here
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>This is the simplest handler function that could be created at this stage. One thing to note is we are using the type <em>APIGatewayEvent</em> imported from <em>"aws-lambda"</em> to get type-safe events as parameter to handler function.</p>
@@ -128,10 +128,10 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
 <p>In this example, <em>OrderRequest</em> is that domain object, effectively a wrapper over <em>APIGatewayEvent</em>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
+{% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
 
-export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
-    return new OrderController().handle(new OrderRequest(event)); <code class="code-comments">//invoke controller</code>
+export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
+    return new OrderController().handle(new OrderRequest(event)); //invoke controller
 };
 
 export class OrderController {
@@ -142,19 +142,19 @@ export class OrderController {
 export class OrderRequest {
     constructor(private readonly event: APIGatewayEvent) {
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Let's move OrderController and OrderRequest classes to <em>controller</em> and <em>model</em> packages (or directories) respectively and invoke OrderController from handler. This is how the handler function will look like after the classes have been moved.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
+{% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
 import {OrderRequest}    from "./model/OrderRequest";
 import {OrderController} from "./controller/OrderController";
 
-export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
+export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
     return new OrderController().handle(new OrderRequest(event));
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>I think we are ready to make our next commit. I know we haven't written any unit tests but as far as this article is concerned, we will write unit tests before we start the next one.</p>
@@ -166,7 +166,7 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
 <p>Controller is a class which will handle the incoming request and return an appropriate response. By this definition, controller will be expected to accept an OrderRequest and find an order by its id.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {OrderRequest} from "../model/OrderRequest";
+{% highlight typescript %}import {OrderRequest} from "../model/OrderRequest";
 
 export class OrderController {
 
@@ -183,7 +183,7 @@ export class OrderController {
 }
 
 export class Order {
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Few quick observations - </p>
@@ -207,10 +207,8 @@ export class Order {
 <p>This is how different classes look at this stage.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
-<div class="highlighter-rouge"><p>&nbsp;<span style="text-decoration: underline;">OrderController.ts</span></p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:code --></p>
-<pre class="wp-block-code"><code>import {OrderRequest} from "../model/OrderRequest";
+{% highlight typescript %}//OrderController.ts
+import {OrderRequest} from "../model/OrderRequest";
 import {Order}        from "../model/Order";
 import {OrderService} from "../service/OrderService";
 
@@ -229,15 +227,12 @@ export class OrderController {
     }
 
     private findAnOrderBy(id: string): Order {
-        return this.orderService.findAnOrderBy(id); <code class="code-comments">//invoke service</code>
+        return this.orderService.findAnOrderBy(id); //invoke service
     }
-}</code></pre>
-<p><!-- /wp:code --></p>
-<p><!-- wp:paragraph --></p>
-<p>&nbsp;<span style="text-decoration: underline;">OrderRequest.ts</span></p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:code --></p>
-<pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
+}
+
+//OrderRequest.ts
+import {APIGatewayEvent} from "aws-lambda";
 
 export class OrderRequest {
     constructor(private readonly event: APIGatewayEvent) {
@@ -249,18 +244,14 @@ export class OrderRequest {
     orderId(): string {
         return "";
     }
-}</code></pre>
-<p><!-- /wp:code --></p>
-<p><!-- wp:paragraph --></p>
-<p>&nbsp;<span style="text-decoration: underline;">OrderService.ts</span></p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:code --></p>
-<pre class="wp-block-code"><code>export class OrderService {
+}
+//OrderService.ts
+export class OrderService {
 
     findAnOrderBy(id: string) {
         return null;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:heading {"level":4} --></p>
 <h4>Step 4: Let's jump into service</h4>
@@ -269,7 +260,7 @@ export class OrderRequest {
 <p>Service layer will interact with repository to find an order by id. It doesn't look like service layer is really needed for this example, but let's proceed with it -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>export class OrderService {
+{% highlight typescript %}export class OrderService {
     private repository: OrderRepository;
 
     constructor() {
@@ -277,7 +268,7 @@ export class OrderRequest {
     }
 
     findAnOrderBy(id: string) {
-        return this.repository.findAnOrderBy(id); <code class="code-comments">//invoke repository</code>
+        return this.repository.findAnOrderBy(id); //invoke repository
     }
 }
 
@@ -285,7 +276,7 @@ export class OrderRepository {
     findAnOrderBy(id: string) {
         return null;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Let's move OrderRepository into repository package.</p>
@@ -306,7 +297,7 @@ export class OrderRepository {
 <p>Now we are ready to query "orders" table.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DynamoDB} from "aws-sdk"
+{% highlight typescript %}import {DynamoDB} from "aws-sdk"
 import {GetItemInput} from "aws-sdk/clients/dynamodb";
 import {Order} from "../model/Order";
 
@@ -326,7 +317,7 @@ export class OrderRepository {
         const response = await dynamoDb.getItem(getItemInputOptions).promise();
         return response.Item;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Few quick observations - </p>
@@ -350,7 +341,7 @@ export class OrderRepository {
 <p>Let's quickly make a change to return <em>Order instead of response.Item. </em></p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DynamoDB} from "aws-sdk"
+{% highlight typescript %}import {DynamoDB} from "aws-sdk"
 import {GetItemInput} from "aws-sdk/clients/dynamodb";
 import {Order} from "../model/Order";
 
@@ -367,23 +358,23 @@ export class OrderRepository {
                 "orderId": {S: id}
             }
         };
-        <code class="code-comments">//get an item from dynamoDb</code>
+        //get an item from dynamoDb
         const response = await dynamoDb.getItem(getItemInputOptions).promise(); 
         return response.Item ? Order.from(response.Item) : null;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>and this is how Order.ts looks like - </p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DocumentClient} from "aws-sdk/clients/dynamodb";
+{% highlight typescript %}import {DocumentClient} from "aws-sdk/clients/dynamodb";
 
 export class Order {
     static from(item: DocumentClient.AttributeMap): Order {
         return null;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>This completes our repository. We still have some open items. Let's take them one by one - </p>
@@ -402,7 +393,7 @@ export class Order {
 <p>Order class provides a static method which accepts and instance of DocumentClient.AttributeMap and returns an instance of Order. To keep things simple, we will assume that an order has orderId and amount.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DocumentClient} from "aws-sdk/clients/dynamodb";
+{% highlight typescript %}import {DocumentClient} from "aws-sdk/clients/dynamodb";
 
 export class Order {  
 
@@ -412,7 +403,7 @@ export class Order {
     private constructor(private readonly orderId: string,
                         private readonly amount: number) {
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p><code>AttributeMap within aws-sdk </code>is defined as -</p>
@@ -443,21 +434,21 @@ export class Order {
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
+{% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
 
 export class OrderRequest {
     constructor(private readonly event: APIGatewayEvent) {
     }
 
     isAGetOrder(): boolean {
-        return this.event.httpMethod === "GET" &amp;&amp;
-               this.event.path.startsWith("/orders") &amp;&amp;
+        return this.event.httpMethod === "GET" &&
+               this.event.path.startsWith("/orders") &&
                this.event.pathParameters.orderId != null;
     }
     orderId(): string {
         return this.event.pathParameters.orderId;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:heading {"level":4} --></p>
 <h4>Step 8: Introducing async/await in service and controller</h4>
@@ -466,12 +457,12 @@ export class OrderRequest {
 <p>Let's introduce async and await in handler, controller and service.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code><code class="code-comments">//handler.ts</code>
-export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
+{% highlight typescript %}//handler.ts
+export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
     return await new OrderController().handle(new OrderRequest(event));
 };
 
-<code class="code-comments">//OrderController.ts</code>
+//OrderController.ts
 async handle(orderRequest: OrderRequest) {
     if (orderRequest.isAGetOrder()) {
         return await this.findAnOrderBy(orderRequest.orderId())
@@ -483,33 +474,29 @@ private async findAnOrderBy(id: string) {
     return await this.orderService.findAnOrderBy(id);
 }
 
-<code class="code-comments">//OrderService.ts</code>
+//OrderService.ts
 async findAnOrderBy(id: string) {
     return await this.repository.findAnOrderBy(id);
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:heading {"level":4} --></p>
 <h4>Step 9: Lambda response with API gateway</h4>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>When AWS lambda works behind an API gateway, it is expected to return a response in a specific format. This looks like -</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>{
+{% highlight json %}{
    "statusCode": Http Status Code,
    "body": Response body,
    "headers": Response headers
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>It would be great if controller knows the least about this structure. All it should do is return a response with Order object. Let's create an abstraction which takes an object T and knows about the final HTTP response. Let's name this as <em>Response</em>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>export class Response&lt;T> {
+{% highlight typescript %}export class Response<T> {
     private constructor(readonly status: HttpStatus, readonly body?: T) {
     }
 
-    static ok&lt;T>(status: HttpStatus, body?: T) {
+    static ok<T>(status: HttpStatus, body?: T) {
         return new Response(status, body);
     }
     static notFound() {
@@ -520,13 +507,13 @@ async findAnOrderBy(id: string) {
 export class HttpStatus {
     static readonly OK = "200";
     static readonly NOT_FOUND = "404";
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>With the introduction of Response, following will be the view of some classes - </p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {OrderRequest} from "../model/OrderRequest";
+{% highlight typescript %}import {OrderRequest} from "../model/OrderRequest";
 import {OrderService} from "../service/OrderService";
 
 export class OrderController {
@@ -536,12 +523,12 @@ export class OrderController {
         this.orderService = new OrderService();
     }
 
-    async handle(orderRequest: OrderRequest): Promise&lt;Response&lt;Order | unknown>> {
+    async handle(orderRequest: OrderRequest): Promise<Response<Order | unknown>> {
         if (orderRequest.isAGetOrder()) {
             const order = await this.findAnOrderBy(orderRequest.orderId());
-            return Response.ok&lt;Order>(HttpStatus.OK, order); <code class="code-comments">//return Ok</code>
+            return Response.ok<Order>(HttpStatus.OK, order); //return Ok
         }
-        return Response.notFound(); <code class="code-comments">//return NotFound</code>
+        return Response.notFound(); //return NotFound
     }
 
     private async findAnOrderBy(id: string) {
@@ -549,18 +536,18 @@ export class OrderController {
     }
 }
 
-export class Response&lt;T> {
+export class Response<T> {
     private constructor(readonly status: HttpStatus, readonly body?: T) {
     }
 
-    static ok&lt;T>(status: HttpStatus, body?: T) {
+    static ok<T>(status: HttpStatus, body?: T) {
         return new Response(status, body);
     }
     static notFound() {
         return new Response(HttpStatus.NOT_FOUND);
     }
     get() {
-        <code class="code-comments">//return JSON response</code>
+        //return JSON response
         return this.body === null ? {"statusCode": this.status} : {
             "statusCode": this.status,
             "body": JSON.stringify(this.body)
@@ -571,20 +558,20 @@ export class Response&lt;T> {
 export class HttpStatus {
     static readonly OK = "200";
     static readonly NOT_FOUND = "404";
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>If controller returns an instance of Response, handler code can be changed to invoke get() on the returned instance.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {APIGatewayEvent} from "aws-lambda";
+{% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
 import {OrderRequest}    from "./model/OrderRequest";
 import {OrderController} from "./controller/OrderController";
 
-export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => {
+export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
     const response = await new OrderController().handle(new OrderRequest(event));
     return response.get();
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>That's it. We have connected all the pieces, yes without any form of tests.</p>
@@ -607,7 +594,7 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
 <p>jest configuration in <code>jest.config.js</code> -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>module.exports = {
+{% highlight typescript %}module.exports = {
     "testMatch": [
         "**/__tests__/**/*.+(ts|tsx|js)",
         "**/?(*.)+(spec|test).+(ts|tsx|js)"
@@ -615,7 +602,7 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
     "transform": {
         "^.+\\.(ts|tsx)$": "ts-jest"
     },
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>test script in <code>package.json</code> -</p>
@@ -632,7 +619,7 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise&lt;any> => 
 <p>Let's add our first test which attempts to validate the status for finding an order by its id.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {OrderController} from "../../src/controller/OrderController";
+{% highlight typescript %}import {OrderController} from "../../src/controller/OrderController";
 import {OrderRequest} from "../../src/model/OrderRequest";
 import {APIGatewayEvent} from "aws-lambda";
 import {HttpStatus} from "../../src/model/ModelAndResponseStatus";
@@ -672,7 +659,7 @@ const orderRequest = (id: string) => {
         resource: ""
     };
     return new OrderRequest(apiGatewayEvent);
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>One quick observation -</p>
@@ -687,14 +674,14 @@ const orderRequest = (id: string) => {
 <p>Another test could be to check the order returned from controller given an id.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>test("should return an order given a request to find an order by id", async () => {
+{% highlight typescript %}test("should return an order given a request to find an order by id", async () => {
     sinon.stub(OrderService.prototype, "findAnOrderBy")
          .callsFake(() => new Order("id-100", 1445));
 
     const response = await new OrderController().handle(orderRequest("id-100"));
 
     expect(response.body!!).toEqual(new Order("id-100", 1445));
-});</code></pre></div>
+});{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>I guess we are ready to do TDD as well for Serverless.</p>
