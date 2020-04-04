@@ -41,124 +41,124 @@ excerpt: Flips is an implementation of the Feature Toggles pattern for Java and
 <p id="4643" class="graf graf--p graf-after--blockquote">Let’s get started with in-depth understanding of these features.</p>
 <h3 id="b84c" class="graf graf--h3 graf-after--p">Getting Started</h3>
 <p id="8695" class="graf graf--p graf-after--h3">Include the necessary dependency:</p>
-<div class="highlighter-rouge"><pre class="lang:default decode:true ">&lt;dependency&gt;
-   &lt;groupId&gt;com.github.feature-flip&lt;/groupId&gt;
-   &lt;artifactId&gt;flips-web&lt;/artifactId&gt;
-   &lt;version&gt;1.0.1&lt;/version&gt;
-&lt;/dependency&gt;</pre></div>
+{% highlight gradle %}<dependency>
+   <groupId>com.github.feature-flip</groupId>
+   <artifactId>flips-web</artifactId>
+   <version>1.0.1</version>
+</dependency>{% endhighlight %}
 <p id="5f28" class="graf graf--p graf-after--pre">Or:</p>
-<div class="highlighter-rouge"><pre class="lang:default decode:true ">&lt;dependency&gt;
-  &lt;groupId&gt;com.github.feature-flip&lt;/groupId&gt;
-  &lt;artifactId&gt;flips-core&lt;/artifactId&gt;
-  &lt;version&gt;1.0.1&lt;/version&gt;
-&lt;/dependency&gt;</pre></div>
+{% highlight gradle %}<dependency>
+  <groupId>com.github.feature-flip</groupId>
+  <artifactId>flips-core</artifactId>
+  <version>1.0.1</version>
+</dependency>{% endhighlight %}
 <h3 id="5b8f" class="graf graf--h3 graf-after--pre">Detailed Description of All Annotations</h3>
 <p id="6fda" class="graf graf--p graf-after--h3">Flips provides various annotations to flip a feature. Let’s have a detailed walk-through of all the annotations:</p>
 <h3 id="8c53" class="graf graf--h3 graf-after--p">@FlipOnEnvironmentProperty</h3>
 <p id="81ce" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOnEnvironmentProperty </strong>is used to flip a feature based on the value of an environment property.</p>
-<div class="highlighter-rouge"><pre class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnEnvironmentProperty(property = "feature.send.email", 
                                expectedValue = "true")
     public void sendEmail(EmailMessage emailMessage) {
     }
 }
-</pre></div>
+{% endhighlight %}
 <h3 id="ebde" class="graf graf--h3 graf-after--p">@FlipOnProfiles</h3>
 <p id="d955" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOnProfiles</strong> is used to flip a feature based on the environment in which the application is running</p>
-<div class="highlighter-rouge"><pre id="a052" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnProfiles(activeProfiles = {"dev", "qa"})
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p id="fccf" class="graf graf--p graf-after--pre">Feature sendEmail is enabled if the current profile (or environment) is either <strong>dev or qa.</strong></p>
 <h3 id="7e8a" class="graf graf--h3 graf-after--p">@FlipOnDaysOfWeek</h3>
 <p id="b04e" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOnDaysOfWeek</strong> is used to flip a feature based on the day of the week.</p>
-<div class="highlighter-rouge"><pre id="7af4" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnDaysOfWeek(daysOfWeek = {DayOfWeek.MONDAY})
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p id="fbed" class="graf graf--p graf-after--pre">Feature sendEmail is enabled if the current day is <strong>MONDAY</strong>.</p>
 <h3 id="0827" class="graf graf--h3 graf-after--p">@FlipOnDateTime</h3>
 <p id="6a6d" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOnDateTime</strong> is used to flip a feature based on date and time.</p>
-<div class="highlighter-rouge"><pre id="3f0e" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnDateTime(cutoffDateTimeProperty = "default.date.enabled")
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p>Feature sendEmail is enabled if the current datetime is equal to or greater than the value (in ISO-8601 format) defined by the <strong>default.date.enabled</strong> property.</p>
 <h3 id="f5bf" class="graf graf--h3 graf-after--p">@FlipOnSpringExpression</h3>
 <p id="a1d8" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOnSpringExpression</strong> is used to flip a feature based on the evaluation of a Spring expression.</p>
-<div class="highlighter-rouge"><pre id="fc81" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnSpringExpression(expression = "T(java.lang.Math).sqrt(4) * 100.0 
-                                          &lt; T(java.lang.Math).sqrt(4) * 10.0")
+                                          < T(java.lang.Math).sqrt(4) * 10.0")
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p>Feature sendEmail is enabled if the expression evaluates to TRUE. This annotation happens to be one of the most powerful annotations in Flips library. Why so ?</p>
 <p class="graf graf--p graf-after--pre">One could always write a custom spring component and use the same in @FlipOnSpringExpression to flip a feature.</p>
 <h3 id="5d44" class="graf graf--h3 graf-after--blockquote">@FlipBean</h3>
 <p id="1200" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipBean</strong> is used to flip the invocation of a method with another method <em class="markup--em markup--p-em">defined in a different bean</em>.</p>
-<div class="highlighter-rouge"><pre id="aa3e" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipBean(with = SendGridEmailSender.class)
     @FlipOnProfiles(activeProfiles = "DEV")
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p>This will flip the invocation of the sendEmail method with a method (having same signature) defined in SendGridEmailSender Spring component if the current profile is <strong>DEV</strong>.</p>
 <h3 id="eab3" class="graf graf--h3 graf-after--p">@FlipOff</h3>
 <p id="42de" class="graf graf--p graf-after--h3"><strong class="markup--strong markup--p-strong">@FlipOff</strong> is used to flip a feature off.</p>
-<div class="highlighter-rouge"><pre class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOff
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p id="a3bb" class="graf graf--p graf-after--pre">Feature sendEmail is always DISABLED.</p>
 <h3 id="831b" class="graf graf--h3 graf-after--p">Combining annotations</h3>
-<div class="highlighter-rouge"><pre id="7b21" class="graf graf--pre graf-after--h3">@Component
+{% highlight java %}@Component
 class EmailSender {
     @FlipOnProfiles(activeProfiles = "dev")
     @FlipOnDaysOfWeek(daysOfWeek={DayOfWeek.MONDAY})
     public void sendEmail(EmailMessage emailMessage) {
     }
-}</pre></div>
+}{% endhighlight %}
 <p id="7937" class="graf graf--p graf-after--pre">Feature sendEmail is enabled if the current profile is "<strong>dev</strong>" AND the current day of the week is <strong>MONDAY</strong>.</p>
 <h3 class="graf graf--p graf-after--pre">Import Flip Context Configuration</h3>
 <p id="65cb" class="graf graf--p graf-after--h3">In order to bring all Flips-related annotations into effect, you need to import FlipContextConfiguration or FlipWebContextConfiguration and you are ready to go.</p>
-<div class="highlighter-rouge"><pre class="lang:java decode:true ">@SpringBootApplication
+{% highlight java %}@SpringBootApplication
 @Import(FlipWebContextConfiguration.class)
 class ApplicationConfig {
     public static void main(String[] args) {
         SpringApplication.run(ApplicationConfig.class, args);
     }
-}</pre></div>
+}{% endhighlight %}
 <p id="1e18" class="graf graf--p graf-after--pre">Please refer to this <a class="markup--anchor markup--p-anchor" href="https://github.com/SarthakMakhija/flips-samples/blob/master/flips-sample-spring-boot/src/main/java/com/finder/article/ApplicationConfig.java" target="_blank" rel="nofollow noopener" data-href="https://github.com/SarthakMakhija/flips-samples/blob/master/flips-sample-spring-boot/src/main/java/com/finder/article/ApplicationConfig.java">sample project</a>.</p>
 <h3 id="6eed" class="graf graf--h3 graf-after--p">Creating Custom Annotations</h3>
 <p id="03ee" class="graf graf--p graf-after--h3">All the annotations provided by the library are of type <em class="markup--em markup--p-em">@FlipOnOff</em>, which is essentially a meta-annotation. So, create a custom annotation annotated with @FlipOnOff at the method level:</p>
-<div class="highlighter-rouge"><pre id="860e" class="graf graf--pre graf-after--p">@Target({ElementType.METHOD})
+{% highlight java %}@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME) 
 @FlipOnOff(value = MyCustomCondition.class) !!Important
 public @interface MyCustomAnnotation {
-}</pre></div>
+}{% endhighlight %}
 <p>As a part of this annotation, specify the condition that will evaluate this annotation.</p>
-<div class="highlighter-rouge"><pre id="29c6" class="graf graf--pre graf-after--p">@Component
+{% highlight java %}@Component
 public class MyCustomCondition implements FlipCondition {
     @Override
     public boolean evaluateCondition(FeatureContext fContext,
                                      FlipAnnotationAttributes attr){
         
-        <code class="code-comments">//code to evaluate flip condition</code>
+        //code to evaluate flip condition
         return false;
     }
 }
-</pre></div>
+{% endhighlight %}
 <p>This Condition class needs to implement <strong>FlipCondition</strong> and MUST be a Spring Component.</p>
 <p id="e279" class="graf graf--p graf-after--blockquote">That is it! You can use your custom annotation to any method to flip it ON or OFF based on your condition.</p>
 <h3 class="graf graf--pre graf-after--p">What Does It Mean “Feature Is DISABLED”?</h3>
