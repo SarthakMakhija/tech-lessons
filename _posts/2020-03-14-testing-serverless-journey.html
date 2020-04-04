@@ -60,8 +60,6 @@ excerpt: It is time to test our Serverless journey which started with a web appl
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
 <p>Before moving on let's look at this conversation to understand how can LocalStack be leveraged for testing Serverless application. </p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:core-embed/youtube {"url":"https://youtu.be/Xed6C8vskUo","type":"video","providerNameSlug":"youtube","align":"center","className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --></p>
 <figure class="wp-block-embed-youtube aligncenter wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
 <div class="wp-block-embed__wrapper">
     <iframe width="800" height="400" src="https://www.youtube.com/embed/Xed6C8vskUo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -96,16 +94,16 @@ excerpt: It is time to test our Serverless journey which started with a web appl
 <p>Let's add a build task to our outer package.json which will execute <code>tsc</code>. Let's also add a types definition for node by executing <code>npm i @types/node</code>. Here, is how our build script looks like - </p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>"scripts": {
+{% highlight json %}"scripts": {
   "test": "jest test/**",
   "build": "tsc"
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Before we execute our build command, let's <code>exclude infra and test</code> folders from our outer tsconfig.json.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:preformatted --></p>
-<div class="highlighter-rouge"><pre class="wp-block-preformatted">{
+{% highlight typescript %}{
   "compilerOptions": {
     "noEmitOnError": true,
     "moduleResolution": "node",
@@ -115,7 +113,7 @@ excerpt: It is time to test our Serverless journey which started with a web appl
     "inlineSourceMap": true
   },
   "exclude": ["infra", "test"]
-}</pre></div>
+}{% endhighlight %}
 <p><!-- /wp:preformatted --></p>
 <p><!-- wp:paragraph --></p>
 <p>Now, we can execute <code>npm run build</code> which should produce a <code>dist</code> folder with compiled code.</p>
@@ -127,10 +125,10 @@ excerpt: It is time to test our Serverless journey which started with a web appl
 <p><strong>Step 2: Docker container with a running DynamoDB service</strong></p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
-<p>Let's create a docker-compose file referring to LocalStack image and start the container as a pretest step in our package.json.</p>
+<p>Let's create a <i>docker-compose.yml</i> file referring to LocalStack image and <i>start the container as a pretest step in our package.json</i>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>version: "2.1"
+{% highlight yaml %}version: "2.1"
 services:
   localstack:
     image: localstack/localstack:0.10.7
@@ -144,14 +142,12 @@ services:
       - PORT_WEB_UI=${PORT_WEB_UI- }
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"</code></pre></div>
-<p><!-- /wp:code --></p>
-<p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>  "scripts": {
+      - "/var/run/docker.sock:/var/run/docker.sock"{% endhighlight %}
+{% highlight json %} "scripts": {
     "pretest": "docker-compose -f test/docker-compose.yml up -d",
     "test": "jest test/**",
     "build": "tsc"
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Run the pretest command and see LocalStack running as docker container.</p>
@@ -163,7 +159,7 @@ services:
 <p>With LocalStack container up and running, "orders" table needs to be created in DynamoDB service. In order to do this we will use CloudFormation template. So, let's write one -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>AWSTemplateFormatVersion: "2010-09-09"
+{% highlight yaml %}AWSTemplateFormatVersion: "2010-09-09"
 Resources:
   OrdersTable:
     Type: AWS::DynamoDB::Table
@@ -174,13 +170,13 @@ Resources:
           AttributeType: "S"
       KeySchema:
         - AttributeName: "orderId"
-          KeyType: "HASH"</code></pre></div>
+          KeyType: "HASH"{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>We will also create a script to deploy CloudFormation template against LocalStack. This script will also be executed as a part of our pretest step.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>#!/bin/sh
+{% highlight shell %}#!/bin/sh
 
 aws cloudformation deploy \
 --template-file template.yaml \
@@ -189,7 +185,7 @@ aws cloudformation deploy \
 --capabilities CAPABILITY_IAM  \
 --endpoint-url http://localhost:4581
 
-echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
+echo 'aws cloudformation deploy executed against localstack'{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Few Quick Observations - </p>
@@ -204,14 +200,14 @@ echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
 <p>Let's update our package.json.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>  "scripts": {
+{% highlight json %} "scripts": {
     "localstack:up": "docker-compose -f test/docker-compose.yml up -d",
     "delay": "sleep 20",
-    "localstack:create-infra": "cd test/infra &amp;&amp; ./deploy.sh",
-    "pretest": "npm run localstack:up &amp;&amp; npm run delay &amp;&amp; npm run localstack:create-infra",
+    "localstack:create-infra": "cd test/infra && ./deploy.sh",
+    "pretest": "npm run localstack:up && npm run delay && npm run localstack:create-infra",
     "test": "jest test/**",
     "build": "tsc"
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Following events happens as a part of pretest step -</p>
@@ -233,15 +229,15 @@ echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
 <p>LocalStack <em>tries</em> to replicate AWS services on local. By this theory, we should be able to run AWS commands by specifying the endpoint-url of the corresponding service.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>> aws dynamodb scan --table-name orders --endpoint-url http://localhost:4569
+{% highlight shell %} > aws dynamodb scan --table-name orders --endpoint-url http://localhost:4569
 
-<code class="code-comments">##Output##</code>
+//Output
 {
     "Count": 0,
     "Items": [],
     "ScannedCount": 0,
     "ConsumedCapacity": null
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Now, the last step is making a change in the application to connect to local DynamoDB.</p>
@@ -253,11 +249,11 @@ echo 'aws cloudformation deploy executed against localstack'</code></pre></div>
 <p>Let's change the repository layer to connect to local DynamoDB service.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {GetItemInput} from "aws-sdk/clients/dynamodb";
+{% highlight typescript %}import {GetItemInput} from "aws-sdk/clients/dynamodb";
 import {Order} from "../model/Order";
 import {dynamoDbClient} from "../DynamoDbConfiguration";
 
-const dynamoDb = dynamoDbClient(); <code class="code-comments">//get dynamoDbClient from DynamoDbConfiguration</code>
+const dynamoDb = dynamoDbClient(); //get dynamoDbClient from DynamoDbConfiguration
 
 export class OrderRepository {
 
@@ -271,13 +267,13 @@ export class OrderRepository {
         const response = await dynamoDb.getItem(getItemInputOptions).promise();
         return response.Item ? Order.from(response.Item) : null;
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>DynamoDbConfiguration looks like - </p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DynamoDB} from "aws-sdk"
+{% highlight typescript %}import {DynamoDB} from "aws-sdk"
 
 const executionEnvironment = () => {
     const defaultExecutionEnvironment = "test";
@@ -297,7 +293,7 @@ export const dynamoDbClient = () => {
             "region": "ap-south-1"
         });
     }
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Few Quick Observations - </p>
@@ -314,7 +310,7 @@ export const dynamoDbClient = () => {
 <p><strong>Step 5: Adding Integration Tests for Repository</strong></p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DeleteItemInput, PutItemInput} from "aws-sdk/clients/dynamodb";
+{% highlight typescript %}import {DeleteItemInput, PutItemInput} from "aws-sdk/clients/dynamodb";
 
 import {OrderRepository} from "../src/repository/OrderRepository";
 import {Order}           from "../src/model/Order";
@@ -367,7 +363,7 @@ class OrderRepositoryFixture {
         };
         await dynamoDb.deleteItem(item).promise();
     }
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>That's it run all the tests <code>npm t</code> and see them pass 😁</p>
@@ -398,16 +394,16 @@ class OrderRepositoryFixture {
 <p>Let's archive the code, create an S3 bucket and upload the archive on S3 service.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>"scripts": {
+{% highlight json %}"scripts": {
     "localstack:down": "docker-compose -f test/docker-compose.yml down",
     "localstack:up": "docker-compose -f test/docker-compose.yml up -d",
     "delay": "sleep 20",
-    "localstack:create-infra": "cd test/infra &amp;&amp; ./init.sh",
-    "archive": "cd dist/ &amp;&amp; zip -r ../serverless-order-service.zip .",
-    "pretest": "npm run build &amp;&amp; npm run archive &amp;&amp; npm run localstack:down &amp;&amp; npm run localstack:up &amp;&amp; npm run delay &amp;&amp; npm run localstack:create-infra",
+    "localstack:create-infra": "cd test/infra && ./init.sh",
+    "archive": "cd dist/ && zip -r ../serverless-order-service.zip .",
+    "pretest": "npm run build && npm run archive && npm run localstack:down && npm run localstack:up && npm run delay && npm run localstack:create-infra",
     "test": "jest test/**",
     "build": "tsc"
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Following events happens as a part of pretest step –</p>
@@ -429,16 +425,16 @@ class OrderRepositoryFixture {
 <p>Let's see the commands to create an S3 bucket and upload the archive. These are the same commands which will be executed from one of our shell scripts -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>> aws s3 mb s3://serverless-order-service --endpoint-url http://localhost:4572
+{% highlight shell %}> aws s3 mb s3://serverless-order-service --endpoint-url http://localhost:4572
 
 > aws s3 cp ../../serverless-order-service.zip \
-s3://serverless-order-service --endpoint-url http://localhost:4572</code></pre></div>
+s3://serverless-order-service --endpoint-url http://localhost:4572{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Let's update CloudFormation template to create lambda resource.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>AWSTemplateFormatVersion: "2010-09-09"
+{% highlight yaml %}AWSTemplateFormatVersion: "2010-09-09"
 Resources:
   OrdersFunction:
     Type: AWS::Lambda::Function
@@ -447,9 +443,9 @@ Resources:
       Runtime: "nodejs10.x"
       Handler: "handler.ordersHandler"
       Code:
-        S3Bucket: "serverless-order-service"   <code class="code-comments">//created earlier</code>
-        S3Key: "serverless-order-service.zip"  <code class="code-comments">//uploaded earlier</code>
-        Role: !GetAtt "OrdersRole.Arn"         <code class="code-comments">//refer to a dummy role created below</code>
+        S3Bucket: "serverless-order-service"   //created earlier
+        S3Key: "serverless-order-service.zip"  //uploaded earlier
+        Role: !GetAtt "OrdersRole.Arn"         //refer to a dummy role created below
 
   OrdersRole:
     Type: AWS::IAM::Role
@@ -474,22 +470,22 @@ Resources:
           AttributeType: "S"
       KeySchema:
         - AttributeName: "orderId"
-          KeyType: "HASH"</code></pre></div>
+          KeyType: "HASH"{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Executing <code>npm t</code> should now create AWS lambda function in LocalStack. We can verify the same -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>>  aws lambda list-functions --endpoint-url http://localhost:4574/
+{% highlight shell %}> aws lambda list-functions --endpoint-url http://localhost:4574/
 
-<code class="code-comments">##Output</code>
+//Output
 {
     "FunctionArn": "arn:aws:lambda:us-east-1:000000000000:function:order-service-function", 
     "Handler": "handler.ordersHandler", 
     "Role": "test_role", 
     "Timeout": 3, 
     "Runtime": "nodejs10.x"
-}</code></pre></div>
+}{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Let's move on to creating a Rest Api.</p>
@@ -501,9 +497,9 @@ Resources:
 <p>This should be simple, let's update our CloudFormation template to have a Rest Api with <code>/orders/{instanceId}</code> as the resource and a <code>GET</code> method.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>AWSTemplateFormatVersion: "2010-09-09"
+{% highlight yaml %}AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  <code class="code-comments">## Content Trimmed</code>
+  //Content Trimmed
 
   OrdersApiGateway:
     Type: AWS::ApiGateway::RestApi
@@ -545,18 +541,18 @@ Resources:
               - Fn::GetAtt:
                   - OrdersFunction
                   - Arn
-                  - /invocations</code></pre></div>
+                  - /invocations{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Executing <code>npm t</code> should now create Rest Api in LocalStack. We can verify the same -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>> aws apigateway get-rest-apis \
+{% highlight shell %}> aws apigateway get-rest-apis \
 --query "items[?name=='orders-api'].id" \
 --output text --region us-east-1 \
 --endpoint-url=http://localhost:4567
 
-<code class="code-comments">##Should print Api Id</code></code></pre></div>
+//Should print Api Id{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p><strong>Step 8: Adding Integration Test for the application</strong></p>
@@ -568,39 +564,39 @@ Resources:
 <p>This means we need a way to get the rest api id that was created as a part of deployment of CloudFormation template. We will add <code>aws apigateway get-rest-apis</code> command as a part of a script which will be executed from <code>init.sh</code>. This command will write the rest api id into a file which will be read by our integration test.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>#!/bin/sh
+{% highlight shell %}#!/bin/sh
 
 aws apigateway get-rest-apis \
 --query "items[?name=='orders-api'].id" \
 --output text --region us-east-1 \
---endpoint-url=http://localhost:4567 > rest_api_id</code></pre></div>
+--endpoint-url=http://localhost:4567 > rest_api_id{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>This is how our init.sh looks now -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>#!/bin/sh
+{% highlight shell %}#!/bin/sh
 
 ./createBucket.sh
 ./package.sh
 ./deploy.sh
-./outputRestApiId.sh</code></pre></div>
+./outputRestApiId.sh{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Now, it is the time to add integration test.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {OrderRepositoryFixture} from "./fixture/OrderRepositoryFixture";
+{% highlight typescript %}import {OrderRepositoryFixture} from "./fixture/OrderRepositoryFixture";
 import {Order} from "../src/model/Order";
 
 import * as fs from "fs";
 import * as path from "path";
-import Axios from "axios"; <code class="code-comments">//add axios as dev-dependency</code>
+import Axios from "axios"; //add axios as dev-dependency
 
 let apiId = "";
 
 beforeEach(() => {
-    <code class="code-comments">//read rest api id</code>
+    //read rest api id
     apiId = fs.readFileSync(path.resolve("test/infra/rest_api_id"), "utf8").trim();
 });
 
@@ -619,13 +615,13 @@ test("should return an order given there is AN order for the provided order id",
         "orderId": orderId,
         "amount": 4000
     });
-}, 20000);</code></pre></div>
+}, 20000);{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Before the test can be run, we will have to make one change in <code>DynamoDbConfiguration</code>. It returns a <em>dynamoDbClient</em> which connects to dynamodb running on <code>localhost:4569</code>. This is not true anymore because lambda is running inside a docker container and for that lambda function "localhost:4569" will refer to the port 4569 on docker's IP. What we need is the port 4569 with the IP of host machine. So, let's make this change. This is how updated DynamoDbConfiguration will look like -</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
-<div class="highlighter-rouge"><pre class="wp-block-code"><code>import {DynamoDB} from "aws-sdk"
+{% highlight typescript %}import {DynamoDB} from "aws-sdk"
 
 const executionEnvironment = () => {
     const defaultExecutionEnvironment = "local";
@@ -635,12 +631,12 @@ const executionEnvironment = () => {
 const isExecutionEnvironmentLocal = () => executionEnvironment() === "local";
 
 export const dynamoDbClient = () => {
-    if (isExecutionEnvironmentLocal()) {<code class="code-comments">
+    if (isExecutionEnvironmentLocal()) {
         /** LOCALSTACK_HOSTNAME:
         *     for accessing the hostname from inside the container
         *   localhost: 
         *     for running repository integration tests which run on host machine
-        **/</code>
+        **/
         const dynamoHost = process.env.LOCALSTACK_HOSTNAME || "localhost";
         return new DynamoDB({
             "region": "us-east-1",
@@ -651,7 +647,7 @@ export const dynamoDbClient = () => {
             "region": "ap-south-1"
         });
     }
-};</code></pre></div>
+};{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>LocalStack exposes an environment variable LOCALSTACK_HOSTNAME which is available inside docker process that refers to the host machine.</p>
