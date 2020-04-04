@@ -28,9 +28,9 @@ excerpt: This article is in continuation with the previous article "Let’s Def
 <p id="4401" class="graf graf--p graf-after--pullquote">Let’s not abandon our code, let’s repair the code as soon as we get an opportunity to repair it and let’s not get ourselves into a situation where damage is beyond our capacity to fix. Let’s see our theory in action.</p>
 <h4 id="1575" class="graf graf--h4 graf-after--p">Problem Definition Overview</h4>
 <p id="1f4e" class="graf graf--p graf-after--h4">The below code belongs to a hypothetical application “Movie Rental” which allows its customers to rent either a Regular or a Children’s movies for fixed number of days. The application also allows generation of a statement which the business calls as “Text Statement”. This application has been running in Production for a long time without issues and has become very popular. Now business wants to generate an HTML statement with exact same logic for amount computation.</p>
-<div class="highlighter-rouge"><pre>public class Customer {
+{% highlight java %}public class Customer {
     private String name;
-    private List&lt;Rental&gt; rentals = new ArrayList<>();
+    private List<Rental> rentals = new ArrayList<>();
 
     public Customer(String name) {
         this.name = name;
@@ -46,7 +46,8 @@ excerpt: This article is in continuation with the previous article "Let’s Def
         String result = "Rental Record for " + getName() + "\n";
         for (Rental each : rentals) {
             double thisAmount = 0;
-            <code class="code-comments">//determine amounts for each line</code>
+
+            //determine amounts for each line
             switch (each.getMovie().getPriceCode()) {
                 case Movie.REGULAR:
                     thisAmount += 2;
@@ -59,12 +60,12 @@ excerpt: This article is in continuation with the previous article "Let’s Def
                         thisAmount += (each.getDaysRented() - 3) * 1.5;
                     break;
             }
-            <code class="code-comments">//show figures for this Rental</code>
+            //show figures for this Rental
             result += "\t" + each.getMovie().getTitle() + "\t" +
                     String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
-        <code class="code-comments">//add footer lines result</code>
+        //add footer lines result
         result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
         return result;
     }
@@ -81,7 +82,7 @@ public class Movie {
         this.title = title;
         this.priceCode = priceCode;
     }
-    <code class="code-comments">//getters ignored</code>
+    //getters ignored
 }
 
 public class Rental {
@@ -92,9 +93,9 @@ public class Rental {
         this.movie = movie;
         this.daysRented = daysRented;
     }
-    <code class="code-comments">//getters ignored</code>
+    //getters ignored
 }
-</pre></div>
+{% endhighlight %}
 <p>The team decides to discuss different ways to handle this new requirement in legacy code.</p>
 <p>
     <iframe width="800" height="400" src="https://www.youtube.com/embed/aGGoW8YENKo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -105,7 +106,7 @@ public class Rental {
 <p id="927f" class="graf graf--p graf-after--p">Jessica&gt; Let’s look at the code. It should give us some hints.</p>
 <p id="6d15" class="graf graf--p graf-after--p">Scott&gt; I get it. We need a few rentals consisting of Regular and Children’s movie and the number of days rented for which these movies can be greater than 2 or 3. So, one test should cover a <strong class="markup--strong markup--p-strong">decent</strong> functionality.</p>
 <p id="00b8" class="graf graf--p graf-after--p">Jessica&gt; I can’t agree more. So let’s write it then.</p>
-<div class="highlighter-rouge"><pre>public class CustomerUnitTest {
+{% highlight java %}public class CustomerUnitTest {
     @Test
     public void shouldGenerateStatement(){
         Customer john      = new Customer("John");
@@ -120,7 +121,7 @@ public class Rental {
         assertEquals("", statement);
     }
 }
-</pre></div>
+{% endhighlight %}
 <p>Scott&gt; Let’s run this and see it fail.</p>
 <div class="highlighter-rouge"><pre id="7bb8" class="graf graf--pre graf-after--p">org.junit.ComparisonFailure:
 Expected: ""
@@ -131,7 +132,7 @@ Rental Record for John
 Amount owed is 6.5
 </pre></div>
 <p>Jessica&gt; Great. We have made some progress. Let’s correct our test.</p>
-<div class="highlighter-rouge"><pre>public class CustomerUnitTest {
+{% highlight java %}public class CustomerUnitTest {
     @Test
     public void shouldGenerateStatement(){
         String expected = "Rental Record for John\n" +
@@ -150,7 +151,7 @@ Amount owed is 6.5
         String statement = john.statement();
         assertEquals(expected, statement);
     }
-}</pre></div>
+}{% endhighlight %}
 <p><em>Jessica and Scott agree to write one test case covering a decent portion of the code. If this gives us confidence, we can live with one test for now else we can write a few more or include movies with daysRented &lt; 2.</em></p>
 <p id="8a8b" class="graf graf--p graf-after--blockquote">Scott&gt; Jessica, what type of test should a Characterization test be? Unit, Functional, Integration?</p>
 <p id="03f9" class="graf graf--p graf-after--p">Jessica&gt; Scott, it is not always possible to write unit or functional tests for legacy code. You might end up writing an <em class="markup--em markup--p-em">integration test</em> to begin with because you just want to know what system does. But, as soon as you get an opportunity, get your tests closer to the code.</p>
@@ -160,17 +161,18 @@ Amount owed is 6.5
 <p id="935c" class="graf graf--p graf-after--p">Jessica&gt; I believe statement() method is a long method. We should try and make it a little shorter.</p>
 <p id="5a47" class="graf graf--p graf-after--p">Scott&gt; Agreed.</p>
 <p><em>Jessica and Scott agreed that statement() method is a long method. But, this agreement was not based on the number of lines in the method. It was based on how easy it is to comprehend the method or is a method doing more than one thing at a time or it can be decomposed further.</em></p>
-<div class="highlighter-rouge"><pre>public String statement() {
+{% highlight java %}public String statement() {
     double totalAmount = 0;
     String result = "Rental Record for " + getName() + "\n";
     for (Rental each : Rentals) {
-        <code class="code-comments">//determine amounts for each line</code>
+        //determine amounts for each line
         double thisAmount = amount(each);
-        <code class="code-comments">//show figures for this Rental</code>
+
+        //show figures for this Rental
         result += "\t" + each.getMovie().getTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code class="code-comments">//add footer lines result</code>
+    //add footer lines result
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
@@ -190,7 +192,7 @@ private double amount(Rental each) {
             break;
     }
     return thisAmount;
-}</pre></div>
+}{% endhighlight %}
 <p id="4d36" class="graf graf--p graf-after--figure">Jessica&gt; Switch statement has gone out and the extracted amount() method does one thing which is getting amount for a given rental.</p>
 <p id="8b87" class="graf graf--p graf-after--p">Scott&gt; Let’s continue refactoring. I am in a mood to clean up everything.</p>
 <p id="0ac2" class="graf graf--p graf-after--p">Jessica&gt; Hold on Scott, we need to run tests before we move on.</p>
@@ -198,16 +200,17 @@ private double amount(Rental each) {
 <p><em>While working with Legacy Code it is important to take smaller steps and follow refactoring cycle. Refactor -&gt; Run Tests -&gt; Refactor</em></p>
 <p id="f267" class="graf graf--p graf-after--blockquote">Scott&gt; Sure. Jessica, are we in a position to remove the comment <em class="markup--em markup--p-em">“determine amounts for each line” from previous code?</em></p>
 <p id="9609" class="graf graf--p graf-after--p">Jessica&gt; Yes, we can remove it.</p>
-<div class="highlighter-rouge"><pre>public String statement() {
+{% highlight java %}public String statement() {
     double totalAmount = 0;
     String result = "Rental Record for " + getName() + "\n";
     for (Rental rental : Rentals) {
         double thisAmount = amount(rental);
-        <code class="code-comments">//show figures for this Rental</code>
+
+        //show figures for this Rental
         result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code class="code-comments">//add footer lines result</code>
+    //add footer lines result
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
@@ -227,31 +230,32 @@ private double amount(Rental rental) {
             break;
     }
     return thisAmount;
-}</pre></div>
+}{% endhighlight %}
 <p><em>Remove comments from legacy code when you have captured their complete essence . Though I did take some liberty to rename variable along with removing comment, it is always ideal to take smaller steps when you are beginning to understand legacy code. As you grow in confidence, you might want to take bigger steps but one test failure and the reality reveals itself.</em></p>
 <p id="49cd" class="graf graf--p graf-after--blockquote">Scott&gt; Let’s look at amount() method. It depends on priceCode from movie but is placed in Customer. We should move this method to the place where it belongs.</p>
 <p id="e000" class="graf graf--p graf-after--p">Jessica&gt; Yes, let’s do a few method movements (in the interest of this article).</p>
-<div class="highlighter-rouge"><pre><code class="code-comments">//Customer</code>
+{% highlight java %}//Customer
 public String statement() {
     double totalAmount = 0;
     String result = "Rental Record for " + getName() + "\n";
     for (Rental rental : Rentals) {
         double thisAmount = rental.amount();
-        <code class="code-comments">//show figures for this Rental</code>
+
+        //show figures for this Rental
         result += "\t" + rental.movieTitle() + "\t" + String.valueOf(thisAmount) + "\n";
         totalAmount += thisAmount;
     }
-    <code class="code-comments">//add footer lines result</code>
+    //add footer lines result
     result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
     return result;
 }
 
-<code class="code-comments">//Rental</code>
+//Rental
 double amount() {
   return movie.amount(this.daysRented);
 }
 
-<code class="code-comments">//Movie</code>
+//Movie
 double amount(int daysRented) {
     double thisAmount = 0.0;
     switch (this.getPriceCode()) {
@@ -268,7 +272,7 @@ double amount(int daysRented) {
     }
     return thisAmount;
 }
-</pre></div>
+{% endhighlight %}
 <p><em>I did a few movements. Moved amount() method to Rental and then to Movie and ran the tests. It should be noted that this is our first opportunity to write unit tests for Rental and Movie. I won’t, for this article, but I assume you will.</em></p>
 <p id="7db7" class="graf graf--p graf-after--blockquote">Scott&gt; Jessica, I have a question. Movie has a switch statement based on different types of movies. Shall we introduce some polymorphism here?</p>
 <p id="98cd" class="graf graf--p graf-after--p">Jessica&gt; I don’t think it is coming in our way of implementing HTML statement functionality.</p>
@@ -276,7 +280,7 @@ double amount(int daysRented) {
 <p id="9c99" class="graf graf--p graf-after--blockquote">Scott&gt; I get that. Thank you. The statement() method in Customer is short enough. Shall we pause our refactoring here?</p>
 <p id="4221" class="graf graf--p graf-after--p">Jessica&gt; We could, but one thing that is bothering me is this method seems to be generating 3 parts of the statement and I can see it clearly — header, body and footer. <em class="markup--em markup--p-em">If the effort is not huge</em> we should try and extract this code into different methods.</p>
 <p id="19cb" class="graf graf--p graf-after--p">Scott&gt; You clearly have an eye for refactoring. Let’s do it.</p>
-<div class="highlighter-rouge"><pre>public String textStatement() {
+{% highlight java %}public String textStatement() {
     return textHeader() + textBody() + textFooter();
 }
 private String textHeader() {
@@ -298,7 +302,7 @@ private double totalAmount() {
         totalAmount += rental.amount();
     }
     return totalAmount;
-}</pre></div>
+}{% endhighlight %}
 <p><em>I cheated again. Did lot more than what I should have done,renamed methods to be <strong class="markup--strong markup--blockquote-strong">text*,</strong> duplicated for loops (over rentals) to calculate totalAmount(), repeated the same in textBody().</em></p>
 <p><em>Is that justified? Well, how many rentals do we expect to have for a customer? What is the cost of iterating over them twice? If it is not significant, go ahead and use it. What does it give me? Look at the statement() (renamed as textStatement()) method now.</em></p>
 <p id="5e8c" class="graf graf--p graf-after--blockquote">Jessica&gt; Now, we are done with refactoring. We can introduce HTML statement functionality now.</p>
