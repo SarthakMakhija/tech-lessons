@@ -287,7 +287,7 @@ export class OrderRepository {
 <h4>Step 5: Let's jump into repository</h4>
 <p><!-- /wp:heading --></p>
 <p><!-- wp:paragraph --></p>
-<p>Repository will interact with our database which in this example is a DynamoDB and fetch an order by its id. Let's assume a table named "<em>orders</em>" with "<em>orderId</em>" as the HASH key. </p>
+<p>Repository will interact with our database which in this example is a DynamoDB and fetch an order by its id. Let's assume a table named "<em>orders</em>" with "<em>orderId</em>" as the HASH key and an attribute named "amount".</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
 <p>We will be using "<em>aws-sdk</em>" for querying DynamoDB. "aws-sdk" is a dependency which is available in the runtime environment of lambda which means this dependency can be added as a "<em>devDependency</em>".</p>
@@ -391,7 +391,7 @@ export class Order {
 <h4>Step 6: Finishing Order class</h4>
 <p><!-- /wp:heading --></p>
 <p><!-- wp:paragraph --></p>
-<p>Order class provides a static method which accepts and instance of DocumentClient.AttributeMap and returns an instance of Order. To keep things simple, we will assume that an order has orderId and amount.</p>
+<p>Order class provides a static method which accepts and instance of DocumentClient.AttributeMap and returns an instance of Order consisting of orderId and amount.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}import {DocumentClient} from "aws-sdk/clients/dynamodb";
@@ -709,7 +709,7 @@ const orderRequest = (id: string) => {
 <li>Controller checks if the request is for getting an order. This if/else ladder will grow given the same lambda handles creation and deletion of orders.</li>
 <li>Every component is unit testable in itself, except Repository layer which needs dynamo db</li>
 </ul>
-<p><!-- /wp:list --></p>
+<p>I am sure you will be able to fill these gaps and at this stage, I will move forward.</p>
 <p><!-- wp:paragraph --></p>
 <p><strong>There is a lot of work still left before we can deploy the code -</strong></p>
 <p><!-- /wp:paragraph --></p>
