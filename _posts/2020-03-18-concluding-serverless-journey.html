@@ -142,6 +142,7 @@ export class OrderServiceInfraStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
+        //create a lambda function in the stack
         new Function(this, "order-service-function", null); //compilation error
     }
 }{% endhighlight %}
@@ -181,6 +182,7 @@ export class OrderServiceInfraStack extends Stack {
             functionName: "order-service-function",
             environment: {"ExecutionEnvironment": "dev"}
         };
+        //create a lambda function in the stack
         new Function(this, "order-service-function", functionProperties);
     }
 }{% endhighlight %}
@@ -214,7 +216,7 @@ export class OrderServiceInfraStack extends Stack {
     dynamodb, api gateway etc.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
-<p>We will be starting with unit tests which will assert on resources and their properties.</p>
+<p>We will be starting with unit tests which will assert on a resource and its properties.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}import {OrderServiceInfraStack} from "../lib/OrderServiceInfraStack";
@@ -224,8 +226,9 @@ import "@aws-cdk/assert/jest";
 
 test("stack should contain a lambda function with node10 as the runtime", () => {
     const app = new App();
-    const stack = new OrderServiceInfraStack(app, "OrderServiceStack");
+    const stack = new OrderServiceInfraStack(app, "OrderServiceStack"); //instantiate stack
 
+    //assert that stack contains a lambda function with node10 as the runtime
     expect(stack).toHaveResource("AWS::Lambda::Function", {
         Runtime: Runtime.NODEJS_10_X.toString()
     })
@@ -262,7 +265,6 @@ export class OrderServiceInfraStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        //create FunctionProps
         const functionProperties: FunctionProps = {
             code: Code.fromAsset("../dist"),
             handler: "handler.ordersHandler",
@@ -280,6 +282,7 @@ export class OrderServiceInfraStack extends Stack {
             },
             tableName: "orders"
         };
+        //create a dynamo table in the stack
         new Table(this, "order-table", tableProps);
     }
 }{% endhighlight %}
@@ -307,6 +310,7 @@ export class OrderServiceInfraStack extends Stack {
     const app = new App();
     const stack = new OrderServiceInfraStack(app, "OrderServiceStack");
 
+    //assert that stack contains a dynamo table with "orders" as the table name
     expect(stack).toHaveResource("AWS::DynamoDB::Table", {
         "TableName": "orders"
     })
@@ -316,6 +320,7 @@ test("stack should contain a dynamodb table with orderId as the Hash key", () =>
     const app = new App();
     const stack = new OrderServiceInfraStack(app, "OrderServiceStack");
 
+    //assert that stack contains a dynamo table with "orderId" as the HASH key
     expect(stack).toHaveResource("AWS::DynamoDB::Table", {
         "KeySchema": [
             {
@@ -330,7 +335,7 @@ test("stack should contain a dynamodb table with orderId as the Hash key", () =>
 <h4>Step 5: Refactoring the stack</h4>
 <p><!-- /wp:heading --></p>
 <p><!-- wp:paragraph --></p>
-<p>Let's look at a unit test and see if there are any challenges in understanding it. </p>
+<p>Let's look at a unit test and see if there are any challenges in understanding it.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}test("stack should contain a lambda function with node10 as runtime", () => {
@@ -353,14 +358,13 @@ test("stack should contain a dynamodb table with orderId as the Hash key", () =>
 </ol>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
-<p>In order to solve both the problems, we can create a component (or a class) which will take some properties and
-    create a lambda function. This means we will be able to move lambda function unit tests closer to that class and
+<p>In order to solve both the problems, we can create a component (or a class) which accepts configuration properties and
+    creates a lambda function. This means we will be able to move lambda function unit tests closer to that class and
     make the unit tests more revealing. Let's see how. </p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
-<p>Let's consider that all our lambda functions are based on node10 runtime. With this consideration, we can create a
-    class <code>Node10LambdaFunction</code> which represents a lambda function and accepts properties that are relevant
-    to our project defined by <code>Node10LambdaFunctionProperties</code>. </p>
+<p>Let's consider that all our lambda functions are based on "node10" runtime. With this consideration, we can create a
+    class, <code>Node10LambdaFunction</code> that represents a lambda function and accepts <code>Node10LambdaFunctionProperties</code>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}import {Code, Function, FunctionProps, Runtime} from "@aws-cdk/aws-lambda";
@@ -368,6 +372,7 @@ import {Construct} from "@aws-cdk/core";
 
 //inherit from Function
 export class Node10LambdaFunction extends Function {
+    //accepts Node10FunctionProperties which will contain attributes that make sense for our project
     constructor(scope: Construct, properties: Node10FunctionProperties) {
         super(scope, properties.functionName, properties.toFunctionProps())
     }
@@ -381,7 +386,7 @@ class Node10LambdaFunctionProperties {
                 private readonly environmentVariables?: {[key: string]: string }) {
     }
 
-    //return FunctionProps
+    //behavior to return AWS FunctionProps
     toFunctionProps(): FunctionProps {
         return {
             code: this.code,
@@ -418,8 +423,10 @@ class Node10LambdaFunctionProperties {
         "handler.ordersHandler",
         "order-service-function");
 
+    //name of the class indicates a lambda function with node10 as the runtime will be created
     new Node10LambdaFunction(stack, properties);
 
+    //assert that stack contains a lambda function with node10 as the runtime. This time the test is not magical
     expect(stack).toHaveResource("AWS::Lambda::Function", {
         Runtime: Runtime.NODEJS_10_X.toString()
     })
@@ -435,6 +442,7 @@ test("stack should contain a lambda function with specified environment variable
 
     new Node10LambdaFunction(stack, properties);
 
+    //assert that stack contains a lambda function with provided environment variable
     expect(stack).toHaveResource("AWS::Lambda::Function", {
         Environment: {
             Variables: {
@@ -450,8 +458,8 @@ test("stack should contain a lambda function with specified environment variable
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
 <p>Similarly, we can write other tests around lambda function like - assert that lambda function is created with a given
-    name, assert that lambda function is inside a VPC etc. I will make similar changes for Dynamo table and commit the
-    code.</p>
+    name, assert that lambda function is inside a VPC etc. <i>I will make similar changes for Dynamo table and commit the
+    code.</i></p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
 <p>With these changes, we can write unit tests for various components (as fine grained as we want) and a snapshot test
@@ -477,6 +485,7 @@ import {IFunction} from "@aws-cdk/aws-lambda";
 //inherit from LambdaRestApi
 class LambdaBackedPublicRestApi extends LambdaRestApi {
 
+    //similar to Node10Function, it accepts LambdaBackedPublicRestApiProperties
     constructor(scope: Construct, properties: LambdaBackedPublicRestApiProperties) {
         super(scope, properties.apiName, properties.toLambdaRestApiProps());
     }
@@ -489,7 +498,7 @@ class LambdaBackedPublicRestApiProperties {
                 private handler: Node10LambdaFunction) {
     }
 
-    //return LambdaRestApiProps
+    //behavior to return LambdaRestApiProps
     toLambdaRestApiProps(): LambdaRestApiProps {
         return {
             restApiName: this.apiName,
@@ -505,7 +514,7 @@ class LambdaBackedPublicRestApiProperties {
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>This will create a RestApi in the stack for us but there is no endpoint available for us. In order to allow that to
-    happen we can expose a method that takes a resource path say - "<code>order/{orderId}</code>" and an http method
+    happen we can expose a method that takes a resource path say - "<code>orders/{orderId}</code>" and an http method
     which needs to be attached to the last part of resource which in this example is <code>{orderId}</code>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
@@ -554,29 +563,10 @@ class LambdaBackedPublicRestApi extends LambdaRestApi {
         return add(resourcePath.split("/"), (this.root as Resource));
     }
 
+    //return the already added resource or add
     private static getOrAdd(resourcePath: string, rootResource: Resource): Resource {
         const alreadyPresentResource = rootResource.getResource(resourcePath) as Resource;
         return alreadyPresentResource || rootResource.addResource(resourcePath)
-    }
-}
-
-class LambdaBackedPublicRestApiProperties {
-
-    constructor(readonly apiName: string,
-                private readonly stageName: string,
-                private handler: Node10LambdaFunction) {
-    }
-
-    toLambdaRestApiProps(): LambdaRestApiProps {
-        return {
-            restApiName: this.apiName,
-            deployOptions: {
-                stageName: this.stageName,
-                loggingLevel: MethodLoggingLevel.INFO
-            },
-            proxy: false,
-            handler: this.handler as IFunction
-        }
     }
 }
 
@@ -597,10 +587,11 @@ class IllegalArgumentException extends Error {
     </li>
     <li>We are recursively adding each resource from the resource path</li>
     <li>Http method gets added on the last resource of the resource path</li>
+    <li><code>getOrAdd</code> ensures that we do not add the same resource again. Eg; if we want to add 2 resource paths <code>serverless/lambda</code> and <code>serverless/lambda/{functionId}</code>, it is necessary to ensure we do not add <code>serverless/lambda</code> again</li>
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
-<p>Let's quickly add some unit tests.</p>
+<p>Let's quickly add a couple of unit tests.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}import {LambdaBackedPublicRestApi} from "../../../lib/restapi/public/LambdaBackedPublicRestApi";
@@ -609,9 +600,9 @@ import {LambdaBackedPublicRestApiProperties} from "../../../lib/restapi/public/L
 import {Node10LambdaFunctionProperties} from "../../../lib/function/Node10LambdaFunctionProperties";
 import {Code} from "@aws-cdk/aws-lambda";
 import {Node10LambdaFunction} from "../../../lib/function/Node10LambdaFunction";
-import "@aws-cdk/assert/jest";
 import {HttpMethod} from "../../../lib/restapi/public/HttpMethod";
 import {CfnMethod} from "@aws-cdk/aws-apigateway";
+import "@aws-cdk/assert/jest";
 
 const addFakeEndpoint = (api: LambdaBackedPublicRestApi) => {
     api.addEndpoint("fake", HttpMethod.GET);
@@ -635,61 +626,13 @@ test("stack should contain a public api with a name", () => {
     const api = new LambdaBackedPublicRestApi(stack, properties);
     addFakeEndpoint(api);
 
+    //assert that stack contains a rest api with "orders-api" as the name
     expect(stack).toHaveResource("AWS::ApiGateway::RestApi", {
         Name: "orders-api"
     });
 });
 
-test("stack should contain a public api with stage name", () => {
-    const stack = new Stack();
-    const node10LambdaFunction = new Node10LambdaFunction(
-        stack,
-        new Node10LambdaFunctionProperties(
-            Code.fromAsset("../dist"),
-            "handler.ordersHandler",
-            "order-service-function"));
-
-    const properties = new LambdaBackedPublicRestApiProperties(
-        "orders-api",
-        "dev",
-        node10LambdaFunction
-    );
-
-    const api = new LambdaBackedPublicRestApi(stack, properties);
-    addFakeEndpoint(api);
-
-    expect(stack).toHaveResource("AWS::ApiGateway::Stage", {
-        StageName: "dev"
-    });
-});
-
-test("stack should contain a public api with a resource", () => {
-    const stack = new Stack();
-    const node10LambdaFunction = new Node10LambdaFunction(
-        stack,
-        new Node10LambdaFunctionProperties(
-            Code.fromAsset("../dist"),
-            "handler.ordersHandler",
-            "order-service-function"));
-
-    const properties = new LambdaBackedPublicRestApiProperties(
-        "orders-api",
-        "dev",
-        node10LambdaFunction
-    );
-
-    const api = new LambdaBackedPublicRestApi(stack, properties);
-    api.addEndpoint("article/serverless", HttpMethod.GET);
-
-    //assert a resource
-    const articleResource = api.root.getResource("article");
-    expect(articleResource).toBeDefined();
-
-    const serverlessResource = articleResource?.getResource("serverless");
-    expect(serverlessResource).toBeDefined();
-});
-
-test("stack should contain a public api with an http method added to the resource", () => {
+test("stack should contain a public api with an http method GET added to the resource", () => {
     const stack = new Stack();
     const node10LambdaFunction = new Node10LambdaFunction(
         stack,
@@ -715,8 +658,7 @@ test("stack should contain a public api with an http method added to the resourc
 });{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
-<p><em>These tests assert that a rest api exists with a given name, with a given stage name, with a resource and an http
-    method attached to a resource.</em></p>
+<p><em>These tests assert that a rest api exists with a given name and an http method is attached to a resource.</em></p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:heading {"level":4} --></p>
 <h4>Step 7: Updating the stack</h4>
@@ -748,10 +690,11 @@ export class OrderServiceInfraStack extends Stack {
         const ordersTable    = this.ordersTable();
         const restApi        = this.lambdaBackedPublicRestApi(ordersFunction);
 
-        restApi.addEndpoint("orders/{orderId}", HttpMethod.GET);
-        ordersTable.grantReadData(ordersFunction);
+        restApi.addEndpoint("orders/{orderId}", HttpMethod.GET); //add the required resources along with HTTP method
+        ordersTable.grantReadData(ordersFunction); //grant read access on "orders" table to lambda function
     }
 
+    //returns an instance of Node10LambdaFunction
     private ordersFunction() {
         return new Node10LambdaFunction(this, new Node10LambdaFunctionProperties(
             Code.fromAsset("../dist"),
@@ -761,6 +704,7 @@ export class OrderServiceInfraStack extends Stack {
         );
     }
 
+    //returns an instance of DynamoTable
     private ordersTable() {
         return new DynamoTable(this, new DynamoTableProperties(
             "orders",
@@ -772,6 +716,7 @@ export class OrderServiceInfraStack extends Stack {
         );
     }
 
+    //returns an instance of LambdaBackedPublicRestApi
     private lambdaBackedPublicRestApi(lambda: Node10LambdaFunction) {
         return new LambdaBackedPublicRestApi(this, new LambdaBackedPublicRestApiProperties(
             "orders-api",
@@ -819,6 +764,7 @@ const app = new cdk.App();
 const stackProps:StackProps = {
     stackName: "order-service-stack"
 };
+//instantiate OrderServiceInfraStack
 new OrderServiceInfraStack(app, "OrderServiceStack", stackProps);{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
