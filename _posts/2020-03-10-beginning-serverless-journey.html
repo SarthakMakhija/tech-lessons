@@ -131,14 +131,15 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
 {% highlight typescript %}import {APIGatewayEvent} from "aws-lambda";
 
 export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
-    return new OrderController().handle(new OrderRequest(event)); //invoke controller
+    return new OrderController().handle(new OrderRequest(event)); //handler invokes controller
 };
 
 export class OrderController {
-    handle(orderRequest: OrderRequest) {
+    handle(orderRequest: OrderRequest) { //accepts OrderRequest
     }
 }
 
+//domain object which wraps APIGatewayEvent
 export class OrderRequest {
     constructor(private readonly event: APIGatewayEvent) {
     }
@@ -171,14 +172,14 @@ export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
 export class OrderController {
 
     handle(orderRequest: OrderRequest) {
-       if (orderRequest.isAGetOrder()) {
-         return this.findAnOrderBy(orderRequest.orderId())
+       if (orderRequest.isAGetOrder()) { //if the request is for finding an order
+         return this.findAnOrderBy(orderRequest.orderId()); //find an order by its id
        }
        return null;
     }
 
     private findAnOrderBy(id: string): Order {
-        return null;
+        return null; //fake implementation
     }
 }
 
@@ -227,7 +228,7 @@ export class OrderController {
     }
 
     private findAnOrderBy(id: string): Order {
-        return this.orderService.findAnOrderBy(id); //invoke service
+        return this.orderService.findAnOrderBy(id); //controller invokes service to find an order by its id
     }
 }
 
@@ -239,17 +240,17 @@ export class OrderRequest {
     }
 
     isAGetOrder(): boolean {
-       return true;
+       return true; //fake implementation
     }
     orderId(): string {
-        return "";
+        return ""; //fake implementation
     }
 }
 //OrderService.ts
 export class OrderService {
 
     findAnOrderBy(id: string) {
-        return null;
+        return null; //fake implementation
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -268,13 +269,13 @@ export class OrderService {
     }
 
     findAnOrderBy(id: string) {
-        return this.repository.findAnOrderBy(id); //invoke repository
+        return this.repository.findAnOrderBy(id); //service invokes repository to find an order by its id
     }
 }
 
 export class OrderRepository {
     findAnOrderBy(id: string) {
-        return null;
+        return null; //fake implementation
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -314,7 +315,7 @@ export class OrderRepository {
                 "orderId": {S: id}
             }
         };
-        const response = await dynamoDb.getItem(getItemInputOptions).promise();
+        const response = await dynamoDb.getItem(getItemInputOptions).promise(); //get a dynamo item by passing its id
         return response.Item;
     }
 }{% endhighlight %}
@@ -358,9 +359,8 @@ export class OrderRepository {
                 "orderId": {S: id}
             }
         };
-        //get an item from dynamoDb
-        const response = await dynamoDb.getItem(getItemInputOptions).promise(); 
-        return response.Item ? Order.from(response.Item) : null;
+        const response = await dynamoDb.getItem(getItemInputOptions).promise(); //get a dynamo item by passing its id
+        return response.Item ? Order.from(response.Item) : null;  //map dynamo item to Order
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -372,7 +372,7 @@ export class OrderRepository {
 
 export class Order {
     static from(item: DocumentClient.AttributeMap): Order {
-        return null;
+        return null; //fake implementation
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -398,7 +398,7 @@ export class Order {
 export class Order {  
 
     static from(item: DocumentClient.AttributeMap): Order {
-        return new Order(item.orderId.S, Number(item.amount.N));
+        return new Order(item.orderId.S, Number(item.amount.N)); //create an instance of Order from an instance of AttributeMap
     }
     private constructor(private readonly orderId: string,
                         private readonly amount: number) {
@@ -440,13 +440,14 @@ export class OrderRequest {
     constructor(private readonly event: APIGatewayEvent) {
     }
 
+    //return true if the request is a GET request, with path starting from /orders and containing a path parameter
     isAGetOrder(): boolean {
         return this.event.httpMethod === "GET" &&
                this.event.path.startsWith("/orders") &&
                this.event.pathParameters.orderId != null;
     }
     orderId(): string {
-        return this.event.pathParameters.orderId;
+        return this.event.pathParameters.orderId; //order id is passed as path parameter
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -496,8 +497,8 @@ async findAnOrderBy(id: string) {
     private constructor(readonly status: HttpStatus, readonly body?: T) {
     }
 
-    static ok<T>(status: HttpStatus, body?: T) {
-        return new Response(status, body);
+    static ok<T>(body: T) {
+        return new Response(HttpStatus.OK, body);
     }
     static notFound() {
         return new Response(HttpStatus.NOT_FOUND);
@@ -526,9 +527,9 @@ export class OrderController {
     async handle(orderRequest: OrderRequest): Promise<Response<Order | unknown>> {
         if (orderRequest.isAGetOrder()) {
             const order = await this.findAnOrderBy(orderRequest.orderId());
-            return Response.ok<Order>(HttpStatus.OK, order); //return Ok
+            return order === null ? Response.notFound() : Response.ok<Order>(order); //return an Ok response if order exists else NotFound
         }
-        return Response.notFound(); //return NotFound
+        return Response.notFound(); //return NotFound response
     }
 
     private async findAnOrderBy(id: string) {
@@ -540,14 +541,14 @@ export class Response<T> {
     private constructor(readonly status: HttpStatus, readonly body?: T) {
     }
 
-    static ok<T>(status: HttpStatus, body?: T) {
-        return new Response(status, body);
+    static ok<T>(body: T) {
+        return new Response(HttpStatus.OK, body);
     }
     static notFound() {
         return new Response(HttpStatus.NOT_FOUND);
     }
     get() {
-        //return JSON response
+        //return a well formed JSON response
         return this.body === null ? {"statusCode": this.status} : {
             "statusCode": this.status,
             "body": JSON.stringify(this.body)
@@ -570,7 +571,7 @@ import {OrderController} from "./controller/OrderController";
 
 export const ordersHandler = async (event: APIGatewayEvent): Promise<any> => {
     const response = await new OrderController().handle(new OrderRequest(event));
-    return response.get();
+    return response.get(); //handler invokes get() on the response returned from controller
 };{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
