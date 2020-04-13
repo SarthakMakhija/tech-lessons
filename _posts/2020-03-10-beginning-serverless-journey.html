@@ -246,6 +246,7 @@ export class OrderRequest {
         return ""; //fake implementation
     }
 }
+
 //OrderService.ts
 export class OrderService {
 
@@ -310,9 +311,9 @@ export class OrderRepository {
 
     async findAnOrderBy(id: string) {
         const getItemInputOptions: GetItemInput = {
-            TableName: "orders",
+            TableName: "orders", //table name
             Key: {
-                "orderId": {S: id}
+                "orderId": {S: id} //query against orderId attribute of order item
             }
         };
         const response = await dynamoDb.getItem(getItemInputOptions).promise(); //get a dynamo item by passing its id
@@ -354,9 +355,9 @@ export class OrderRepository {
 
     async findAnOrderBy(id: string) {
         const getItemInputOptions: GetItemInput = {
-            TableName: "orders",
+            TableName: "orders", //table name
             Key: {
-                "orderId": {S: id}
+                "orderId": {S: id} //query against orderId attribute of order item
             }
         };
         const response = await dynamoDb.getItem(getItemInputOptions).promise(); //get a dynamo item by passing its id
@@ -490,16 +491,18 @@ async findAnOrderBy(id: string) {
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
-<p>It would be great if controller knows the least about this structure. All it should do is return a response with Order object. Let's create an abstraction which takes an object T and knows about the final HTTP response. Let's name this as <em>Response</em>.</p>
+<p>It would be great if controller knows the least about this structure. All it should do is return a response with Order object. Let's create an abstraction which takes an object T and knows about the final HTTP response. Let's name this abstraction as <em>Response</em>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:code --></p>
 {% highlight typescript %}export class Response<T> {
     private constructor(readonly status: HttpStatus, readonly body?: T) {
     }
 
+    //signifies 200 response
     static ok<T>(body: T) {
         return new Response(HttpStatus.OK, body);
     }
+    //signifies 404 response
     static notFound() {
         return new Response(HttpStatus.NOT_FOUND);
     }
@@ -527,7 +530,8 @@ export class OrderController {
     async handle(orderRequest: OrderRequest): Promise<Response<Order | unknown>> {
         if (orderRequest.isAGetOrder()) {
             const order = await this.findAnOrderBy(orderRequest.orderId());
-            return order === null ? Response.notFound() : Response.ok<Order>(order); //return an Ok response if order exists else NotFound
+            //return an Ok response if order is found else NotFound
+            return order === null ? Response.notFound() : Response.ok<Order>(order);
         }
         return Response.notFound(); //return NotFound response
     }
