@@ -131,7 +131,7 @@ excerpt: It is time to test our Serverless journey which started with a web appl
 {% highlight yaml %}version: "2.1"
 services:
   localstack:
-    image: localstack/localstack:0.10.7
+    image: localstack/localstack:0.10.7 ## use localstack image
     ports:
       - "4567-4599:4567-4599"
       - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
@@ -144,7 +144,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"{% endhighlight %}
 {% highlight json %} "scripts": {
-    "pretest": "docker-compose -f test/docker-compose.yml up -d",
+    "pretest": "docker-compose -f test/docker-compose.yml up -d", //start docker compose before running the tests
     "test": "jest test/**",
     "build": "tsc"
 }{% endhighlight %}
@@ -164,12 +164,12 @@ Resources:
   OrdersTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "orders"
+      TableName: "orders" ## create "orders" table
       AttributeDefinitions:
         - AttributeName: "orderId"
-          AttributeType: "S"
+          AttributeType: "S" ## use STRING as the data type for "orderId"
       KeySchema:
-        - AttributeName: "orderId"
+        - AttributeName: "orderId" ## use "orderId" as the HASH key
           KeyType: "HASH"{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
@@ -193,7 +193,7 @@ echo 'aws cloudformation deploy executed against localstack'{% endhighlight %}
 <p><!-- wp:list --></p>
 <ul>
 <li>As a part of "<code>aws cloudformation deploy</code>", us-east-1 has been specified as the region. By default, LocalStack runs with us-east-1 and we are using the same region</li>
-<li>As a part of "<code>aws cloudformation deploy</code>", local CloudFormation service endpoint exposed by LocalStack has been specified by using <code>--endpoint-url</code></li>
+<li>As a part of "<code>aws cloudformation deploy</code>", we use 4581 as the port for local CloudFormation service which is exposed by LocalStack </li>
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
@@ -204,6 +204,7 @@ echo 'aws cloudformation deploy executed against localstack'{% endhighlight %}
     "localstack:up": "docker-compose -f test/docker-compose.yml up -d",
     "delay": "sleep 20",
     "localstack:create-infra": "cd test/infra && ./deploy.sh",
+    //start docker compose, introduce some delay and run the above script as a part of pretest
     "pretest": "npm run localstack:up && npm run delay && npm run localstack:create-infra",
     "test": "jest test/**",
     "build": "tsc"
@@ -215,8 +216,8 @@ echo 'aws cloudformation deploy executed against localstack'{% endhighlight %}
 <p><!-- wp:list --></p>
 <ul>
 <li>LocalStack docker container starts</li>
-<li>Some delay gets introduced</li>
-<li>CloudFormation template gets deployed against LocalStack</li>
+<li>Some delay gets introduced to allow localstack services to be available</li>
+<li>CloudFormation template gets deployed against LocalStack by running deploy.sh</li>
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
@@ -259,13 +260,13 @@ export class OrderRepository {
 
     async findAnOrderBy(id: string) {
         const getItemInputOptions: GetItemInput = {
-            TableName: "orders",
+            TableName: "orders", //table name
             Key: {
-                "orderId": {S: id}
+                "orderId": {S: id} //query against orderId attribute of order item
             }
         };
-        const response = await dynamoDb.getItem(getItemInputOptions).promise();
-        return response.Item ? Order.from(response.Item) : null;
+        const response = await dynamoDb.getItem(getItemInputOptions).promise(); //get a dynamo item by passing its id
+        return response.Item ? Order.from(response.Item) : null; //map dynamo item to Order
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -277,6 +278,7 @@ export class OrderRepository {
 
 const executionEnvironment = () => {
     const defaultExecutionEnvironment = "test";
+    //accept ExecutionEnvironment as the lambda environment variable
     return process.env.ExecutionEnvironment || defaultExecutionEnvironment;
 };
 
@@ -284,11 +286,13 @@ const isTestExecutionEnvironment = () => executionEnvironment() === "test";
 
 export const dynamoDbClient = () => {
     if (isTestExecutionEnvironment()) {
+        //return an instance of DynamoDB connecting to local dynamo endpoint exposed by localstack, if the execution environment is "test"
         return new DynamoDB({
             "region": "us-east-1",
             "endpoint": "http://localhost:4569"
         });
     } else {
+        //return an instance of DynamoDB connecting to the actual region in AWS
         return new DynamoDB({
             "region": "ap-south-1"
         });
@@ -303,7 +307,7 @@ export const dynamoDbClient = () => {
 <li>OrderRepository uses <code>dynamoDbClient</code> exposed by DynamoDbConfiguration <code>globally</code>. The reason being "aws-sdk" needs to be initialised during cold startup of lambda function</li>
 <li>DynamoDbConfiguration uses a lambda environment variable to determine if the execution environment is "test". By default, execution environment is considered as "test"</li>
 <li>If execution environment is "test", then an instance of DynamoDB connecting to local dynamo service is returned</li>
-<li>This also means ExecutionEnvironment needs to be passed during deployment as lambda environment variable</li>
+    <li>This also means <code>ExecutionEnvironment</code> needs to be passed during deployment as lambda environment variable</li>
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
@@ -321,10 +325,10 @@ const dynamoDb = dynamoDbClient();
 test("should return an order given there is AN order for the provided order id", async () => {
     const orderId = "order-100";
     
-    await OrderRepositoryFixture.deleteAnOrder(orderId);
-    await OrderRepositoryFixture.createAn(new Order(orderId, 5000));
+    await OrderRepositoryFixture.deleteAnOrder(orderId); //delete an existing order
+    await OrderRepositoryFixture.createAn(new Order(orderId, 5000)); //save an order in dynamo table
     
-    const order = await new OrderRepository().findAnOrderBy(orderId);
+    const order = await new OrderRepository().findAnOrderBy(orderId); //find an order by orderId
 
     expect(order.orderId).toEqual(orderId);
     expect(order.amount).toEqual(5000);
@@ -340,17 +344,17 @@ test("should NOT return an order given there is NO order for the provided order 
 class OrderRepositoryFixture {
     static async createAn(order: Order) {
         const item: PutItemInput = {
-            TableName: "orders",
+            TableName: "orders", //table name
             Item: {
                 "orderId": {
-                    S: order.orderId
+                    S: order.orderId //STRING orderId
                 },
                 "amount": {
-                    N: order.amount.toString()
+                    N: order.amount.toString() //NUMERIC amount
                 }
             }
         };
-        await dynamoDb.putItem(item).promise()
+        await dynamoDb.putItem(item).promise(); //save the order
     }
     static async deleteAnOrder(orderId: string) {
         const item: DeleteItemInput = {
@@ -361,7 +365,7 @@ class OrderRepositoryFixture {
                 }
             }
         };
-        await dynamoDb.deleteItem(item).promise();
+        await dynamoDb.deleteItem(item).promise(); //delete the order
     }
 }{% endhighlight %}
 <p><!-- /wp:code --></p>
@@ -410,16 +414,16 @@ class OrderRepositoryFixture {
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:list --></p>
 <ul>
-<li>Code gets built</li>
-<li>Distribution gets archived</li>
-<li>LocalStack docker container gets stopped</li>
-<li>LocalStack docker container starts</li>
-<li>Some delay gets introduced</li>
-<li>CloudFormation template gets deployed against LocalStack</li>
+<li>Code gets built using <code>npm run build</code></li>
+<li>Distribution gets archived using <code>npm run archive</code></li>
+<li>LocalStack docker container gets stopped using <code>npm run localstack:down</code></li>
+<li>LocalStack docker container starts using <code>npm run localstack:down</code></li>
+<li>Some delay gets introduced using <code>npm run delay</code></li>
+<li>CloudFormation template gets deployed against LocalStack using <code>npm run localstack:create-infra</code></li>
 </ul>
 <p><!-- /wp:list --></p>
 <p><!-- wp:paragraph --></p>
-<p>package.json now runs <code>build</code> and <code>archive</code> as a part of <code>pretest</code> step. <code>archive</code> simply creates a zip file which is ready to uploaded on an S3 bucket. localstack:create-infra now runs init.sh which delegates the job of creating a bucket, uploading the archive and deploying the infra to different scripts.</p>
+<p>package.json now runs <code>build</code> and <code>archive</code> as a part of <code>pretest</code> step. <code>archive</code> simply creates a zip file of the built code which is ready to be uploaded on an S3 bucket. localstack:create-infra now runs init.sh which delegates the job of creating a bucket, uploading the archive and deploying the infra to different scripts (we shall see it soon).</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
 <p>Let's see the commands to create an S3 bucket and upload the archive. These are the same commands which will be executed from one of our shell scripts -</p>
@@ -443,12 +447,12 @@ Resources:
       Runtime: "nodejs10.x"
       Handler: "handler.ordersHandler"
       Code:
-        S3Bucket: "serverless-order-service"   //created earlier
-        S3Key: "serverless-order-service.zip"  //uploaded earlier
-        Role: !GetAtt "OrdersRole.Arn"         //refer to a dummy role created below
+        S3Bucket: "serverless-order-service"   ## created earlier
+        S3Key: "serverless-order-service.zip"  ## uploaded earlier
+        Role: !GetAtt "OrdersRole.Arn"         ## refer to a dummy role created below
 
   OrdersRole:
-    Type: AWS::IAM::Role
+    Type: AWS::IAM::Role                       ## dummy role
     Properties:
       RoleName: "OrdersFunctionRole"
       AssumeRolePolicyDocument:
@@ -460,17 +464,7 @@ Resources:
             Principal:
               Service:
                 - "lambda.amazonaws.com"
-
-  OrdersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: "orders"
-      AttributeDefinitions:
-        - AttributeName: "orderId"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "orderId"
-          KeyType: "HASH"{% endhighlight %}
+{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Executing <code>npm t</code> should now create AWS lambda function in LocalStack. We can verify the same -</p>
@@ -499,29 +493,29 @@ Resources:
 <p><!-- wp:code --></p>
 {% highlight yaml %}AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  //Content Trimmed
+  ## Content Trimmed
 
   OrdersApiGateway:
-    Type: AWS::ApiGateway::RestApi
+    Type: AWS::ApiGateway::RestApi ## create a rest api
     Properties:
       Name: "orders-api"
 
   OrdersResource:
-    Type: AWS::ApiGateway::Resource
+    Type: AWS::ApiGateway::Resource ## create an "orders" resource
     Properties:
       ParentId: !GetAtt "OrdersApiGateway.RootResourceId"
       PathPart: "orders"
       RestApiId: !Ref "OrdersApiGateway"
 
   OrderIdResource:
-    Type: AWS::ApiGateway::Resource
+    Type: AWS::ApiGateway::Resource ## create an "{orderId}" resource
     Properties:
       ParentId: !Ref "OrdersResource"
       PathPart: "{orderId}"
       RestApiId: !Ref "OrdersApiGateway"
 
   OrdersGetMethod:
-    Type: AWS::ApiGateway::Method
+    Type: AWS::ApiGateway::Method ## create a "GET" method and integrate with lambda function
     Properties:
       HttpMethod: "GET"
       AuthorizationType: "NONE"
@@ -577,10 +571,10 @@ aws apigateway get-rest-apis \
 <p><!-- wp:code --></p>
 {% highlight shell %}#!/bin/sh
 
-./createBucket.sh
-./package.sh
-./deploy.sh
-./outputRestApiId.sh{% endhighlight %}
+./createBucket.sh                       //creates a bucket
+./package.sh                            //copies the archive
+./deploy.sh                             //deploys the cloudformation
+./outputRestApiId.sh                    //logs the rest api id to a file{% endhighlight %}
 <p><!-- /wp:code --></p>
 <p><!-- wp:paragraph --></p>
 <p>Now, it is the time to add integration test.</p>
@@ -604,12 +598,14 @@ test("should return an order given there is AN order for the provided order id",
 
     const orderId = "order-500";
 
-    await OrderRepositoryFixture.deleteAnOrder(orderId);
-    await OrderRepositoryFixture.createAn(new Order(orderId, 4000));
+    await OrderRepositoryFixture.deleteAnOrder(orderId); //delete an existing order
+    await OrderRepositoryFixture.createAn(new Order(orderId, 4000)); //save an new order
 
+    //make an API call
     const apiUrl = `http://localhost:4567/restapis/${apiId}/test/_user_request_/orders/${orderId}`;
     const response = await Axios.get(apiUrl);
 
+    //assert on the response status and the content
     expect(response.status).toEqual(200);
     expect(response.data).toEqual({
         "orderId": orderId,
