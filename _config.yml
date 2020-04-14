@@ -1,6 +1,6 @@
 # SITE CONFIGURATION
 baseurl: ""
-url: "https://sarthakmakhija.github.io"
+url: "https://tech-lessons.in"
 
 # THEME-SPECIFIC CONFIGURATION
 title: tech-lessons.in                                  # site's title
