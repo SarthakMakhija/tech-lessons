@@ -18,8 +18,8 @@ I am an application developer at ThoughtWorks. It has been a little more than 8 
 I love working on my personal projects in free time. Some of my projects include –
 
 - [Flips](https://github.com/Feature-Flip/flips) : Feature Toggles library for Java
-- [Data-anon](https://github.com/dataanon/data-anon) : Data Anonymization tool in Kotlin
-- [Serverless Article Series](https://github.com/aws-articles/serverless-order-service) : Article series on AWS Serverless  
+- [Data-anon](https://github.com/dataanon/data-anon) : Data anonymization tool in Kotlin
+- [Serverless article series](https://github.com/aws-articles/serverless-order-service) : Article series on AWS Serverless  
 
 ## What I love doing
 
