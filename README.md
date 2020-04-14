@@ -44,8 +44,8 @@
 + [Configuring Go Daddy with your domain to point to Github pages] (http://andrewsturges.com/blog/jekyll/tutorial/2014/11/06/github-and-godaddy.html)
 + [Understanding difference between master and gh-pages](http://octopress.org/docs/deploying/github/)
 
-Referenced [Gurpreet's README.md](https://github.com/gsluthra/my_blog/blob/master/README.md). Thank you!.
-
 ## Thanks
 
-[Sarthak] This theme was forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap). Thank you!
++ This theme was forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap). Thank you!
++ Referenced [Gurpreet's README.md](https://github.com/gsluthra/my_blog/blob/master/README.md). Thank you!
++ Thank you [Swapneel](https://github.com/swapneeldesai) for helping with the website theme. Thank you!
