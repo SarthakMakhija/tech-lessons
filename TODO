@@ -1,0 +1,36 @@
+1. logo -- done (Need to get it reviewed from Swapneel)
+..confirm about posts padding - reduced to 2% - ok
+..confirm about favicon - ok
+..confirm about top menu - Home .. and other nav bar positioning - ok
+
+2. Header image change - introduce slogan - done
+
+3. Images to be redrawn - done
+    - Beginning Serverless - done
+    - Testing Serverless - done
+    - Concluding Serverless - done
+    - Kotlin DSL - done
+
+4. Change config.yml to a new URL - done
+5. Create a CNAME file
+6. Serverless code comments (improve and have sufficient comments) - done
+----------------------------------------------------------
+
+ --> Image Scrolling - done
+ --> Feature image center align on blog - done
+ --> Height of images on various pages - blog, search, about me - done
+ --> Header image issue :: coffee cup gets removed in mobile mode .. - done
+
+ --> navigation bar - ipad mode - done
+ --> Search new image       - done
+
+ -->  Beginning Serverless  - done
+      Testing Serverless    -
+      Concluding Serverless - done
+      Flips                 - done
+      Kotlin DSL            - done
+      (Redraw)
+ --> Code syntax highlighting - done
+
+
+ --> Home new image - done
