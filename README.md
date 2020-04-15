@@ -1,7 +1,6 @@
 ## Introduction
 
-[tech-lessons.in](https://tech-lessons.in/) is a [Jekyll](https://jekyllrb.com/) based blog and this repository is a Jekyll theme forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap). 
-
+[tech-lessons.in](https://tech-lessons.in/) is a [Jekyll](https://jekyllrb.com/) based blog and this repository is a Jekyll theme forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap).
 
 ## Installation & Usage
 
@@ -43,6 +42,10 @@
 + [Jekyll Configuration options] (http://jekyllrb.com/docs/configuration/)
 + [Configuring Go Daddy with your domain to point to Github pages] (http://andrewsturges.com/blog/jekyll/tutorial/2014/11/06/github-and-godaddy.html)
 + [Understanding difference between master and gh-pages](http://octopress.org/docs/deploying/github/)
+
+## Website Repository
+
++ [tech lessons repository](https://github.com/SarthakMakhija/sarthakmakhija.github.io) 
 
 ## Thanks
 
