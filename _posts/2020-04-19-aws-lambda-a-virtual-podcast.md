@@ -56,8 +56,6 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 
 <span class="jessica">Jessica></span> Yes, your lambda function gets around <b>500MB</b> of storage in <b>/tmp</b> directory but that is ephemeral. It goes away as the container goes away.
 
-<span class="me">Me></span> Thank you Jessica.
-
 <blockquote class="wp-block-quote">
     <p>AWS will provision a container to run your function when there is a request for your lambda function. This container will be discarded after some inactive time.</p>
 </blockquote>
@@ -151,8 +149,6 @@ Rest everything is taken care by AWS Lambda.
 
 <span class="hernandez">Hernandez></span> Yes, that is right.
 
-<span class="me">Me></span> Thank you Hernandez.
-
 <blockquote class="wp-block-quote">
     <p>AWS Lambda function logs are sent to CloudWatch and lambda function needs an IAM role in order to that. Other than CloudWatch, you can also use AWS X-Ray for tracing and debugging performance issues.</p>
 </blockquote>
@@ -206,8 +202,6 @@ LocalStack spins up various Cloud APIs on local machine including S3, lambda, Dy
 <span class="me">Me></span> Interesting. Does LocalStack support all AWS services?
 
 <span class="hernandez">Hernandez></span> No, it supports quite a few but definitely not all.
-
-<span class="me">Me></span> Thanks Jessica and Hernandez.
 
 <blockquote class="wp-block-quote">
     <p>I am sure Unit testing with AWS Lambda function code is understood by all of us but what is good to know is <i>LocalStack</i> can be used for integration testing.</p>
