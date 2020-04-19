@@ -217,11 +217,11 @@ LocalStack spins up various Cloud APIs on local machine including S3, lambda, Dy
 
 <span class="me">Me></span> How do you folks package your application? It appears to me as if we need to create a "fat jar" kind of a thing.
 
-<span class="hernandez">Hernandez></span> We use <b>typescript</b> for coding our lambda application and <b>webpack</b> for packaging it. It does not create a zip file, just an <b>out directory</b> containing the transpiled code (js) and a handler.js file with all the required code from different node_modules plus its source map.
+<span class="hernandez">Hernandez></span> We use [typescript](https://www.typescriptlang.org/) for coding our lambda application and [webpack](https://webpack.js.org/) for packaging it. It does not create a zip file, just an <b>out directory</b> containing the transpiled code (js) and a handler.js file with all the required code from different node_modules plus its source map.
 
 <span class="me">Me></span> How do you deploy your code then because you just seemed to create an output directory with a few javascript files.
 
-<span class="hernandez">Hernandez></span> We use <b>CDK</b> for deploying our code which allows you to code your infra.
+<span class="hernandez">Hernandez></span> We use [CDK](https://docs.aws.amazon.com/cdk/latest/guide/home.html) for deploying our code which allows you to code your infra.
 
 <span class="me">Me></span> Wow, the list of tools doesn't seem to come to an end.
 
