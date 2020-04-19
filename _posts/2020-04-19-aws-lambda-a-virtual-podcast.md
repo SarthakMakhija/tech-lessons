@@ -265,3 +265,4 @@ And when you say <b>cdk deploy</b>, you will see all the required AWS components
 + [Managing AWS Lambda Function Concurrency](https://aws.amazon.com/blogs/compute/managing-aws-lambda-function-concurrency/)
 + [Keeping Functions Warm - How To Fix AWS Lambda Cold Start Issues](https://serverless.com/blog/keep-your-lambdas-warm/)
 + [Provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/)
++ [Lambda Layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
