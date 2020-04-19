@@ -118,7 +118,7 @@ Let's say, we set concurrency limit of 100 for a lambda function, all we are say
 
 <span class="me">Me></span> Does that mean the client of your lambda function say API Gateway will get an error?
 
-<span class="jessica">Jessica></span> It actually depends on the type of request. If it a <b>synchronous</b> request, say from API Gateway, it will end with a <b>timeout error</b>. 
+<span class="jessica">Jessica></span> It actually depends on the type of request. If it a <b>synchronous</b> request, it will end with a <b>timeout error</b>. 
 
 Whereas in case of <b>asynchronous</b> request, say from SQS, AWS Lambda will <b>retry</b> your lambda function before sending the request event to a Dead Letter Queue, assuming one is configured. 
 
