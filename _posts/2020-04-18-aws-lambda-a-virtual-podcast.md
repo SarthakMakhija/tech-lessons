@@ -66,22 +66,22 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 
 ### What is AWS Lambda Cold Start
 
-<span class="me">Me></span> Hernandez, since a lambda function is not always running, does it add to the response time of a request?
+<span class="me">Me></span> Hernandez, since a lambda function is not always running, does it increase the response time of a request?
 
 <span class="hernandez">Hernandez></span> Yes, when running a serverless function, it will stay active as long as it is running. After a period of inactivity, AWS  will drop the container that is running your function which makes your function inactive and this is called as cold state. 
 
-<b>Cold start</b> happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then run your function.
+<b>Cold start</b> happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function.
 
 <span class="me">Me></span> Is there a way to avoid cold start?
 
 <span class="hernandez">Hernandez></span> Yes. Recently, AWS introduced <b>Provisioned Concurrency</b> which is designed to keep your functions <b>initialized</b> and ready to respond in double-digit milliseconds at the scale you need. Provisioned concurrency adds pricing dimension though. 
 
-You can turn it ON/OFF from AWS console or CloudFormation.
+You can turn it ON/OFF from AWS console or CloudFormation template.
 
 <span class="me">Me></span> Thank you Hernandez.
 
 <blockquote class="wp-block-quote">
-    <p>Cold start happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function.</p>
+    <p>Cold start happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function. You should check Provisioned Concurrency for keeping your functions initialized.</p>
 </blockquote>
 
 <p style="text-align:center"><strong>. . . </strong></p>
@@ -100,11 +100,11 @@ You can turn it ON/OFF from AWS console or CloudFormation.
 
 <span class="me">Me></span> Wow, these are too many. Jessica you mentioned memory, but no mention of CPU?
 
-<span class="jessica">Jessica></span> Yes, you can not control the amount of CPU allocated to your lambda function, it is actually proportional to the amount of memory allocated. 
+<span class="jessica">Jessica></span> Yes, you can not control the amount of CPU that gets allocated to your lambda function, it is actually proportional to the amount of memory allocated. 
 
-<span class="me">Me></span> Jessica, what do you mean by <b>Concurrency</b> of a lambda function?
+<span class="me">Me></span> I see. Jessica, what do you mean by <b>Concurrency</b> of a lambda function?
 
-<span class="jessica">Jessica></span> I like the example given in [Managing AWS Lambda Function Concurrency](https://aws.amazon.com/blogs/compute/managing-aws-lambda-function-concurrency/). Imagine each slice of a pizza is an execution unit of a lambda function and the entire pizza represents <i>concurrency pool</i> for all lambda functions in an AWS account. 
+<span class="jessica">Jessica></span> I like the example given in [Managing AWS Lambda Function Concurrency](https://aws.amazon.com/blogs/compute/managing-aws-lambda-function-concurrency/). Imagine each slice of a pizza is an execution unit of a lambda function and the entire pizza represents the <i>shared concurrency pool</i> for all lambda functions in an AWS account. 
 
 Let's say, we set concurrency limit of 100 for a lambda function, all we are saying is the lambda function will have a total of 100 pizza slices which means you can have 100 concurrent executions of lambda function. Concurrency limit set for a lambda function is reduced from concurrency pool, which is 1000 for all lambda functions per AWS account - the entire pizza.            
     
@@ -143,7 +143,7 @@ Rest everything is taken care by AWS Lambda.
 
 <span class="me">Me></span> Ok. Once this is done, AWS will be able to build a service map signifying which services were invoked by lambda function and indicate the problems, if any. Is that right?
 
-<span class="hernandez">Hernandez></span> Yes, that is correct.
+<span class="hernandez">Hernandez></span> Yes, that is right.
 
 <span class="me">Me></span> Thank you Hernandez.
 
@@ -191,7 +191,7 @@ we mixed too many responsibilities in a lambda function or is it something else.
 
 <span class="hernandez">Hernandez></span> Sure. LocalStack provides an easy-to-use test/mocking framework for developing Cloud applications. At this stage, their focus is primarily on supporting the AWS cloud stack.
 
-LocalStack spins up various Cloud APIs on local machine including S3, lambda, DynamoDB and API Gateway. All you need to do is, <b>spin up LocalStack docker container</b> and <b>connect to these services</b> running on local machine from within your code.   
+LocalStack spins up various Cloud APIs on local machine including S3, lambda, DynamoDB and API Gateway. All you need to do is, <b>spin up LocalStack docker container</b>, <b>deploy your infra say Dynamo table or lambda function</b> within LocalStack and <b>connect to these services</b> running on local machine from within your code.   
 
 <span class="me">Me></span> Interesting. Does LocalStack support all AWS services?
 
@@ -207,9 +207,9 @@ LocalStack spins up various Cloud APIs on local machine including S3, lambda, Dy
 
 ### Packaging and deploying an AWS Lambda application
 
-<span class="me">Me></span> Jessica, you talked about unzipped code size, what does that mean?  
+<span class="me">Me></span> Jessica, you talked about unzipped code. Does that mean you have to create a zip file and upload it somewhere?
 
-<span class="jessica">Jessica></span> Well, you have package your lambda function along with its dependencies as an archive, upload it either on AWS Lambda console or in an S3 bucket.
+<span class="jessica">Jessica></span> Well, you have package your lambda function along with its dependencies as an archive, upload it either on AWS Lambda console or in an S3 bucket which will be referenced from your CloudFormation template.
 
 <span class="me">Me></span> How do you folks package your application? It appears to me as if we need to create a "fat jar" kind of a thing.
 
