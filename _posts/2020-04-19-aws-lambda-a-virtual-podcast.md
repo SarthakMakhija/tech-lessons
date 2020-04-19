@@ -1,7 +1,7 @@
 ---
 layout: post
 title: AWS Lambda - A Virtual Podcast
-date: 2020-04-18
+date: 2020-04-19
 type: post
 parent_id: '0'
 published: true
@@ -16,11 +16,11 @@ author: sarthakmakhija
 permalink: "/aws-lambda-a-virtual-podcast/"
 feature-img: "assets/img/pexels/aws-lambda-virtual-podcast.png"
 thumbnail: "assets/img/pexels/aws-lambda-virtual-podcast.png"
-excerpt: AWS Lambda is a serverless compute service and after having worked with it for sometime, I felt it is a good time for me to share my learning and experiences. I have been thinking of trying to write an article in a "Virtual Podcast format" and felt this could be the one.        
+excerpt: AWS Lambda is a serverless compute service and after having worked with it for sometime, I felt it is a good time for me to share my learning and experiences. I have been thinking of writing an article in a "Virtual Podcast format" and felt this could be the one.        
 ---
 
 <blockquote class="wp-block-quote">
-    <p>AWS Lambda is a serverless compute service and after having worked with it for sometime, I felt it is a good time for me to share my learning and experiences. I have been thinking of trying to write an article in a "Virtual Podcast format" and felt this could be the one.</p>
+    <p>AWS Lambda is a serverless compute service and after having worked with it for sometime, I felt it is a good time for me to share my learning and experiences. I have been thinking of writing an article in a "Virtual Podcast format" and felt this could be the one.</p>
 </blockquote>
 
 Welcome all to this article named <i>AWS Lambda - A Virtual Podcast</i> and let me introduce our guests Mr. Hernandez and Ms. Jessica who would walk us through their experiences of using AWS Lambda. 
@@ -70,11 +70,11 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 
 <span class="hernandez">Hernandez></span> Like Jessica mentioned, a lambda function will run inside a container which will stay active till the time your function is running. This container will be discarded by AWS after some inactive time thus making your function inactive and this is called as cold state. 
 
-Whenever there is a request for a cold function, AWS needs to provision a container for running your function and this is called as <b>Cold Start.</b> So, to answer your question, Cold Start can add to the response time of a request.
+Whenever there is a request for a cold function, AWS needs to provision a container for running your function and this is called as <b>Cold Start.</b> So, to answer your question, yes, cold start can add to the response time of a request.
 
 <span class="me">Me></span> Is there a way to avoid cold start?
 
-<span class="hernandez">Hernandez></span> Yes. Recently, AWS introduced <b>Provisioned Concurrency</b> which is designed to keep your functions <b>initialized</b> and ready to respond in double-digit milliseconds at the scale you need. [Provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/) adds pricing dimension though. 
+<span class="hernandez">Hernandez></span> Yes. AWS has now introduced <b>Provisioned Concurrency</b> which is designed to keep your functions <b>initialized</b> and ready to respond in double-digit milliseconds at the scale you need. [Provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/) adds pricing dimension though. 
 
 You can turn it ON/OFF from AWS console or CloudFormation template.
 
@@ -114,7 +114,7 @@ Let's say, we set concurrency limit of 100 for a lambda function, all we are say
 
 <span class="jessica">Jessica></span> AWS also reserves 100 units of concurrency for all functions that don’t have a specified concurrency limit set. This helps to make sure that future functions have capacity to be consumed.
 
-<span class="me">Me></span> Thank you Jessica. I am starting to wonder what happens when a lambda functions concurrency limit is reached and there are more requests?
+<span class="me">Me></span> Thank you Jessica. I am starting to wonder what happens when a lambda function's concurrency limit is reached and there are more requests?
 
 <span class="jessica">Jessica></span> Lambda function gets <b>throttled</b> in that case and the behavior of throttling depends on the request type. 
 
