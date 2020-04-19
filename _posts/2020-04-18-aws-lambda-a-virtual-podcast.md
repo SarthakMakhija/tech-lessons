@@ -50,7 +50,7 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 ### How does a lambda function execute?
 <span class="me">Me></span> Jessica, you mentioned that a lambda function runs in response to an event, but where does it run?
 
-<span class="jessica">Jessica></span> When you create a lambda function, you need to specify a <b>runtime</b> say, <i>node12.x</i>, <i>python3.7</i> or anything else. When there is a request for your lambda function, AWS will provision your selected runtime container and then run your function.
+<span class="jessica">Jessica></span> When you create a lambda function, you need to specify a <b>runtime</b> say, <i>node12.x</i>, <i>python3.7</i> or anything else. When there is a request for your lambda function, AWS will provision a container with the selected runtime and then run your function.
 
 <span class="me">Me></span> So it is actually a container within which a lambda function is run. Does that also mean your lambda function gets some storage on file system? 
 
@@ -59,7 +59,7 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 <span class="me">Me></span> Thank you Jessica.
 
 <blockquote class="wp-block-quote">
-    <p>AWS will provision your selected runtime container to run your function when there is a request for your lambda function. This container will be dropped after a period of inactivity.</p>
+    <p>AWS will provision a container to run your function when there is a request for your lambda function. This container will be discarded after some inactive time.</p>
 </blockquote>
 
 <p style="text-align:center"><strong>. . . </strong></p>
@@ -68,20 +68,22 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 
 <span class="me">Me></span> Hernandez, since a lambda function is not always running, does it increase the response time of a request?
 
-<span class="hernandez">Hernandez></span> Yes, when running a serverless function, it will stay active as long as it is running. After a period of inactivity, AWS  will drop the container that is running your function which makes your function inactive and this is called as cold state. 
+<span class="hernandez">Hernandez></span> Like Jessica mentioned, a lambda function will run inside a container which will stay active till the time your function is running. This container will be discarded by AWS after some inactive time thus making your function inactive and this is called as cold state. 
 
-<b>Cold start</b> happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function.
+Whenever there is a request for a cold function, AWS needs to provision a container for running your function and this is called as <b>Cold Start.</b> So, to answer your question, Cold Start can add to the response time of a request.
 
 <span class="me">Me></span> Is there a way to avoid cold start?
 
-<span class="hernandez">Hernandez></span> Yes. Recently, AWS introduced <b>Provisioned Concurrency</b> which is designed to keep your functions <b>initialized</b> and ready to respond in double-digit milliseconds at the scale you need. Provisioned concurrency adds pricing dimension though. 
+<span class="hernandez">Hernandez></span> Yes. Recently, AWS introduced <b>Provisioned Concurrency</b> which is designed to keep your functions <b>initialized</b> and ready to respond in double-digit milliseconds at the scale you need. [Provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/) adds pricing dimension though. 
 
 You can turn it ON/OFF from AWS console or CloudFormation template.
+
+If you are using <b>serverless framework</b> you should checkout this [blog](https://serverless.com/blog/keep-your-lambdas-warm/) for keeping your functions warm.
 
 <span class="me">Me></span> Thank you Hernandez.
 
 <blockquote class="wp-block-quote">
-    <p>Cold start happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function. You should check Provisioned Concurrency for keeping your functions initialized.</p>
+    <p>AWS needs to provision a container for running your cold function and this is called as Cold Start. You should check Provisioned Concurrency (or even Serverless plugin WarmUP) for keeping your functions initialized.</p>
 </blockquote>
 
 <p style="text-align:center"><strong>. . . </strong></p>
@@ -256,3 +258,8 @@ And when you say <b>cdk deploy</b>, you will see all the required AWS components
 <p style="text-align:center"><strong>. . . </strong></p>
 
 <i>With this we come to an end of our "Virtual Podcast" and a big Thank you to Jessica and Hernandez for being a part of this.</i> This was wonderful, and hope our readers (yes, it is still virtual) find it the same way. Thank you again. 
+
+### References
++ [Managing AWS Lambda Function Concurrency](https://aws.amazon.com/blogs/compute/managing-aws-lambda-function-concurrency/)
++ [Keeping Functions Warm - How To Fix AWS Lambda Cold Start Issues](https://serverless.com/blog/keep-your-lambdas-warm/)
++ [Provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/)
