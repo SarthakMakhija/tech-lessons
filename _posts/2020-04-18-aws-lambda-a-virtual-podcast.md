@@ -47,13 +47,30 @@ Let's say, you have a file named "handler.js" and it exports a function named "p
 
 <p style="text-align:center"><strong>. . . </strong></p>
 
+### How does a lambda function execute?
+<span class="me">Me></span> Jessica, you mentioned that a lambda function runs in response to an event, but where does it run?
+
+<span class="jessica">Jessica></span> When you create a lambda function, you need to specify a <b>runtime</b> say, <i>node12.x</i>, <i>python3.7</i> or anything else. When there is a request for your lambda function, AWS will provision your selected runtime container and then run your function.
+
+<span class="me">Me></span> So it is actually a container within which a lambda function is run. Does that also mean your lambda function gets some storage on file system? 
+
+<span class="jessica">Jessica></span> Yes, your lambda function gets around <b>500MB</b> of storage in <b>/tmp</b> directory but that is ephemeral. It goes away as the container goes away.
+
+<span class="me">Me></span> Thank you Jessica.
+
+<blockquote class="wp-block-quote">
+    <p>AWS will provision your selected runtime container to run your function when there is a request for your lambda function. This container will be dropped after a period of inactivity.</p>
+</blockquote>
+
+<p style="text-align:center"><strong>. . . </strong></p>
+
 ### What is AWS Lambda Cold Start
 
 <span class="me">Me></span> Hernandez, since a lambda function is not always running, does it add to the response time of a request?
 
 <span class="hernandez">Hernandez></span> Yes, when running a serverless function, it will stay active as long as it is running. After a period of inactivity, AWS  will drop the container that is running your function which makes your function inactive and this is called as cold state. 
 
-<b>Cold start</b> happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then running your function.
+<b>Cold start</b> happens when you execute an inactive function and this delay comes from AWS provisioning your selected runtime container and then run your function.
 
 <span class="me">Me></span> Is there a way to avoid cold start?
 
@@ -188,6 +205,40 @@ LocalStack spins up various Cloud APIs on local machine including S3, lambda, Dy
 
 <p style="text-align:center"><strong>. . . </strong></p>
 
+### Packaging and deploying an AWS Lambda application
+
+<span class="me">Me></span> Jessica, you talked about unzipped code size, what does that mean?  
+
+<span class="jessica">Jessica></span> Well, you have package your lambda function along with its dependencies as an archive, upload it either on AWS Lambda console or in an S3 bucket.
+
+<span class="me">Me></span> How do you folks package your application? It appears to me as if we need to create a "fat jar" kind of a thing.
+
+<span class="hernandez">Hernandez></span> We use <b>typescript</b> for coding our lambda application and <b>webpack</b> for packaging it. It does not create a zip file, just an <b>out directory</b> containing the transpiled code (js) and a handler.js file with all the required code from different node_modules plus its source map.
+
+<span class="me">Me></span> How do you deploy your code then because you just seemed to create an output directory with a few javascript files.
+
+<span class="hernandez">Hernandez></span> We use <b>CDK</b> for deploying our code which allows you to code your infra.
+
+<span class="me">Me></span> Wow, the list of tools doesn't seem to come to an end.
+
+<span class="hernandez">Hernandez></span> It's simple. Just look at it this way, we have just created a directory which is ready to be deployed and moment you say <b>cdk bootstrap</b>, it will copy the contents of this out directory into another directory which will be archived and uploaded to an S3 bucket. 
+
+And when you say <b>cdk deploy</b>, you will see all the required AWS components getting deployed. Simple. 
+
+<span class="me">Me></span>Simple? You said <i>contents of this out directory will be copied into another directory</i>. Does that mean CDK already knows about the out directory?
+
+<span class="hernandez">Hernandez></span> That's true. When you code your infra, you will specify where is your compiled (or transpiled) or ready to be shipped code located and that's how CDK knows about this directory.    
+
+<span class="me">Me></span> Great, now I able to connect dots. Build your code -> get a shippable directory -> archive it -> upload it to an S3 bucket -> deploy it and CDK is one way to get all these steps done. Is that right?  
+
+<span class="hernandez">Hernandez></span> Absolutely.
+
+<blockquote class="wp-block-quote">
+    <p>In order to deploy your your lambda function, it needs to be packaged along with its dependencies as an archive. You could use webpack if you are using typescript as a programming language. You can use CDK, CloudFormation or SAM for packaging and deploying your lambda function.</p>
+</blockquote>
+
+<p style="text-align:center"><strong>. . . </strong></p>
+
 ### Applications built using AWS Lambda
 
 <span class="me">Me></span> Jessica, Hernandez, what are the different types of applications that you folks have built using AWS Lambda?
@@ -202,8 +253,6 @@ LocalStack spins up various Cloud APIs on local machine including S3, lambda, Dy
     <p>Our panel highlighted different types of applications they have built using AWS Lambda including microservices, event processing (images on S3 buckets) and stream processing (web clicks and handling changes in DynamoDB).</p>
 </blockquote>
 
-<i>Thank you Jessica and Hernandez for being a part of this "Virtual Podcast".</i> This was wonderful, and hope our readers (yes, it is still virtual) find it the same way. Thank you again. 
+<p style="text-align:center"><strong>. . . </strong></p>
 
-
-//global lambda
-//pack application
+<i>With this we come to an end of our "Virtual Podcast" and a big Thank you to Jessica and Hernandez for being a part of this.</i> This was wonderful, and hope our readers (yes, it is still virtual) find it the same way. Thank you again. 
