@@ -118,7 +118,7 @@ Let's say, we set concurrency limit of 100 for a lambda function, all we are say
 
 <span class="jessica">Jessica></span> Lambda function gets <b>throttled</b> in that case and the behavior of throttling depends on the request type. 
 
-If it is a synchronous request, client receives a timeout error (code 429) and in case of asynchronous request, AWS Lambda (the compute service) retries your lambda function, I think twice, before sending the request event or message to a DLQ, assuming DLQ is configured.
+If it is a synchronous request, client receives a timeout error (code 429) and in case of asynchronous request, AWS Lambda (the compute service) retries your lambda function, I think twice, before sending the request event or message to a Dead Letter Queue, assuming one is configured.
 
 <blockquote class="wp-block-quote">
     <p>Various configuration options can be specified while creating a lambda function including IAM role, memory, timeout, VPC concurrency etc.</p>
