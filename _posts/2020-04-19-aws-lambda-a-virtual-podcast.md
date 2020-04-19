@@ -116,7 +116,7 @@ Let's say, we set concurrency limit of 100 for a lambda function, all we are say
 
 <span class="jessica">Jessica></span> Lambda function gets <b>throttled</b>.
 
-<span class="me">Me></span> Does that mean the client of your lambda function say API Gateway will get an error?
+<span class="me">Me></span> Does that mean a client of your lambda function say API Gateway will get an error?
 
 <span class="jessica">Jessica></span> It actually depends on the type of request. If it a <b>synchronous</b> request, it will end with a <b>timeout error</b>. 
 
