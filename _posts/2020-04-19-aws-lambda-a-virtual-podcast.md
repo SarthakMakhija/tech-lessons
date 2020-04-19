@@ -116,9 +116,13 @@ Let's say, we set concurrency limit of 100 for a lambda function, all we are say
 
 <span class="me">Me></span> Thank you Jessica. I am starting to wonder what happens when a lambda function's concurrency limit is reached and there are more requests?
 
-<span class="jessica">Jessica></span> Lambda function gets <b>throttled</b> in that case and the behavior of throttling depends on the request type. 
+<span class="jessica">Jessica></span> Lambda function gets <b>throttled</b>.
 
-If it is a synchronous request, client receives a timeout error (code 429) and in case of asynchronous request, AWS Lambda (the compute service) retries your lambda function, I think twice, before sending the request event or message to a Dead Letter Queue, assuming one is configured.
+<span class="me">Me></span> Does that mean the client of your lambda function say API Gateway will get an error?
+
+<span class="jessica">Jessica></span> It actually depends on the type of request. If it a <b>synchronous</b> request, say from API Gateway, it will end with a <b>timeout error</b>. 
+
+Whereas in case of <b>asynchronous</b> request, say from SQS, AWS Lambda will <b>retry</b> your lambda function before sending the request event to a Dead Letter Queue, assuming one is configured. 
 
 <blockquote class="wp-block-quote">
     <p>Various configuration options can be specified while creating a lambda function including IAM role, memory, timeout, VPC concurrency etc.</p>
@@ -161,17 +165,21 @@ Rest everything is taken care by AWS Lambda.
 
 <span class="jessica">Jessica></span> I think there are a few restrictions - 
 
-+ A lambda function can have a total of <i>5 lambda layers</i>
 + Maximum unzipped code size for lambda function can be <i>250MB</i>
 + Environment variables can be a maximum of <i>4KB</i> in size
 + Maximum timeout of a lambda function can be <i>15mins</i>
 + Maximum amount of memory that can be allocated to a lambda function can be <i>3GB</i>
++ A lambda function can have a total of <i>5 lambda layers</i>
 + Not all runtime or programming languages are supported by AWS Lambda
 
 With that said, I feel you might not hit all these limitations. To elaborate, if your unzipped code size is going beyond 250MB, I think it is good to understand why is a lambda function getting too huge. Have we packed too many dependencies or have 
 we mixed too many responsibilities in a lambda function or is it something else.
 
-<span class="me">Me></span> I guess similar reasoning can go for lambda layers which is a way of distributing shared code across lambda functions.
+<span class="me">Me></span> Jessica, what is lambda layer?
+
+<span class="jessica">Jessica></span> A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies needed by your application. With layers, you can use libraries in your function without needing to include them in your deployment package. Layers let you keep your deployment package small.
+
+<span class="me">Me></span> Ok, then 5 lambda layers in an application looks like a sensible default.
 
 <span class="jessica">Jessica></span> True. I think these <b>constraints are very sensible</b> and if we are hitting some of them, it is worth looking back and seeing if there is a problem somewhere else. 
 
@@ -185,13 +193,13 @@ we mixed too many responsibilities in a lambda function or is it something else.
 
 <span class="me">Me></span> Coming to my favorite topic. How has your experience been with testing of AWS Lambda function?
 
-<span class="jessica">Jessica></span> Well, <b>unit testing</b> is not difficult. If you are coding your lambda function in typescript, you can very well use <i>sinon</i> to mock all the dependencies and just validate that a single unit is working fine. 
+<span class="jessica">Jessica></span> Well, <b>unit testing</b> is not difficult. If you are coding your lambda function in typescript, you can very well use [sinon](https://sinonjs.org/) to mock all the dependencies and just validate that a single unit is working fine. 
 
 <span class="hernandez">Hernandez></span> True. I think challenge comes when you want to assert that the integration of your lambda function with external systems say DynamoDB or S3 works properly. In order to test this, we have used <b>LocalStack</b> in our project.    
 
 <span class="me">Me></span> LocalStack? Do you want to talk a bit about this?
 
-<span class="hernandez">Hernandez></span> Sure. LocalStack provides an easy-to-use test/mocking framework for developing Cloud applications. At this stage, their focus is primarily on supporting the AWS cloud stack.
+<span class="hernandez">Hernandez></span> Sure. [LocalStack](https://github.com/localstack/localstack) provides an easy-to-use test/mocking framework for developing Cloud applications. At this stage, their focus is primarily on supporting the AWS cloud stack.
 
 LocalStack spins up various Cloud APIs on local machine including S3, lambda, DynamoDB and API Gateway. All you need to do is, <b>spin up LocalStack docker container</b>, <b>deploy your infra say Dynamo table or lambda function</b> within LocalStack and <b>connect to these services</b> running on local machine from within your code.   
 
