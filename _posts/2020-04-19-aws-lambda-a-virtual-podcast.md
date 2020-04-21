@@ -247,9 +247,9 @@ And when you say <b>cdk deploy</b>, you will see all the required AWS components
 
 <span class="me">Me></span> Jessica, Hernandez, what are the different types of applications that you folks have built using AWS Lambda?
 
-<span class="jessica">Jessica></span> We have actually built <b>serverless microservices</b> using AWS Lambda and have processed <b>web clicks</b> on our application. 
+<span class="jessica">Jessica></span> We have actually built <b>serverless microservices</b> using AWS Lambda and we also process <b>web clicks</b> on our application which is a stream of events flowing from user interface to <i>AWS Pinpoint</i> to <i>AWS Kinesis</i> to <i>AWS Lambda</i>. 
 
-<span class="hernandez">Hernandez></span> We use AWS Lambda for <b>scaling down images</b> that are uploaded to our S3 buckets and for handling <b>DynamoDB streams.</b> 
+<span class="hernandez">Hernandez></span> We use AWS Lambda for <b>scaling down images</b> that are uploaded to our S3 buckets and for processing <b>DynamoDB streams</b> which is a stream of changes in DynamoDB table.
 
 <span class="me">Me></span> Thanks Jessica and Hernandez.
 
