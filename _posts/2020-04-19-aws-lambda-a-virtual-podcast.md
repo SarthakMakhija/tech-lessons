@@ -25,7 +25,7 @@ excerpt: AWS Lambda is a serverless compute service and after having worked with
 
 Welcome all to this article named <i>AWS Lambda - A Virtual Podcast</i> and let me introduce our guests Mr. Hernandez and Ms. Jessica who would walk us through their experiences of using AWS Lambda. 
 
-Welcome Hernandez and Jessica and thank you for participating in this <i>Virtual Podcast</i>. Let's get started.
+Welcome, Hernandez and Jessica and thank you for participating in this <i>Virtual Podcast</i>. Let's get started.
 
 ### What is AWS Lambda 
 
