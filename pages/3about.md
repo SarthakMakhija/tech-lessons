@@ -20,6 +20,7 @@ I love working on my personal projects in free time. Some of my projects include
 - [Flips](https://github.com/Feature-Flip/flips) : Feature Toggles library for Java
 - [Data-anon](https://github.com/dataanon/data-anon) : Data anonymization tool in Kotlin
 - [Serverless article series](https://github.com/aws-articles/serverless-order-service) : Article series on AWS Serverless  
+- [Gamifying Refactoring](http://gamifying-refactoring.github.io/) : Identify code smells and understand or justify WHY is something really a smell   
 
 ## What I love doing
 
