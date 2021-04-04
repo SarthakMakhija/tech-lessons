@@ -150,13 +150,18 @@ Let's understand the bytecode of ```execute``` method first -
 8. Stack now contains 10 and 20. **iadd** pops the 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
 9. **ireturn** takes the value from stack top and returns an integer
 
+Following diagram represents the overall execution -
+<div class="wp-block-image is-style-default">
+    <img style="padding-left: 0; max-width: 125%" src="{{ site.baseurl }}/assets/img/pexels/addition-example.png"
+         class="wp-image-878"/>
+</div>
+<p></p>
+
 Few things to note-
 - All the opcodes are prefixed with an ```i```, indicating that we are dealing with an integer data type 
 - Slot 0 of LocalVariableTable is occupied by ```this``` of AdditionExample
 - All the entries in LocalVariableTable are statically typed
 - Bytecode is statically typed in a sense that all the opcodes which work with specific data type   
-
-<<Picture Pending>>
 
 ### Examples
 
