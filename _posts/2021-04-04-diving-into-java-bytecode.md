@@ -117,7 +117,7 @@ public class AdditionExample {
     public AdditionExample();
         Code:
         0: aload_0
-        1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+        1: invokespecial #1   // Method java/lang/Object."<init>":()V
         4: return
     
     public int execute();
@@ -150,11 +150,13 @@ Let's understand the bytecode of ```execute``` method first -
 8. Stack now contains 10 and 20. **iadd** pops the 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
 9. **ireturn** takes the value from stack top and returns an integer
 
-Few things to note
+Few things to note-
 - All the opcodes are prefixed with an ```i```, indicating that we are dealing with an integer data type 
 - Slot 0 of LocalVariableTable is occupied by ```this``` of AdditionExample
 - All the entries in LocalVariableTable are statically typed
 - Bytecode is statically typed in a sense that all the opcodes which work with specific data type   
+
+<<Picture Pending>>
 
 ### Examples
 
