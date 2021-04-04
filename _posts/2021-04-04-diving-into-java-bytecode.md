@@ -27,7 +27,7 @@ excerpt: Java code is compiled into an intermediate representation called as "by
 
 ### Content
 1. Terminology
-2. Structure of class file
+2. Class file structure
 3. Bytecode execution model
 4. Understanding bytecode opcodes
 5. Examples
@@ -59,7 +59,9 @@ We will see various opcodes as we move on, but let's take a quick glimpse of an 
 
 Standard Java class file disassembler distributed with JDK. It provides a human-readable format of class file. 
 
-### Structure of class file
+### Class file structure
+
+<<Pending>>
 
 ### Bytecode execution model
 
@@ -93,9 +95,66 @@ which are used in a class. Various opcodes like **invokevirtual** refer to const
 {% endhighlight %}
 Here, **invokevirtual** refers to an entry in constant pool and the entry indicates the method to be called along with its parameter and return type. 
 
-
-
 ### Understanding bytecode opcodes
+Let's take some simple examples to understand opcodes and their execution. 
+
+**AdditionExample**
+
+{% highlight java %}
+public class AdditionExample {
+    public int execute() {
+        int addend = 10;
+        int augend = 20;
+        return addend + augend;
+    }
+}
+{% endhighlight %}
+
+**bytecode-AdditionExample**
+
+{% highlight java %}
+public class AdditionExample {
+    public AdditionExample();
+        Code:
+        0: aload_0
+        1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+        4: return
+    
+    public int execute();
+        Code:
+        0: bipush        10
+        2: istore_1
+        3: bipush        20
+        5: istore_2
+        6: iload_1
+        7: iload_2
+        8: iadd
+        9: ireturn
+
+        LocalVariableTable:
+        Start  Length  Slot  Name     Signature
+            0      10     0  this     Lorg/sample/AdditionExample;
+            3       7     1  addend   I
+            6       4     2  augend   I
+}
+{% endhighlight %}
+
+Let's understand the bytecode of ```execute``` method first - 
+1. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
+2. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
+3. **bipush** now pushes 20 to the top of the stack
+4. **istore_2** takes the value from top of the stack, which is 20 and assigns it into LocalVariableTable at slot 2
+5. At this stage, values 10 and 20 have been assigned to addend and augend in LocalVariableTable, and our stack is empty. This means these 2 values need to be brought into stack before an addition can be performed
+6. **iload_1** copies the value from slot 1 of LocalVariableTable to the stack
+7. **iload_2** copies the value from slot 2 of LocalVariableTable to the stack
+8. Stack now contains 10 and 20. **iadd** pops the 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
+9. **ireturn** takes the value from stack top and returns an integer
+
+Few things to note
+- All the opcodes are prefixed with an ```i```, indicating that we are dealing with an integer data type 
+- Slot 0 of LocalVariableTable is occupied by ```this``` of AdditionExample
+- All the entries in LocalVariableTable are statically typed
+- Bytecode is statically typed in a sense that all the opcodes which work with specific data type   
 
 ### Examples
 
