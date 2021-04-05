@@ -498,6 +498,12 @@ All these opcodes make up our constructor. Let's now jump to the ```sum``` metho
   </tr>
 </table>
 
+Following diagram represents the overall execution of ```sum``` method -
+<div class="wp-block-image is-style-default">
+    <img style="padding-left: 0; max-width: 130%" src="{{ site.baseurl }}/assets/img/pexels/combining-things-together.png" class="wp-image-878"/>
+</div>
+<p></p>
+
 That's it. Hope that was meaningful. Appreciate the feedback. 
 
 ### References
