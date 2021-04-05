@@ -96,7 +96,7 @@ which are used in a class. Various opcodes like **invokevirtual** refer to const
 Here, **invokevirtual** refers to an entry in constant pool and the entry indicates the method to be called along with its parameter and return type. 
 
 ### Understanding bytecode opcodes
-Let's take some simple examples to understand opcodes and their execution. 
+Let's take a simple example which adds 2 integers to understand opcodes and their execution. 
 
 **AdditionExample**
 
@@ -139,7 +139,7 @@ public class AdditionExample {
 }
 {% endhighlight %}
 
-Let's understand the bytecode of ```execute``` method first - 
+We will get to the bytecode of ```AdditionExample()``` a little later, let's understand the bytecode of ```execute``` method first - 
 1. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
 2. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
 3. **bipush** now pushes 20 to the top of the stack
@@ -162,6 +162,133 @@ Few things to note-
 - Slot 0 of LocalVariableTable is occupied by ```this``` of AdditionExample
 - All the entries in LocalVariableTable are statically typed
 - Bytecode is statically typed in a sense that all the opcodes which work with specific data type   
+
+Quick summary of opcodes that we have seen so far -
+
+| Opcode  | Purpose |
+| ------------- | ------------- |
+| istore_slot  | Takes the integer value from top of the stack and assigns it into LocalVariableTable at defined slot  |
+| iload_slot  | Copies the value from defined slot of LocalVariableTable to the stack  |
+| bipush  | Pushes a byte sized integer on the stack |
+
+Let's take another example, which is a slight modification of the first one. The idea is to invoke a method from another method. 
+
+**MethodInvocation**
+
+{% highlight java %}
+public class AdditionExample {
+    public int execute() {
+        return add();
+    }
+    private int add() {
+        int addend = 10;
+        int augend = 20;
+        return addend + augend;
+    }
+}
+{% endhighlight %}
+
+**bytecode (MethodInvocation)**
+
+{% highlight java %}
+public class AdditionExample {
+Constant pool:
+    #7 = Methodref          #8.#9          // org/sample/AdditionExample.add:()I
+    #8 = Class              #10            // org/sample/AdditionExample
+    #9 = NameAndType        #11:#12        // add:()I
+    #10 = Utf8              org/sample/AdditionExample
+    #11 = Utf8              add
+    #12 = Utf8              ()I
+
+    public AdditionExample();
+        Code:
+            0: aload_0
+            1: invokespecial #1    // Method java/lang/Object."<init>":()V
+            4: return
+        
+    public int execute();
+        Code:
+            0: aload_0
+            1: invokevirtual #7   // Method add:()I
+            4: ireturn
+    
+    private int add();
+        Code:
+            0: bipush        10
+            2: istore_1
+            3: bipush        20
+            5: istore_2
+            6: iload_1
+            7: iload_2
+            8: iadd
+            9: ireturn
+}
+{% endhighlight %}
+
+Bytecode in ```add``` method should look very familiar 😁. Let's look at the bytecode for ```execute``` method -
+1. **aload_0** copies the value from slot 0 of LocalVariableTable to the stack. Slot 0 of LocalVariableTable contains ```this```, which means stack top now contains ```this```
+2. Now is the time to invoke the private method ```add``` of the same class. **invokevirtual** is used for invoking the virtual method and takes a parameter which is a reference to an entry in constant pool. Let's see how does this entry get used -
+    - Entries in constant pool are composable, which means an entry could be created by referring to other entries
+    - #7 is a method reference entry which refers to #8 and #9
+    - #8 refers to an entry #10 which specifies the name of the class ```org/sample/AdditionExample```
+    - #9 refers to entries #11 and #12 which specify the method name ```add``` along with its signature ```()I``` (*no parameters, integer return type*) respectively
+    - #7 provides a complete signature of the ```add``` method including its class name 
+3. **invokevirtual** pops the entry from stack top which is ```this```, invokes ```add``` method and stores the result in stack top  
+4. **ireturn** takes the value from stack top and returns an integer
+
+One of the questions that is worth answering is "how does invokevirtual know how many entries should be popped out?". In order to answer this, we will modify our
+previous example slightly and see the behavior of **invokevirtual**.
+
+**MethodInvocation with parameters**
+
+{% highlight java %}
+public class AdditionExample {
+    public int execute() {
+        return add(10, 20);
+    }
+    private int add(int addend, int augend) {
+        return addend + augend;
+    }
+{% endhighlight %}
+
+**bytecode (MethodInvocation with parameters)**
+
+{% highlight java %}
+public class AdditionExample {
+    public AdditionExample();
+        Code:
+            ....
+    
+    public int execute();
+        Code:
+            0: aload_0
+            1: bipush        10
+            3: bipush        20
+            5: invokevirtual #7       // Method add:(II)I
+            8: ireturn
+    
+    private int add(int, int);
+        Code:
+            ...
+}
+{% endhighlight %}
+
+Let's look at the bytecode for ```execute``` method again -
+1. ```this``` is pushed on the stack, followed by push of values 10 and 20
+2. There is a change in signature of the method which will be invoked by invokevirtual. It now takes 2 integer parameters and returns an integer denoted as ```add:(II)I```
+3. **invokevirtual** now needs to pop 3 entries from the stack, 2 integers which were pushed using **bipush** opcode and a reference to ```this``` which was pushed using **aload_0**
+4. Once it pops the entries, ```add``` method is invoked and, the result is stored in stack top
+5. **ireturn** takes the value from stack top and returns an integer
+
+Effectively, **invokevirtual** knows the number of entries to be popped based on the signature of the method to be invoked. As seen in previous example, in order to invoke a method
+which takes 2 parameters, we need to pop 2 values from the stack along with an instance of the current class.  
+
+Quick summary of opcodes that we have seen so far -
+
+| Opcode  | Purpose |
+| ------------- | ------------- |
+| aload_slot  | Copies the address value from defined slot of LocalVariableTable to the stack, ```a``` stands for address  |
+| invokevirtual  | Invokes virtual method, pops the entries from stack based on the signature of the method to be invoked  |
 
 ### Examples
 
