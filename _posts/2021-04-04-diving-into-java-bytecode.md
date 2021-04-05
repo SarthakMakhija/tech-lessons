@@ -33,7 +33,7 @@ This article aims to cover the following content -
 3. Bytecode execution model
 4. Introducing bytecode opcodes
 5. Opcodes for object creation
-6. Java compiler optimization
+6. Combining things together
 7. References
 
 Let's get an understanding of some terms before we start to dive in.
@@ -349,7 +349,153 @@ Quick summary of opcodes that we have seen so far -
 | Opcode  | Purpose |
 | ------------- | ------------- |
 | new  | Allocates the required memory for the object does not call the object constructor |
-| dup  | Duplicates the entry on stack top |
+| dup  | Duplicates the entry present on stack top |
 | invokespecial  | Invokes special methods like constructors  |
+
+### Combining things together
+Time to take one last example and validate our learning.  
+
+{% highlight java %}
+public class SumOfN {
+    private final int n;
+    public SumOfN(int n) {
+        this.n = n;
+    }
+    public int sum() {
+        int sum = 0;
+        for (int number = 1; number <= n; number++) {
+            sum = sum + number;
+        }
+        return sum;
+    }
+}
+{% endhighlight %}
+
+**bytecode (SumOfN)**
+
+{% highlight java %}
+public class SumOfN {
+    private final int n;
+    
+    public SumOfN(int);
+        Code:
+            0: aload_0
+            1: invokespecial #1     // Method java/lang/Object."<init>":()V
+            4: aload_0
+            5: iload_1
+            6: putfield      #7     // Field n:I
+            9: return
+        
+        LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      10     0  this   Lorg/meetkt/SumOfN;
+            0      10     1     n   I
+
+    public int sum();
+        Code:
+            0: iconst_0
+            1: istore_1
+            2: iconst_1
+            3: istore_2
+            4: iload_2
+            5: aload_0
+            6: getfield      #7     // Field n:I
+            9: if_icmpgt     22
+            12: iload_1
+            13: iload_2
+            14: iadd
+            15: istore_1
+            16: iinc          2, 1
+            19: goto          4
+            22: iload_1
+            23: ireturn
+        
+        LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            4      18     2  number   I
+            0      24     0  this     Lorg/meetkt/SumOfN;
+            2      22     1  sum      I
+}
+{% endhighlight %}
+
+Let's begin with ```SumOfN(int)``` constructor and understand the bytecode. Instead of going through the code first, let's see what should the bytecode look like by
+understanding what needs to be done.
+
+<table style="width:100%">
+  <tr>
+    <th>What needs to be done</th>
+    <th>How can it be done</th>
+  </tr>
+  <tr>
+    <td rowspan="2">We should be able to invoke the constructor of <code class="language-plaintext highlighter-rouge">java.lang.Object</code></td>
+    <td>load this reference on the stack, which is what <b>aload_0</b> does</td>
+  </tr>
+  <tr>
+    <td>invoke <code class="language-plaintext highlighter-rouge">init</code> method of <code class="language-plaintext highlighter-rouge">java.lang.Object</code> which is what <b>invokespecial</b> does. It pops <code class="language-plaintext highlighter-rouge">this</code> reference from stack top</td>
+  </tr>
+
+  <tr>
+    <td rowspan="3">We should be able to store the value of <code class="language-plaintext highlighter-rouge">n</code> in class field</td>
+    <td>load <code class="language-plaintext highlighter-rouge">this</code> reference on the stack, which is what <b>aload_0</b> does</td>
+  </tr>
+  <tr>
+    <td>load the value of <code class="language-plaintext highlighter-rouge">n</code> on the stack, which is what <b>iload_1</b> does</td>
+  </tr>
+  <tr>
+    <td>put the value of <code class="language-plaintext highlighter-rouge">n</code> in class field, which is what <b>putfield</b> does. It pops the 2 entries from stack top and sets the class field</td>
+  </tr>
+</table>
+
+That's it about the constructor of ```SumOfN```. Let's now jump to the ```sum``` method.
+<table style="width:100%">
+  <tr>
+    <th>What needs to be done</th>
+    <th>How can it be done</th>
+  </tr>
+  <tr>
+    <td>We should be able to push a constant value 0 on the stack and assign it to a local variable <code class="language-plaintext highlighter-rouge">sum</code></td>
+    <td><b>iconst_0</b> and <b>istore_1</b> should be able to put 0 on the stack and assign it to local variable sum. <code class="language-plaintext highlighter-rouge">sum</code> variable has slot 1</td>
+  </tr>
+  <tr>
+    <td>We should be able to push a constant value 1 on the stack and assign it to a local variable <code class="language-plaintext highlighter-rouge">number</code></td>
+    <td><b>iconst_1</b> and <b>istore_2</b> should be able to put 1 on the stack and assign it to local variable number. <code class="language-plaintext highlighter-rouge">number</code> variable has slot 2</td>
+  </tr>
+  <tr>
+    <td>We should be able to compare the value of <code class="language-plaintext highlighter-rouge">number</code> and the value of the class field <code class="language-plaintext highlighter-rouge">n</code>. In order for this to happen, we need to load the 
+   value of <code class="language-plaintext highlighter-rouge">number</code> and <code class="language-plaintext highlighter-rouge">this</code> reference on the stack</td>
+    <td><b>iload_2</b> and <b>aload_0</b> should be able to copy the value of variable at slot 2 (which is number) and this reference on the stack</td>
+  </tr>
+  <tr>
+    <td>We should be able get the value of class field <code class="language-plaintext highlighter-rouge">n</code></td>
+    <td><b>getfield</b> should be able to help here. It takes the constant pool reference as an argument and pops the class instance to get the field value. The field value goes on the stack. Now, our stack contains value of number and n</td>
+  </tr> 
+  <tr>
+    <td>Perform the required comparison. If the condition indicates exit from the loop, return the value present on the stack top</td>
+    <td><b>if_icmpgt</b> does the integer comparison. It pops the top 2 integer values from stack and does the comparison (number > n). If condition returns true, it takes an argument which is the instruction offset to jump to</td>
+  </tr> 
+  <tr>
+    <td>If the condition indicates loop continuation, load the value of <code class="language-plaintext highlighter-rouge">sum</code> and <code class="language-plaintext highlighter-rouge">number</code> variable to be able to perform addition</td>
+    <td><b>iload_1</b> and <b>iload_2</b> should do it. Now our stack has 2 values which are ready for addition</td>
+  </tr> 
+  <tr>
+    <td>Perform addition</td>
+    <td><b>iadd</b> does the integer addition. Pops the top 2 values from the stack and puts the result back in the stack</td>
+  </tr>
+  <tr>
+    <td>Assign the result of addition to the variable <code class="language-plaintext highlighter-rouge">sum</code></td>
+    <td><b>istore_1</b> would do the job. It takes the value from stack top and assign the value in variable sum</td>
+  </tr>
+  <tr>
+    <td>Increment the value of <code class="language-plaintext highlighter-rouge">number</code></td>
+    <td><b>iinc</b> does integer increment and takes 2 parameters. First one is the LocalVariableTable slot and other one is the increment. It is one of the opcodes that does not work 
+    with stack. It increments the value at a specific slot in LocalVariableTable</td>
+  </tr>
+  <tr>
+    <td>Repeat steps</td>
+    <td><b>goto</b> is the opcode which transfers the control to a specific instruction set</td>
+  </tr>
+</table>
+
+That's it.
 
 ### References
