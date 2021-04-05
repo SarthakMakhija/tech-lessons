@@ -77,7 +77,7 @@ its data type, its slot along with other fields.
 LocalVariableTable contains -
 - variables that are local to a method 
 - method parameters 
-- ```this```, if the method is not static. ```this``` is given slot 0 in LocalVariableTable
+- ```this```, if the method is not static. ```this``` is allocated slot 0 in LocalVariableTable
 
 Eg; **istore_1** is an opcode which stores an integer value from top of the stack into LocalVariableTable at slot 1.
 
@@ -110,7 +110,7 @@ public class AdditionExample {
 }
 {% endhighlight %}
 
-**bytecode-AdditionExample**
+**bytecode (AdditionExample)**
 
 {% highlight java %}
 public class AdditionExample {
@@ -147,7 +147,7 @@ Let's understand the bytecode of ```execute``` method first -
 5. At this stage, values 10 and 20 have been assigned to addend and augend in LocalVariableTable, and our stack is empty. This means these 2 values need to be brought into stack before an addition can be performed
 6. **iload_1** copies the value from slot 1 of LocalVariableTable to the stack
 7. **iload_2** copies the value from slot 2 of LocalVariableTable to the stack
-8. Stack now contains 10 and 20. **iadd** pops the 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
+8. Stack now contains 10 and 20. **iadd** pops 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
 9. **ireturn** takes the value from stack top and returns an integer
 
 Following diagram represents the overall execution -
