@@ -25,13 +25,16 @@ excerpt: Java code is compiled into an intermediate representation called as "by
     <p>Java code is compiled into an intermediate representation called as "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.</p>
 </blockquote>
 
+This article aims to cover the following content -
+
 ### Content
 1. Terminology
 2. Class file structure
 3. Bytecode execution model
-4. Understanding bytecode opcodes
-5. Examples
-6. References
+4. Introducing bytecode opcodes
+5. Opcodes for object creation
+6. Java compiler optimization
+7. References
 
 Let's get an understanding of some terms before we start to dive in.
 
@@ -95,7 +98,7 @@ which are used in a class. Various opcodes like **invokevirtual** refer to const
 {% endhighlight %}
 Here, **invokevirtual** refers to an entry in constant pool and the entry indicates the method to be called along with its parameter and return type. 
 
-### Understanding bytecode opcodes
+### Introducing bytecode opcodes
 Let's take a simple example which adds 2 integers to understand opcodes and their execution. 
 
 **AdditionExample**
@@ -116,20 +119,20 @@ public class AdditionExample {
 public class AdditionExample {
     public AdditionExample();
         Code:
-        0: aload_0
-        1: invokespecial #1   // Method java/lang/Object."<init>":()V
-        4: return
+            0: aload_0
+            1: invokespecial #1   // Method java/lang/Object."<init>":()V
+            4: return
     
     public int execute();
         Code:
-        0: bipush        10
-        2: istore_1
-        3: bipush        20
-        5: istore_2
-        6: iload_1
-        7: iload_2
-        8: iadd
-        9: ireturn
+            0: bipush        10
+            2: istore_1
+            3: bipush        20
+            5: istore_2
+            6: iload_1
+            7: iload_2
+            8: iadd
+            9: ireturn
 
         LocalVariableTable:
         Start  Length  Slot  Name     Signature
@@ -152,8 +155,7 @@ We will get to the bytecode of ```AdditionExample()``` a little later, let's und
 
 Following diagram represents the overall execution -
 <div class="wp-block-image is-style-default">
-    <img style="padding-left: 0; max-width: 125%" src="{{ site.baseurl }}/assets/img/pexels/addition-example.png"
-         class="wp-image-878"/>
+    <img style="padding-left: 0; max-width: 125%" src="{{ site.baseurl }}/assets/img/pexels/addition-example.png" class="wp-image-878"/>
 </div>
 <p></p>
 
@@ -236,7 +238,9 @@ Bytecode in ```add``` method should look very familiar 😁. Let's look at the b
 3. **invokevirtual** pops the entry from stack top which is ```this```, invokes ```add``` method and stores the result in stack top  
 4. **ireturn** takes the value from stack top and returns an integer
 
-One of the questions that is worth answering is "how does invokevirtual know how many entries should be popped out?". In order to answer this, we will modify our
+*javap by default does not return the output for private methods, use -p flag to see the output for private methods.*
+
+One of the questions that is worth answering is "how does invokevirtual know about the number entries to be popped out?". In order to answer this, we will modify our
 previous example slightly and see the behavior of **invokevirtual**.
 
 **MethodInvocation with parameters**
@@ -287,9 +291,65 @@ Quick summary of opcodes that we have seen so far -
 
 | Opcode  | Purpose |
 | ------------- | ------------- |
-| aload_slot  | Copies the address value from defined slot of LocalVariableTable to the stack, ```a``` stands for address  |
+| aload_slot  | Copies the address value from a defined slot of LocalVariableTable to the stack, ```a``` stands for address  |
 | invokevirtual  | Invokes virtual method, pops the entries from stack based on the signature of the method to be invoked  |
 
-### Examples
+### Opcodes for object creation
+Let's take an example to understand the bytecode that gets generated during object creation.
+
+{% highlight java %}
+public class Book {
+    public Book(String name, Date publishingDate) {
+        ///
+    }
+    public Date publishingDate() {
+        return new Date();
+    }
+}
+{% endhighlight %}
+This example uses ```java.util.Date```, (don't ask why) and returns a ```new Date``` as a part of ```publishingDate``` method (again, don't ask why 😁).
+
+**bytecode (Object creation)**
+
+{% highlight java %}
+public class Book {
+public java.util.Date publishingDate();
+    Code:
+        0: new           #7     // class java/util/Date
+        3: dup
+        4: invokespecial #9     // Method java/util/Date."<init>":()V
+        7: areturn
+}
+{% endhighlight %}
+
+This is a new territory that we are going into. Let's understand the bytecode -
+1. **new** allocates the required memory for the object but does not call the constructor. It refers to the constant pool and identifies the object which is ```java/util/Date``` here, and allocates the required memory
+2. Our stack now contains the object reference created by **new**  
+3. Before we understand **dup**, let' understand the need for it -
+    - Let's assume there is no **dup**
+    - Our stack contains the object reference which means it is referring to some memory allocated by **new** opcode
+    - So far our ```date``` object has not been initialized. We need another opcode (invokespecial) for initializing it 
+    - **invokespecial** is used for invoking special methods like constructors. **invokespecial** refers to an entry in the constant pool (#9), resolves it
+      to the init method of ```java.util.Date``` class. 
+    - **invokespecial** will pop the entry from stack top, invoke the ```init``` method of ```java.util.Date```. This means our date object is fully initialized now 
+    - But, now our stack does not contain any reference to the newly created object because it was popped by **invokespecial** to invoke a method which does not return anything
+4. So, we need **dup** to duplicate the entry on stack top
+5. **invokespecial** pops the entry from stack top, invokes the ```init``` method of ```java.util.Date``` class to initialize the object
+6. We now have the stack containing an object reference which refers to the fully created ```java.util.Date``` instance
+7. **areturn** takes the value from stack top and returns ```java.util.Date``` address
+
+Following diagram represents the overall execution -
+<div class="wp-block-image is-style-default">
+    <img style="padding-left: 0; max-width: 70%" src="{{ site.baseurl }}/assets/img/pexels/new-dup.png" class="wp-image-878"/>
+</div>
+<p></p>
+
+Quick summary of opcodes that we have seen so far -
+
+| Opcode  | Purpose |
+| ------------- | ------------- |
+| new  | Allocates the required memory for the object does not call the object constructor |
+| dup  | Duplicates the entry on stack top |
+| invokespecial  | Invokes special methods like constructors  |
 
 ### References
