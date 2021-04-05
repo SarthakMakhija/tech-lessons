@@ -496,6 +496,10 @@ That's it about the constructor of ```SumOfN```. Let's now jump to the ```sum```
   </tr>
 </table>
 
-That's it.
+That's it. Hope that was meaningful. Appreciate the feedback. 
 
 ### References
++ [Advanced Java Bytecode Tutorial](https://www.jrebel.com/blog/java-bytecode-tutorial)
++ [Java Bytecode: Using Objects and Calling Methods](https://www.jrebel.com/blog/using-objects-and-calling-methods-in-java-bytecode)
++ [Java Bytecode Crash Course](https://www.youtube.com/watch?v=e2zmmkc5xI0)
++ [Optimizing Java - practical techniques for improving JVM application performance](https://www.amazon.in/Optimizing-Java-Techniques-Application-Performance/dp/9352137132)
