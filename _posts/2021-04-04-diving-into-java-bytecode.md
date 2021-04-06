@@ -373,7 +373,7 @@ public class SumOfN {
 }
 {% endhighlight %}
 
-**bytecode (SumOfN)**
+**bytecode (SumOfN) constructor**
 
 {% highlight java %}
 public class SumOfN {
@@ -392,35 +392,10 @@ public class SumOfN {
         Start  Length  Slot  Name   Signature
             0      10     0  this   Lorg/meetkt/SumOfN;
             0      10     1     n   I
-
-    public int sum();
-        Code:
-            0: iconst_0
-            1: istore_1
-            2: iconst_1
-            3: istore_2
-            4: iload_2
-            5: aload_0
-            6: getfield      #7     // Field n:I
-            9: if_icmpgt     22
-            12: iload_1
-            13: iload_2
-            14: iadd
-            15: istore_1
-            16: iinc          2, 1
-            19: goto          4
-            22: iload_1
-            23: ireturn
-        
-        LocalVariableTable:
-        Start  Length  Slot  Name   Signature
-            4      18     2  number   I
-            0      24     0  this     Lorg/meetkt/SumOfN;
-            2      22     1  sum      I
 }
 {% endhighlight %}
 
-Let's begin with ```SumOfN(int)``` constructor and understand the bytecode. Instead of going through the code first, let's try and figure out what might the bytecode look like by
+Let's begin with ```SumOfN(int)``` constructor and understand the bytecode. Instead of going through the code first, let's try and, figure out what might the bytecode look like by
 understanding what needs to be done.
 
 <table style="width:100%">
@@ -449,6 +424,36 @@ understanding what needs to be done.
 </table>
 
 All these opcodes make up our constructor. Let's now jump to the ```sum``` method.
+
+**bytecode (SumOfN) sum method**
+
+{% highlight java %}
+public int sum();
+    Code:
+        0: iconst_0
+        1: istore_1
+        2: iconst_1
+        3: istore_2
+        4: iload_2
+        5: aload_0
+        6: getfield      #7     // Field n:I
+        9: if_icmpgt     22
+        12: iload_1
+        13: iload_2
+        14: iadd
+        15: istore_1
+        16: iinc          2, 1
+        19: goto          4
+        22: iload_1
+        23: ireturn
+
+    LocalVariableTable:
+    Start  Length  Slot  Name   Signature
+        4      18     2  number   I
+        0      24     0  this     Lorg/meetkt/SumOfN;
+        2      22     1  sum      I
+{% endhighlight %}
+
 <table style="width:100%">
   <tr>
     <th>What needs to be done</th>
