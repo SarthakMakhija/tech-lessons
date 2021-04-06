@@ -34,7 +34,8 @@ This article aims to cover the following topics -
 4. Introducing bytecode opcodes
 5. Opcodes for object creation
 6. Combining things together
-7. References
+7. Summary
+8. References
 
 Let's get an understanding of some terms before we start to dive in.
 
@@ -509,7 +510,21 @@ Following diagram represents the overall execution of ```sum``` method -
 </div>
 <p></p>
 
-That's it. Hope that was meaningful. Appreciate the feedback. 
+### Summary
+Let's conclude with a some key takeaways -
+
+- javap provides a human-readable format of class file
+- Each opcode in a bytecode is represented by 1 byte
+- Each opcode is prefixed with a letter indicating the data type the opcode will work with  
+- Most of the opcodes work with the stack which means before they operate, values need to be brought on the stack
+- Opcode like **iinc** works with LocalVariableTable instead of working with values on the stack
+- Opcodes like **invokevirtual**, **invokespecial** refer to an entry in the constant pool to resolve the method that needs to be invoked
+- Some opcodes also have shortcuts. eg; **iconst_0** pushes 0 on the stack without taking any argument. It could have been designed to take an argument 
+  but that would have meant the total instruction size will be greater than 1 byte (1 byte for the opcode and another byte for the argument). In order to avoid
+  increasing the size of the instruction, it is designed in a shortcut form
+  
+
+Hope it was meaningful. Appreciate the feedback.
 
 ### References
 + [Advanced Java Bytecode Tutorial](https://www.jrebel.com/blog/java-bytecode-tutorial)
