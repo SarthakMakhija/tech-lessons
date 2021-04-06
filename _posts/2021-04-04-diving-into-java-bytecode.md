@@ -29,7 +29,7 @@ This article aims to cover the following topics -
 
 ### Content
 1. Terminology
-2. Class file structure
+2. Quick Overview of class file structure
 3. Bytecode execution model
 4. Introducing bytecode opcodes
 5. Opcodes for object creation
@@ -64,9 +64,62 @@ We will see various opcodes as we move on, but let's take a quick glimpse of an 
 
 Standard Java class file disassembler distributed with JDK. It provides a human-readable format of class file. 
 
-### Class file structure
+### Quick Overview of class file structure
 
-<<Pending>>
+Let's take a quick look at the structure of the class file. Don't worry if something is not clear at this stage, it should become more clear as we proceed with examples.
+Let's take a simple example to understand what constitutes our class file.
+
+{% highlight java %}
+final public class SumOfN implements Serializable {
+    private final int n;
+    public SumOfN(int n) {
+        this.n = n;
+    }
+    public int sum() {
+        //code left out
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public final class org.sample.SumOfN implements java.io.Serializable
+    minor version: 0
+    major version: 59
+    flags: (0x0031) ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+    this_class: #8                          // org/sample/SumOfN
+    super_class: #2                         // java/lang/Object
+    interfaces: 1, fields: 1, methods: 2, attributes: 1
+Constant pool:
+    #2 = Class              #4             // java/lang/Object
+    #4 = Utf8               java/lang/Object
+    #8 = Class              #10            // org/sample/SumOfN
+    #10 = Utf8              org/meetkt/SumOfN
+{% endhighlight %}
+
+**Magic number (0xCAFEBABE)** is what every class file starts with. The first four bytes indicate that it is a class file and, the remaining four bytes
+indicate the minor and major versions used to compile the source file.
+
+**Major and minor version** indicate the version of JDK used to compile the source file. In the previous example minor version is 0 and major version is 59 (which is Java SE 15).
+
+**Flags** indicate the modifiers that are applied to the class. In the previous example, we have ACC_PUBLIC indicating it is a public class,  ACC_FINAL indicating 
+it is a final class, ACC_SUPER exists for backward compatibility for the code compiled by Sun's older compilers for the Java programming language. (More on this [here](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6527033))
+
+**Constant pool** holds constant values from the class including names of classes, interfaces, fields. These entries are referenced by various opcodes as we will see
+later and also by **this_class** and **super_class**
+
+**this_class** refers to an entry (#8) in the constant pool, which in turn refers to another entry (#10) in the pool that returns ```org/meetkt/SumOfN```.
+Effectively, **this_class** holds the name of the current class
+
+**super_class** refers to an entry (#2) in the constant pool, which in turn refers to another entry (#4) in the pool that returns ```java.lang.Object``` 
+Effectively, **super_class** holds the name of the super class
+
+**interfaces, fields, methods** respectively indicate the number of interfaces implemented by the class, number of fields that the class holds and the number of methods
+that a class has
+
+**attributes** are used in the class file, field level information, method information, and code attribute structures. One example of an attribute is ```Exceptions```
+which indicates which checked exceptions a method may throw. This attribute is attached to ```method_info``` structure.
+
+This was a very quick overview of class file structure, for more details please check [this](https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-4.html) link.
 
 ### Bytecode execution model
 
@@ -144,7 +197,7 @@ public class AdditionExample {
 }
 {% endhighlight %}
 
-We will get to the bytecode of ```AdditionExample()``` a little later, let's understand the bytecode of ```execute``` method first - 
+The bytecode of ```AdditionExample()``` should become clear as we move on but, let's understand the bytecode of ```execute``` method first - 
 1. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
 2. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
 3. **bipush** now pushes 20 to the top of the stack
@@ -511,7 +564,7 @@ Following diagram represents the overall execution of ```sum``` method -
 <p></p>
 
 ### Summary
-Let's conclude with a some key takeaways -
+Let's conclude with some key takeaways -
 
 - javap provides a human-readable format of class file
 - Each opcode in a bytecode is represented by 1 byte
@@ -523,7 +576,6 @@ Let's conclude with a some key takeaways -
   but that would have meant the total instruction size will be greater than 1 byte (1 byte for the opcode and another byte for the argument). In order to avoid
   increasing the size of the instruction, it is designed in a shortcut form
   
-
 Hope it was meaningful. Appreciate the feedback.
 
 ### References
