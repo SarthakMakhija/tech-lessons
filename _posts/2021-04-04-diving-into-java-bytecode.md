@@ -18,11 +18,11 @@ author: sarthakmakhija
 permalink: "/diving-into-java-bytecode/"
 feature-img: "assets/img/pexels/diving-into-java-bytecode.png"
 thumbnail: "assets/img/pexels/diving-into-java-bytecode.png"
-excerpt: Java code is compiled into an intermediate representation called as "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.
+excerpt: Java code is compiled into an intermediate representation called "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.
 ---
 
 <blockquote class="wp-block-quote">
-    <p>Java code is compiled into an intermediate representation called as "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.</p>
+    <p>Java code is compiled into an intermediate representation called "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.</p>
 </blockquote>
 
 This article aims to cover the following topics -
@@ -62,7 +62,14 @@ We will see various opcodes as we move on, but let's take a quick glimpse of an 
 
 **javap**
 
-Standard Java class file disassembler distributed with JDK. It provides a human-readable format of class file. 
+Standard Java class file disassembler distributed with JDK. It provides a human-readable format of class file.
+{% highlight java %}
+javap -p -v -c <path to the class file>
+
+-p => display private methods
+-v => be verbose
+-c => disassemble the source code
+{% endhighlight %}
 
 ### Quick Overview of class file structure
 
@@ -104,10 +111,21 @@ indicate the minor and major versions used to compile the source file.
 **Flags** indicate the modifiers that are applied to the class. In the previous example, we have ACC_PUBLIC indicating it is a public class,  ACC_FINAL indicating 
 it is a final class, ACC_SUPER exists for backward compatibility for the code compiled by Sun's older compilers for the Java programming language. (More on this [here](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6527033))
 
-**Constant pool** holds constant values from the class including names of classes, interfaces, fields. These entries are referenced by various opcodes as we will see
-later and also by **this_class** and **super_class**
+**Constant pool**
+Is a part of class file which contains -
+- string values
+- doubles/float values
+- names of classes
+- interfaces
+- fields
 
-**this_class** refers to an entry (#8) in the constant pool, which in turn refers to another entry (#10) in the pool that returns ```org/meetkt/SumOfN```.
+which are used in a class. Various opcodes like **invokevirtual** refer to constant pool entry to identify the virtual method to be invoked.
+{% highlight java %}
+1: invokevirtual #7  // Method run:()Ljava/lang/Object;
+{% endhighlight %}
+Here, **invokevirtual** takes an argument which refers to an entry in the constant pool and, the entry indicates the method to be called along with its parameter and return type.
+
+**this_class** refers to an entry (#8) in the constant pool, which in turn refers to another entry (#10) in the pool that returns ```org/sample/SumOfN```.
 Effectively, **this_class** holds the name of the current class
 
 **super_class** refers to an entry (#2) in the constant pool, which in turn refers to another entry (#4) in the pool that returns ```java.lang.Object``` 
@@ -123,12 +141,14 @@ This was a very quick overview of class file structure, for more details please 
 
 ### Bytecode execution model
 
-JVM operates using stack as its execution model. Stack, LocalVariableTable and the constant pool of a class are used in order to execute bytecode. 
+JVM operates using stack as its execution model. Stack is a collection of frames, each of which is allocated when a method is invoked.
 
-**Stack**
-Most of the opcodes operate by pushing-in or popping-out value to or from the stack. Eg; **iconst_0** pushes 0 on top of the stack.
+A stack frame consists of - 
 
-**LocalVariableTable**
+**Operand Stack**
+Most of the opcodes operate by pushing-in or popping-out value to or from the operand stack. Eg; **iconst_0** pushes 0 on top of the stack.
+
+**LocalVariableTable (an array of local variables)**
 In order to allow a variable to be assigned a value, a local variable table is used. ```LocalVariableTable``` is a simple data structure which contains the name of the variable, 
 its data type, its slot along with some other fields. 
 
@@ -139,22 +159,8 @@ LocalVariableTable contains -
 
 Eg; **istore_1** is an opcode which stores an integer value from top of the stack into LocalVariableTable at slot 1.
 
-**Constant pool**
-Is a part of class file which contains - 
-- string values
-- doubles/float values
-- names of classes
-- interfaces
-- fields
-
-which are used in a class. Various opcodes like **invokevirtual** refer to constant pool entry to identify the virtual method to be invoked.
-{% highlight java %}
-1: invokevirtual #7  // Method run:()Ljava/lang/Object;
-{% endhighlight %}
-Here, **invokevirtual** takes an argument which refers to an entry in the constant pool and, the entry indicates the method to be called along with its parameter and return type. 
-
 ### Introducing bytecode opcodes
-Let's take a simple example which adds 2 integers to understand opcodes and their execution. 
+Let's take a simple example which adds 2 integers, to understand opcodes and their execution. 
 
 **AdditionExample**
 
@@ -180,6 +186,7 @@ public class AdditionExample {
     
     public int execute();
         Code:
+          stack=2, locals=3, args_size=1
             0: bipush        10
             2: istore_1
             3: bipush        20
@@ -197,16 +204,20 @@ public class AdditionExample {
 }
 {% endhighlight %}
 
-The bytecode of ```AdditionExample()``` should become clear as we move on but, let's understand the bytecode of ```execute``` method first - 
-1. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
-2. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
-3. **bipush** now pushes 20 to the top of the stack
-4. **istore_2** takes the value from top of the stack, which is 20 and assigns it into LocalVariableTable at slot 2
-5. At this stage, values 10 and 20 have been assigned to addend and augend in LocalVariableTable, and our stack is empty. This means these 2 values need to be brought into stack before an addition can be performed
-6. **iload_1** copies the value from slot 1 of LocalVariableTable to the stack
-7. **iload_2** copies the value from slot 2 of LocalVariableTable to the stack
-8. Stack now contains 10 and 20. **iadd** pops 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
-9. **ireturn** takes the value from stack top and returns an integer
+The bytecode of ```AdditionExample()``` should become clear as we move on but first let's understand the bytecode of ```execute``` method - 
+1. The Java compiler has indicated the depth of stack needed during the execution of this method. ```stack=2``` means at any point during this method execution
+   we will have 2 entries on the stack. ```locals=3``` indicate that there are 3 local variables which will need to go in LocalVariableTable. One variable is 
+   ```addend```, other is ```augend``` and the last is ```this```. ```args_size=1``` indicates one object needs to be initialized before the method call which 
+   again is ```this```
+2. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
+3. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
+4. **bipush** now pushes 20 to the top of the stack
+5. **istore_2** takes the value from top of the stack, which is 20 and assigns it into LocalVariableTable at slot 2
+6. At this stage, values 10 and 20 have been assigned to addend and augend in LocalVariableTable, and our stack is empty. This means these 2 values need to be brought into stack before an addition can be performed
+7. **iload_1** copies the value from slot 1 of LocalVariableTable to the stack
+8. **iload_2** copies the value from slot 2 of LocalVariableTable to the stack
+9. Stack now contains 10 and 20. **iadd** pops 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
+10. **ireturn** takes the value from stack top and returns an integer
 
 Following diagram represents the overall execution -
 <div class="wp-block-image is-style-default">
