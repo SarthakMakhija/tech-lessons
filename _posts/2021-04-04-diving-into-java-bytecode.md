@@ -49,15 +49,15 @@ An intermediate representation of Java code which JVM understands.
     <p>This intermediate representation is called bytecode because each "opcode" is represented by 1 byte. This effectively means, a total of 256 opcodes are possible.</p> 
 </blockquote>
 
-These opcodes may take arguments and arguments can be upto 2 bytes long. This means a bytecode instruction, combination of opcode and arguments could be as long as 3 bytes.
+These opcodes may take arguments and arguments can be up to 2 bytes long. This means a bytecode instruction which is a combination of an opcode and arguments could be as long as 3 bytes.
 
 We will see various opcodes as we move on, but let's take a quick glimpse of an instruction which is an output from **javap** utility -
 {% highlight java %}
 9: iconst_0
 {% endhighlight %}
 
-- iconst_0 is an opcode which pushes a constant value 0 on top of stack
-- Every opcode is prefixed with a letter like ```i``` / ```d``` etc to represent the data type the opcode is dealing with 
+- iconst_0 is an opcode which pushes a constant value 0 on top of the stack
+- Every opcode is prefixed with a letter like ```i``` / ```d``` etc to represent the data type that opcode is dealing with 
 - Every bytecode instruction will start with an offset *(9: in the previous example)*. This comes handy when a "goto" opcode is used
 
 **javap**
@@ -73,8 +73,10 @@ javap -p -v -c <path to the class file>
 
 ### Quick overview of class file structure
 
-Let's take a quick look at the structure of the class file. Don't worry if something is not clear at this stage, it should become more clear as we proceed with examples.
-Let's take a simple example to understand what constitutes our class file.
+Let's take a quick look at the structure of the class file. Don't worry if something is not clear at this stage, it should become clear as we proceed with examples.
+Let's take a simple example to understand what constitutes our class file. 
+
+(*Please note: bytecode is trimmed for the entire article*).
 
 {% highlight java %}
 final public class SumOfN implements Serializable {
@@ -88,8 +90,10 @@ final public class SumOfN implements Serializable {
 }
 {% endhighlight %}
 
+**bytecode**
+
 {% highlight java %}
-public final class org.sample.SumOfN implements java.io.Serializable
+public final class SumOfN implements java.io.Serializable
     minor version: 0
     major version: 59
     flags: (0x0031) ACC_PUBLIC, ACC_FINAL, ACC_SUPER
@@ -126,13 +130,13 @@ which are used in a class. Various opcodes like **invokevirtual** refer to const
 Here, **invokevirtual** takes an argument which refers to an entry in the constant pool and, the entry indicates the method to be called along with its parameter and return type.
 
 **this_class** refers to an entry (#8) in the constant pool, which in turn refers to another entry (#10) in the pool that returns ```org/sample/SumOfN```.
-Effectively, **this_class** holds the name of the current class
+Effectively, **this_class** holds the name of the current class.
 
 **super_class** refers to an entry (#2) in the constant pool, which in turn refers to another entry (#4) in the pool that returns ```java.lang.Object``` 
-Effectively, **super_class** holds the name of the super class
+Effectively, **super_class** holds the name of the super class.
 
 **interfaces, fields, methods** respectively indicate the number of interfaces implemented by the class, number of fields that the class holds and the number of methods
-that a class has
+that the class has.
 
 **attributes** are used in the class file, field level information, method information, and code attribute structures. One example of an attribute is ```Exceptions```
 which indicates which checked exceptions a method may throw. This attribute is attached to ```method_info``` structure.
@@ -157,7 +161,7 @@ LocalVariableTable contains -
 - method parameters 
 - ```this```, if the method is not static. ```this``` is allocated slot 0 in LocalVariableTable
 
-Eg; **istore_1** is an opcode which stores an integer value from top of the stack into LocalVariableTable at slot 1.
+Eg; **istore_1** is an opcode which stores an integer value into LocalVariableTable at slot 1 by picking value from top of the stack.
 
 ### Introducing bytecode opcodes
 Let's take a simple example which adds 2 integers, to understand opcodes and their execution. 
@@ -206,8 +210,8 @@ public class AdditionExample {
 
 The bytecode of ```AdditionExample()``` should become clear as we move on but first let's understand the bytecode of ```execute``` method - 
 1. The Java compiler has indicated the depth of stack needed during the execution of this method. ```stack=2``` means at any point during this method execution
-   we will have 2 entries on the stack. ```locals=3``` indicate that there are 3 local variables which will need to go in LocalVariableTable. One variable is 
-   ```addend```, other is ```augend``` and the last is ```this```. ```args_size=1``` indicates one object needs to be initialized before the method call which 
+   we will have a maximum of 2 entries on the stack. ```locals=3``` indicate that there are 3 local variables which will need to go in LocalVariableTable. One variable is 
+   ```addend```, other is ```augend``` and the last is ```this```. ```args_size=1``` indicates one object needs to be initialized before the method call, which 
    again is ```this```
 2. **bipush** is an opcode which pushes a byte sized integer on the stack. It takes an argument which is 10 in our case
 3. **istore_1** takes the value from top of the stack, which is 10 and assigns it into LocalVariableTable at slot 1. This opcode removes the value from stack top
@@ -216,7 +220,7 @@ The bytecode of ```AdditionExample()``` should become clear as we move on but fi
 6. At this stage, values 10 and 20 have been assigned to addend and augend in LocalVariableTable, and our stack is empty. This means these 2 values need to be brought into stack before an addition can be performed
 7. **iload_1** copies the value from slot 1 of LocalVariableTable to the stack
 8. **iload_2** copies the value from slot 2 of LocalVariableTable to the stack
-9. Stack now contains 10 and 20. **iadd** pops 2 integer values from top 2 positions of stack and sums them up. It stores the result back in the stack top
+9. Stack now contains 10 and 20. **iadd** pops 2 integer values from top 2 positions of the stack and sums them up. It stores the result back in the stack top
 10. **ireturn** takes the value from stack top and returns an integer
 
 Following diagram represents the overall execution -
@@ -235,7 +239,7 @@ Quick summary of opcodes that we have seen so far -
 
 | Opcode  | Purpose |
 | ------------- | ------------- |
-| istore_slot  | Takes the integer value from top of the stack and assigns it into LocalVariableTable at defined slot  |
+| istore_slot  | Takes an integer value from top of the stack and assigns it into LocalVariableTable at defined slot  |
 | iload_slot  | Copies the value from defined slot of LocalVariableTable to the stack  |
 | bipush  | Pushes a byte sized integer on the stack |
 
@@ -293,16 +297,17 @@ Constant pool:
 }
 {% endhighlight %}
 
-Bytecode in ```add``` method should look very familiar 😁. Let's look at the bytecode for ```execute``` method -
+Bytecode in ```add``` method should look very familiar 😁. Let's look at the bytecode for ```execute``` method which only invokes ```add``` method-
 1. **aload_0** copies the value from slot 0 of LocalVariableTable to the stack. Slot 0 of LocalVariableTable contains ```this```, which means stack top now contains ```this```
-2. Now is the time to invoke the private method ```add``` of the same class. **invokevirtual** is used for invoking the virtual method and, it takes a parameter which is a reference to an entry in the constant pool. Let's see how does this entry get used -
+2. Now is the time to invoke the private method ```add``` of the same class. **invokevirtual** is used for invoking a virtual method and, it takes a parameter which is a reference to an entry in the constant pool. Let's see how does this entry get used -
     - Entries in constant pool are composable, which means an entry could be created by referring to other entries
     - #7 is a method reference entry which refers to #8 and #9
     - #8 refers to an entry #10 which specifies the name of the class ```org/sample/AdditionExample```
     - #9 refers to entries #11 and #12 which specify the method name ```add``` along with its signature ```()I``` (*no parameters, integer return type*) respectively
-    - #7 in short, provides a complete signature of the ```add``` method including its class name 
-3. **invokevirtual** pops the entry from stack top which is ```this```, invokes ```add``` method and stores the result in stack top  
-4. **ireturn** takes the value from stack top and returns an integer
+    - #7 in short, provides a complete signature of the ```add``` method including its class name ```org/sample/AdditionExample.add:()I``` 
+3. Our stack contains ```this``` which will be used for invoking ```add``` method
+4. **invokevirtual** pops the entry from stack top which is ```this```, invokes ```add``` method and stores the result in stack top  
+5. **ireturn** takes the value from stack top and returns an integer
 
 *javap by default does not return the output for private methods, use -p flag to see the output for private methods.*
 
@@ -346,7 +351,7 @@ public class AdditionExample {
 Let's look at the bytecode for ```execute``` method again -
 1. ```this``` is pushed on the stack, followed by push of values 10 and 20
 2. Stack contains ```this```, ```10``` and ```20```
-3. There is a change in signature of the method which will be invoked by **invokevirtual**. ```add``` now takes 2 integer parameters and returns an integer denoted by ```add:(II)I```
+3. There is a change in signature of the method which will be invoked by **invokevirtual**. ```add``` now takes 2 integer parameters and returns an integer. Method signature is denoted by ```add:(II)I```
 4. **invokevirtual** now needs to pop 3 entries from the stack, 2 integers which were pushed using **bipush** opcode and a reference to ```this``` which was pushed using **aload_0**
 5. Once it pops the entries, ```add``` method is invoked and, the result is stored in stack top
 6. **ireturn** takes the value from stack top and returns an integer
@@ -521,49 +526,60 @@ public int sum();
 
 <table style="width:100%">
   <tr>
-    <th>What needs to be done</th>
-    <th>How can it be done</th>
+    <th width="30%">What needs to be done</th>
+    <th width="30%">Code snippet</th>
+    <th width="40%">How can it be done</th>
   </tr>
   <tr>
-    <td>We should be able to push a constant value 0 on the stack and assign it to a local variable <code class="language-plaintext highlighter-rouge">sum</code></td>
+    <td>Initialize <code class="language-plaintext highlighter-rouge">sum</code> with a value 0</td>
+    <td>int sum = 0</td>
     <td><b>iconst_0</b> and <b>istore_1</b> should be able to put 0 on the stack and assign it to local variable sum. <code class="language-plaintext highlighter-rouge">sum</code> variable has slot 1 in LocalVariableTable</td>
   </tr>
   <tr>
-    <td>We should be able to push a constant value 1 on the stack and assign it to a local variable <code class="language-plaintext highlighter-rouge">number</code></td>
+    <td>Initialize <code class="language-plaintext highlighter-rouge">number</code> with a value 1</td>
+    <td>int number = 1</td>
     <td><b>iconst_1</b> and <b>istore_2</b> should be able to put 1 on the stack and assign it to local variable number. <code class="language-plaintext highlighter-rouge">number</code> variable has slot 2 in LocalVariableTable</td>
   </tr>
   <tr>
     <td>We should be able to compare the value of <code class="language-plaintext highlighter-rouge">number</code> and the value of the class field <code class="language-plaintext highlighter-rouge">n</code>. In order for this to happen, we need to load the 
    value of <code class="language-plaintext highlighter-rouge">number</code> and <code class="language-plaintext highlighter-rouge">this</code> reference on the stack. We need <code class="language-plaintext highlighter-rouge">this</code> reference to be able to get the value of instance variable <code class="language-plaintext highlighter-rouge">n</code></td>
+    <td>number <= this.n</td>
     <td><b>iload_2</b> and <b>aload_0</b> should be able to copy the value of <code class="language-plaintext highlighter-rouge">number</code> variable from slot 2 and <code class="language-plaintext highlighter-rouge">this</code> reference from slot 0 on the stack</td>
   </tr>
   <tr>
     <td>We should be able get the value of class field <code class="language-plaintext highlighter-rouge">n</code></td>
-    <td><b>getfield</b> should be able to help here. It takes the constant pool reference as an argument and pops the class instance to get the field value. The field value goes on the stack. Now, our stack contains value of number and n</td>
+    <td>this.n</td>
+    <td><b>getfield</b> should be able to help here. It pops the class instance to get the field value. The field value goes on the stack. Now, our stack contains value of number and n</td>
   </tr> 
   <tr>
     <td>Perform the required comparison. If the condition indicates exit from the loop, return the value present on the stack top</td>
+    <td>number <= this.n</td>
     <td><b>if_icmpgt</b> does the integer comparison. It pops the top 2 integer values from the stack and does the comparison (number > n). If condition returns true, it takes an argument which is the instruction offset to jump to</td>
   </tr> 
   <tr>
     <td>If the condition indicates loop continuation, load the value of <code class="language-plaintext highlighter-rouge">sum</code> and <code class="language-plaintext highlighter-rouge">number</code> variable to be able to perform addition</td>
+    <td>sum + number</td>
     <td><b>iload_1</b> and <b>iload_2</b> should do it. Now our stack has 2 values which are ready for addition</td>
   </tr> 
   <tr>
     <td>Perform addition</td>
+    <td>sum + number</td>
     <td><b>iadd</b> does the integer addition. Pops the top 2 values from the stack and puts the result back in the stack</td>
   </tr>
   <tr>
     <td>Assign the result of addition to the variable <code class="language-plaintext highlighter-rouge">sum</code></td>
+    <td>sum = sum + number</td>
     <td><b>istore_1</b> would do the job. It takes the value from stack top and assign the value in variable sum</td>
   </tr>
   <tr>
     <td>Increment the value of <code class="language-plaintext highlighter-rouge">number</code></td>
+    <td>number = number + 1</td>
     <td><b>iinc</b> does integer increment and takes 2 parameters. First one is the LocalVariableTable slot and other one is the increment. It is one of the opcodes that does not work 
     with stack. It increments the value at a specific slot in LocalVariableTable</td>
   </tr>
   <tr>
     <td>Repeat steps</td>
+    <td>NA</td>
     <td><b>goto</b> is the opcode which transfers the control to a specific instruction set</td>
   </tr>
 </table>
