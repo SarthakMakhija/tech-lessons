@@ -29,7 +29,7 @@ This article aims to cover the following topics -
 
 ### Content
 1. Terminology
-2. Quick Overview of class file structure
+2. Quick overview of class file structure
 3. Bytecode execution model
 4. Introducing bytecode opcodes
 5. Opcodes for object creation
@@ -71,7 +71,7 @@ javap -p -v -c <path to the class file>
 -c => disassemble the source code
 {% endhighlight %}
 
-### Quick Overview of class file structure
+### Quick overview of class file structure
 
 Let's take a quick look at the structure of the class file. Don't worry if something is not clear at this stage, it should become more clear as we proceed with examples.
 Let's take a simple example to understand what constitutes our class file.
@@ -100,7 +100,7 @@ Constant pool:
     #2 = Class              #4             // java/lang/Object
     #4 = Utf8               java/lang/Object
     #8 = Class              #10            // org/sample/SumOfN
-    #10 = Utf8              org/meetkt/SumOfN
+    #10 = Utf8              org/sample/SumOfN
 {% endhighlight %}
 
 **Magic number (0xCAFEBABE)** is what every class file starts with. The first four bytes indicate that it is a class file and, the remaining four bytes
@@ -455,7 +455,7 @@ public class SumOfN {
         
         LocalVariableTable:
         Start  Length  Slot  Name   Signature
-            0      10     0  this   Lorg/meetkt/SumOfN;
+            0      10     0  this   Lorg/sample/SumOfN;
             0      10     1     n   I
 }
 {% endhighlight %}
@@ -515,7 +515,7 @@ public int sum();
     LocalVariableTable:
     Start  Length  Slot  Name   Signature
         4      18     2  number   I
-        0      24     0  this     Lorg/meetkt/SumOfN;
+        0      24     0  this     Lorg/sample/SumOfN;
         2      22     1  sum      I
 {% endhighlight %}
 
