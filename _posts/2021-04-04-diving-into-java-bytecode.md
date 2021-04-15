@@ -117,7 +117,7 @@ it is a final class, ACC_SUPER exists for backward compatibility for the code co
 
 **Constant pool**
 Is a part of class file which contains -
-- string values
+- string literals / constants
 - doubles/float values
 - names of classes
 - interfaces
