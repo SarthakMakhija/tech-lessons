@@ -282,6 +282,10 @@ why not build confidence in the code by adding automated tests for every piece o
 *If our software is a car, then automated tests are the brakes.* Like we said, we need confidence in the brakes as well which essentially means, it is not just about writing
 tests because of some code coverage policy in the organization, it is about "building a trail of understanding for all the readers", about stating "what is it that a piece of code does", "when does it fail", "what kind of inputs does it take" and so many other things.
 
+<blockquote class="wp-block-quote">
+	It is our responsibility to ensure these "brakes" exist in the code (or the system) and they are reliable. They should not exist just for the sake of existing. 
+</blockquote>
+
 ### Conclusion
 
 I don't see any reason for not writing tests or deferring the addition of tests. I think once you get addicted to "quick feedback", this point of developing
