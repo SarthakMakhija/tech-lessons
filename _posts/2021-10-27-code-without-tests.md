@@ -123,9 +123,10 @@ There is still a forked argument that I can think of.
 The answer to this lies in the argument itself. If left shifting a slice needs an automated test, any fancy and complex system would need them too.
 
 And yes, your system is not as simple as left shifting some elements but at the same time, the fancy system is not built in a day. It is built piece by piece
-gradually, so add tests for every small piece that gets built.
+gradually, so why not add tests for every small piece that gets built.
 
-*Side note* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
+*Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
+*Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
 In fact, at this point in time, the only way to conclude that a non-empty slice will result in a failure is by walking through the code. Once we have the test
 for the same, not only does it give us a safety net but also serves as a live documentation which gets updated everytime the behavior of the changes.
 
@@ -161,7 +162,7 @@ It is so easy for such a thought process to set in and once it sets in, tests wo
 
 **Delayed refactoring**
 
-In the absence of tests, refactoring for various pieces of code will get delayed. This in turn has a huge drawback, a method which is 50 lines today might
+In the absence of tests, refactoring for various parts of code will get delayed. This in turn has a huge drawback, a method which is 50 lines today might
 grow to 100 lines in 7 days. Not only are the number of code smells going to increase later, but even refactoring might become tricky or may take longer.
 
 What are we basing theory of "adding code today and tests later" on? How is tomorrow going to be any different? Is sun going to shine too brightly tomorrow?
@@ -219,12 +220,12 @@ to validate if a change has worked.
 
 **Act as documentation**
 
-Automated tests act as documentation of what the code does.
+Automated tests act as documentation for what the code does.
 I don't need to go through ```leftShift``` method to understand its behavior -
 - what if it is invoked with a slice containing empty elements
 - what if it is invoked with a slice containing just one element
 
-I will just go and look at the tests. In fact, this is one way of creating a trail of understanding for the readers. Readers of the code don't need to make too much of an effort to find these answers,
+I will just go and look at the tests. In fact, adding tests is one way of creating a trail of understanding for the readers. Readers of the code don't need to make too much of an effort to find such answers,
 they can directly look at the tests and find *most* of the answers.
 
 **Provide an opportunity to think from a client's perspective**
