@@ -28,10 +28,10 @@ we still see ideas like "writing code today and adding tests when the delivery p
 I don't have real reasons as to why such ideas would float around but I can speculate.
 
 **Speculation (1)**
-There is a lot of delivery pressure today and there is a firm belief that tomorrow will be better and that is when we will go and add tests
+Adding tests takes a lot of time
 
 **Speculation (2)**
-Adding tests takes a lot of time
+There is a lot of delivery pressure today and there is a firm belief that tomorrow will be better and that is when we will go and add tests
 
 What I want to do as a part of this article is try and understand how would our world look like with such ideas and does it even make sense to consider them.
 With that said, I will keep the idea of TDD aside for this article.
