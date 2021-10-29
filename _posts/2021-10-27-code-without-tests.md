@@ -150,7 +150,7 @@ This stuff just seems boring to me, looking at the code, figuring out various ca
 
 **Possibility of missing corner cases**
 
-There is a good possibility that we will miss corner cases if we decide to add tests later.
+There is a good possibility that we will miss corner cases if we decide to add tests later because the cases, or the context is not fresh anymore.
 
 **Lack of motivation**
 
@@ -194,6 +194,10 @@ Automated tests are a brilliant safety net, I can go ahead and refactor code wit
 I think it would be a very courageous move to refactor code without tests. (*Honestly, I don't know if it is a courageous move or a stupid move.*)
 But, if I decide to refactor code without tests, I think I would be plagued by anxiety, there will be a constant banging in the head - what if refactoring breaks the code,
 can I just stop refactoring here, is it really necessary to refactor etc. And with tests written for the code, there is no case of anxiety or fear.
+
+<blockquote class="wp-block-quote">
+	Tests are anxiety busters :)
+</blockquote>
 
 **Provide quick feedback**
 
@@ -260,6 +264,10 @@ func TestRotatesALinkedListLeftBy1(t *testing.T) {
     ....
 }
 {% endhighlight %}
+
+<blockquote class="wp-block-quote">
+	Tests actually influence the design of class - at micro & macro levels. And actually help write more intuitive code (because they are written from the outside-in perspective, it makes for more readable code... than code which is influenced by "implementation details").
+</blockquote>
 
 By not adding automated tests or by deferring addition of tests, we are just losing all these advantages.
 
