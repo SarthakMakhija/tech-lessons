@@ -286,6 +286,32 @@ func TestRotatesALinkedListLeftBy1(t *testing.T) {
 
 By not adding automated tests or by deferring addition of tests, we are just losing all these advantages.
 
+### Fundamental idea
+
+One of the fundamental ideas behind coding is to break a problem into small pieces say tasks and each of these tasks requires a shifting episode between
+code and tests. I will explain.  Let's say we want to build a [linked list](https://www.geeksforgeeks.org/linked-list-set-1-introduction/) which supports ```get(key)```
+and ```put(key, value []byte)```.
+
+The idea would be to break the problem into small solvable problems and attempt to solve the simplest. One of the task list could be - 
+- Build a linked list which supports ```put(key, value)``` with a single node
+- Add tests to assert that ```put(key, value)``` works
+- Enhance linked list which now supports ```put(key, value)``` with multiple nodes
+- Add tests to assert that ```put(key, value)``` works
+- Add ```get(key)``` in linked list
+- Add tests to assert that ```get(key)``` works if key is found
+- Add tests to assert that ```get(key)``` works if key is not found; if it does not work, go back and change the code
+- Add tests to assert that ```get(key)``` works even if list is empty; if it does not work, go back and change the code
+- Looks good, relook at all the test cases and see if we have missed anything
+
+It looks like there is a continuous dialogue between code and tests, both of them seem to be talking to each other. 
+
+A test says, "Hey, ```get``` is failing when a key is not present", code says, "Updated, please run yourself again". 
+
+Code says, "I will return an error if value for a key is not present" and test would say "let me check if it makes sense from a client's perspective and get back".
+
+Essentially, it's the very act of design and coding that needs small focused episodes with actual code, driving the code with various scenarios.
+Tests and TDD help by adding some specific guidance to it, which is a huge benefit
+
 ### Would you buy a car without brakes?
 
 One of the things that the automated tests provide is a "safety net" which in turn allows us to make changes in code with confidence. I am not sure why do we even call software delivery a delivery, without automated tests.
@@ -322,4 +348,4 @@ get better at things before it all comes crashing down.
 If a team believes there is delivery pressure today and tests can be added tomorrow, then the team needs to be sure of one thing - "That tomorrow is never coming".
 
 ### Mentions
-I would like to thank [Gurpreet Luthra](https://life-lessons.in/) for providing feedback on the article. Thank you Gurpreet. 
+I would like to thank [Gurpreet Luthra](https://life-lessons.in/) and [Unmesh Joshi](https://github.com/unmeshjoshi) for providing feedback on the article. Thank you Gurpreet and Unmesh. 
