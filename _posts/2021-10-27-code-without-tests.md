@@ -125,10 +125,9 @@ The answer to this lies in the argument itself. If left shifting a slice needs a
 And yes, your system is not as simple as left shifting some elements but at the same time, the fancy system is not built in a day. It is built piece by piece
 gradually, so why not add tests for every small piece that gets built.
 
-*Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
-*Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
+*Important Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
 In fact, at this point in time, the only way to conclude that a non-empty slice will result in a failure is by walking through the code. Once we have the test
-for the same, not only does it give us a safety net but also serves as a live documentation which gets updated everytime the behavior of the changes.
+for the same, not only does it give us a safety net but also serves as a **live documentation** which gets updated everytime the behavior of the changes.
 
 ### Code today and add tests later
 
