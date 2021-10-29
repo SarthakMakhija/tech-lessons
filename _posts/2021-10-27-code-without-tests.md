@@ -25,7 +25,7 @@ Automated tests are an essential part of every piece of code that we write. The 
 make sense to think about writing code without tests or writing code today and adding tests later. Despite the benefits, we still see code without tests,
 we still see ideas like "writing code today and adding tests when the delivery pressure reduces" floating around.
 
-I don't have real reasons as to why such ideas would float around but I can speculate.
+I don't have real reasons as to why such ideas would float around, but I can speculate.
 
 **Speculation (1)**
 Adding tests takes a lot of time
@@ -101,10 +101,10 @@ func TestLeftShiftsANotEmptySliceBy1(t *testing.T) {
 }
 {% endhighlight %}
 
-As a part of this test, we perform left shift on a slice and assert the elements against the expected after shift operation. That's really it.
+As a part of this test, we perform a left shift on a slice and assert the elements against the expected after shift operation. That's really it.
 
 It only requires us to understand how to write unit tests.
-Honestly, it doesn't take a whole lot of time to add tests, be it unit tests, integration tests, contract tests or API tests, once we understand a few things including -
+Honestly, it doesn't take a lot of time to add tests, be it unit tests, integration tests, contract tests or API tests, once we understand a few things including -
 - What do these tests stand for
     - It is essential to understand what is "unit" in a unit test, what is an "integration" test etc
 - What purpose do these tests serve
@@ -112,7 +112,7 @@ Honestly, it doesn't take a whole lot of time to add tests, be it unit tests, in
 - And, how to write these tests
     - It is essential to answer questions like "how do I write tests in X programming language with Y framework"
 
-Once we answer all these questions, it doesn't take a whole lot of time to add tests.
+Once we answer all these questions, it doesn't take a lot of time to add tests.
 
 There is still a forked argument that I can think of.
 
@@ -126,13 +126,13 @@ And yes, your system is not as simple as left shifting some elements but at the 
 gradually, so why not add tests for every small piece that gets built.
 
 *Important Side note:* If we remove the assumption that our slice is non-empty (ie; ```elements``` within the ```slice``` struct is non-empty), ```leftSlice``` method will fail.
-In fact, at this point in time, the only way to conclude that a non-empty slice will result in a failure is by walking through the code. Once we have the test
+In fact, at this point in time, the only way to conclude that an empty slice will result in a failure is by walking through the code. Once we have the test
 for the same, not only does it give us a safety net but also serves as a **live documentation** which gets updated everytime the behavior of the changes.
 
 ### Code today and add tests later
 
 One of the other theories that I have heard is "let's code today and add tests tomorrow or maybe later". There could be multiple reasons for this theory
-but probably, "delivery pressure" and a beautiful belief "code without automated tests is ok" should be the main reasons for this wonderful idea to pop up.
+but probably, "delivery pressure", and a beautiful belief "code without automated tests is ok" should be the main reasons for this wonderful idea to pop up.
 
 Let's see what would happen if we write code today and add tests later, forget TDD. Consider our favorite method ```leftShift``` and assume -
 - no tests are written
@@ -169,7 +169,7 @@ Are we going to stop churning stories tomorrow? Are we going to just add tests a
 
 The overall idea is just flawed.
 
-I know I could have hurt your emotions, but let's take a look at some of the benefits of automated tests and see the real gains.
+I know I could have hurt your emotions, but let's take a look at some benefits of automated tests and see the real gains.
 
 ### Benefits of automated tests
 
@@ -192,22 +192,22 @@ It is a huge confidence booster :) if all these questions are answered by passin
 Automated tests are a brilliant safety net, I can go ahead and refactor code without any fear. I know I have tests which would fail loudly if I mess things up, so there is no fear of making mistakes while refactoring.
 
 I think it would be a very courageous move to refactor code without tests. (*Honestly, I don't know if it is a courageous move or a stupid move.*)
-But, if I decide to refactor code without tests, I think I would be plagued by anxiety, there will be a constant banging in the head - what if refactoring breaks the code,
-can I just stop refactoring here, is it really necessary to refactor etc. And with tests written for the code, there is no case of anxiety or fear.
+But, if I decide to refactor code without tests, I think I would be blocked by anxiety, there will be a constant banging in the head - what if refactoring breaks the code,
+can I just stop refactoring here, is it really necessary to refactor etc. With tests written for the code, there is no case of anxiety or fear.
 
 <blockquote class="wp-block-quote">
-	Tests are anxiety busters :)
+	Tests are anxiety busters :), especially unit tests
 </blockquote>
 
 **Provide quick feedback**
 
 Automated tests provide quick feedback on any change that is done in the code.
-Assume (just assume) we are refactoring a long method and we do not have tests. Let's try and imagine what the world would look like now -
+Assume (just assume) we are refactoring a long method, and we do not have tests. Let's try to imagine what the world would look like now -
 1. Extract a piece of code into a new method
 2. Run the entire application, send some requests and see if the extraction worked
 3. It worked, congratulations
 4. Rename the extracted method
-5. Run the entire application, send some requests and see if the rename worked
+5. Run the entire application, send some requests and see if renaming worked
 6. It worked, congratulations again
 7. Change the number of parameters of the extracted method
 8. Run the entire application, send some requests and see if the change in number of parameters worked
@@ -216,10 +216,25 @@ Assume (just assume) we are refactoring a long method and we do not have tests. 
 
 ...
 
-If there were unit tests, we could have run them every time on every change and it would have been way quicker than running the entire application N times.
+If there were unit tests, we could have run them every time on every change, and it would have been way quicker than running the entire application N times.
 There is a strange part that I don't seem to understand, I will explain.
 If the argument for not writing tests or deferring writing tests is "lack of time", then, where would you get time for running the application N times
 to validate if a change has worked.
+
+**Provide ability to move fast under pressure**
+
+Automated tests provide the ability to move fast under pressure. Let's say a production defect is found and  if we have unit tests, we are SAFE. 
+Under production issue pressure what we don't want to do is make a small problem explode into a bigger one.
+With unit tests in place, all we do is - 
+- replicate the issue by adding a failing test
+- make the necessary code changes to pass the test
+- run the entire test suite, if all is "green", we are good
+
+*Important Side note:* What we also don't want to do is "just write UI tests in a web application". We need quick feedback for any changes that we make in the code, and it becomes even more essential to figure out what kind of tests would make more sense for a given situation.
+
+For instance, if there is a method which sorts all the "orders" based on "order date". It does not make sense to test it as a part of some UI based test,
+all this method does is "sorting of a collection based on an attribute". Just add unit tests for the use-case and that is good enough to prove that a part
+of the functionality (sorting) is working fine.
 
 **Act as documentation**
 
@@ -274,7 +289,7 @@ By not adding automated tests or by deferring addition of tests, we are just los
 ### Would you buy a car without brakes?
 
 One of the things that the automated tests provide is a "safety net" which in turn allows us to make changes in code with confidence. I am not sure why do we even call software delivery a delivery, without automated tests.
-Let's try and draw an analogy between "building software" and "manufacturing car".
+Let's try to draw an analogy between "building software" and "manufacturing car".
 
 <blockquote class="wp-block-quote">
     <p>If it is ok to write code without tests, to deliver software without tests, then we should be ok to buy a car without brakes. </p>
@@ -298,10 +313,13 @@ tests because of some code coverage policy in the organization, it is about "bui
 I don't see any reason for not writing tests or deferring the addition of tests. I think once you get addicted to "quick feedback", this point of developing
 without tests, writing code today and adding tests later and not doing TDD automatically goes away.
 
-If a team finds it difficult to write tests or it takes too long to write tests, then the team needs to practice it more.
-Practice till it becomes a habit. Not adding tests is not a solution. It is an easy hack.
+If a team finds it difficult to write tests, or it takes too long to write tests, then the team needs to practice it more.
+Practice till it becomes a habit. Not adding tests is not a solution. It is an easy hack but very expensive.
 
-If a team believes their software has been working without issues and that too without tests, I think it is just a matter of "when", not "if". Try and
+If a team believes their software has been working without issues and that too without tests, I think it is just a matter of "when", not "if". Try to
 get better at things before it all comes crashing down.
 
 If a team believes there is delivery pressure today and tests can be added tomorrow, then the team needs to be sure of one thing - "That tomorrow is never coming".
+
+### Mentions
+I would like to thank [Gurpreet Luthra](https://life-lessons.in/) for providing feedback on the article. Thank you Gurpreet. 
