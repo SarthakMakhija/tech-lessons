@@ -292,7 +292,7 @@ One of the fundamental ideas behind coding is to break a problem into small piec
 code and tests. I will explain.  Let's say we want to build a [linked list](https://www.geeksforgeeks.org/linked-list-set-1-introduction/) which supports ```get(key)```
 and ```put(key, value []byte)```.
 
-The idea would be to break the problem into small solvable problems and attempt to solve the simplest. One of the task list could be - 
+The idea would be to break the problem into small solvable problems and attempt to solve the simplest. One of the task lists could be - 
 - Build a linked list which supports ```put(key, value)``` with a single node
 - Add tests to assert that ```put(key, value)``` works
 - Enhance linked list which now supports ```put(key, value)``` with multiple nodes
@@ -310,7 +310,9 @@ A test says, "Hey, ```get``` is failing when a key is not present", code says, "
 Code says, "I will return an error if value for a key is not present" and test would say "let me check if it makes sense from a client's perspective and get back".
 
 Essentially, it's the very act of design and coding that needs small focused episodes with actual code, driving the code with various scenarios.
-Tests and TDD help by adding some specific guidance to it, which is a huge benefit
+Tests and TDD help by adding some specific guidance to it, which is a huge benefit.
+
+*If all of this is not good enough, then ..*
 
 ### Would you buy a car without brakes?
 
