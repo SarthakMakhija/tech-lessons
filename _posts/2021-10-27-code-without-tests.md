@@ -336,13 +336,41 @@ tests because of some code coverage policy in the organization, it is about "bui
 	It is our responsibility to ensure these "brakes" exist in the code (or the system) and they are reliable. They should not exist just for the sake of existing. 
 </blockquote>
 
+### Time is still a factor, isn't it?
+
+Yes, it is and that is where a combination of a couple of things is needed, **passion to learn and improve** and **the support from leadership in the
+project (or the account).**
+
+Let's see a few ways in which this can be done - 
+
+**Setting realistic expectations**
+
+It is essential for the leadership in the account to be aware of the situation on the ground before making any commitment. If the team needs time to learn
+and work on automated testing, it should be baked in the release plan, probably by keeping a low velocity in the initial iterations (assuming agile) and then gradually
+attempting to increase it as the team becomes more and more comfortable with automated testing.
+
+**Investing in the team**
+
+It is essential to provide learning resources like books / videos / articles to the team to help them learn automated testing. At the same time, it is 
+very much needed for the team to come together and align on (automated) testing strategy. 
+
+**Building a culture of continuous improvement**
+
+It is essential to build a culture of continuous improvement, "Done" is not an option. If a team is not doing automated testing, it needs to learn, probably
+a few members need to act as "catalysts". 
+They shouldn't stop at learning, they need to practice it, check how various open source projects are doing it and teach it to other team members. 
+A team can try to do "lunch and learn", "mob pairing", or "collaborative code improvement" type of sessions.
+
+*These are just a few ways, but the idea is - teams should make attempts to improve, and the necessary "support system" should be built around the team.*
+
 ### Conclusion
 
 I don't see any reason for not writing tests or deferring the addition of tests. I think once you get addicted to "quick feedback", this point of developing
 without tests, writing code today and adding tests later and not doing TDD automatically goes away.
 
 If a team finds it difficult to write tests, or it takes too long to write tests, then the team needs to practice it more.
-Practice till it becomes a habit. Not adding tests is not a solution. It is an easy hack but very expensive.
+Practice till it becomes a habit. Not adding tests is not a solution. It is an easy hack but an expensive one. At the same time,
+the necessary "support system" should be built around the team.
 
 If a team believes their software has been working without issues and that too without tests, I think it is just a matter of "when", not "if". Try to
 get better at things before it all comes crashing down.
@@ -350,4 +378,5 @@ get better at things before it all comes crashing down.
 If a team believes there is delivery pressure today and tests can be added tomorrow, then the team needs to be sure of one thing - "That tomorrow is never coming".
 
 ### Mentions
-I would like to thank [Gurpreet Luthra](https://life-lessons.in/) and [Unmesh Joshi](https://github.com/unmeshjoshi) for providing feedback on the article. Thank you Gurpreet and Unmesh. 
+I would like to thank [Gurpreet Luthra](https://life-lessons.in/), [Unmesh Joshi](https://github.com/unmeshjoshi) 
+and [Sunit Parekh](https://www.sunitparekh.in/about/) for providing feedback on the article. Thank you Gurpreet, Unmesh and Sunit. 
