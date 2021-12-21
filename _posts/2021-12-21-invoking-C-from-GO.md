@@ -125,10 +125,10 @@ import "C"
 
 This is how the beginning of our go file looks like - 
 - Go package is `linkedlist`
-- The import "C" allows us to interface with C code
+- Adding the line `#cgo CFLAGS: -g -Wall` compiles the C code with gcc options: (-g) which is used to enable debug symbols and (-Wall) which is used to enable all warnings
+- `linkedlist.h` is included for our linked list related functions
+- The import "C" allows us to integrate with C code
 - The comments above `import C` represent the actual C code that will be consumed by the rest of our golang code 
-- We include `linkedlist.h` for our linked list related functions 
-- Adding the line `#cgo CFLAGS: -g -Wall` compiles the C files with the gcc options: -g which is used to enable debug symbols and -Wall which is used to enable all warnings
 
 Let's add `Put` in Golang.
 
