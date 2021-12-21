@@ -27,17 +27,17 @@ of invoking C code from Golang, let's see a use-case where this might be needed.
 
 ### Interfacing with an existing C library
 Let's consider that we wish to develop a storage engine for pmem (persistent memory) in Golang. In order to develop this, we might want to use
-[pmdk](https://github.com/pmem/pmdk) which is written in C. This effectively means we want a way to bridge Golang and C code; invoke C code 
+[pmdk - persistent memory development kit](https://github.com/pmem/pmdk) which is written in C. This effectively means we want a way to bridge Golang and C code; invoke C code 
 from Golang.
 
 ### "C" package in Golang
-Go provides a package called "C" to interface with C code. Some features provided by this package includes - 
+Go provides a package called "C" to interface with C code. Some features provided by this package include - 
 - standard C numeric types
 - access to structs defined in C
 - access to function like `malloc` and `free`
 
 ### C Code
-Let's create a linked list in C which will be later invoked from Golang code. Let's start with `linkedlist.h` file which defines the `Node` struct, and the operations supported by linked list.
+Let's start by creating a linked list in C which will be later invoked from Golang code. Let's start with `linkedlist.h` file which defines a struct called `Node`, and a set of operations supported by linked list.
 
 {% highlight C %}
 struct Node {
@@ -50,7 +50,7 @@ void put(int key, int value);
 int get(int key);
 {% endhighlight %}
 
-Our `Node` class has a key, a value which is of type `integer` and a pointer to the next node. It supports 2 behaviors `put` and `get`.
+Our `Node` struct has a key, and a value which are of type `integer` and a pointer to the next node. It also supports 2 behaviors `put` and `get`.
 
 Let's add `linkedlist.c` and add `put` to begin with.
 
@@ -80,15 +80,15 @@ void put(int key, int value) {
 
 `put` does the following -
 - If head is NULL
-  - create a `new node`
-  - point `head` to the `new node`
-  - assign key and value to the `head`
-  - point `current` to the `head`
+  - Creates a `new node`
+  - Points `head` to the `new node`
+  - Assigns key and value to the `head`
+  - Points `current` to the `head`
 - Else
-  - create a `new node`
-  - assign key and value to the `new node`
-  - assign `next` of the `current` node to the `new node`
-  - point `current` to the `new node`  
+  - Creates a `new node`
+  - Assigns key and value to the `new node`
+  - Assigns `next` of the `current` node to the `new node`
+  - Points `current` to the `new node`  
 
 Let's add `get` which will return a value by key.
 
@@ -106,14 +106,14 @@ int get(int key) {
 {% endhighlight %}
 
 `get` does the following -
-- Make a temporary variable `node` point to `head`
-- Iterate while `node` is not NULL and `key of the node` is not equal to the incoming `key`
-- If `node` is NULL, return -1
-- Else return the value pointed by `node`
+- Makes a temporary variable `node` point to `head`
+- Iterates while `node` is not NULL and `key of the node` is not equal to the incoming `key`
+- If `node` is NULL, returns -1
+- Else returns the value pointed by `node`
 
 ### Time to invoke C code from Golang
 
-Let's create a file `linkedlist.go` which will provide `Put` and `GetByKey` behaviors. These functions will internally invoke C functions.
+Let's create a file `linkedlist.go` which will provide `Put` and `GetBy` behaviors. These functions will internally invoke C functions.
 
 {% highlight golang %}
 package linkedlist
@@ -126,11 +126,11 @@ import "C"
 This is how the beginning of our go file looks like - 
 - Go package is `linkedlist`
 - The import "C" allows us to interface with C code
-- The comments above it is the actual C code that will be consumed by the rest of our golang code 
+- The comments above `import C` represent the actual C code that will be consumed by the rest of our golang code 
 - We include `linkedlist.h` for our linked list related functions 
-- Directives for cgo - adding the line `#cgo CFLAGS: -g -Wall` compiles the C files with the gcc options -g which is used to enable debug symbols and -Wall which is used to enable all warnings
+- Adding the line `#cgo CFLAGS: -g -Wall` compiles the C files with the gcc options: -g which is used to enable debug symbols and -Wall which is used to enable all warnings
 
-Let's add `Put`.
+Let's add `Put` in Golang.
 
 {% highlight golang %}
 func Put(key, value int) {
@@ -140,7 +140,7 @@ func Put(key, value int) {
 
 Golang `Put` does the following -
 - Creates a C int by using `C.int` on key and value
-- Invokes `put` by using `C.put`
+- Invokes `put` by using `C.put`, passing C.int
 
 Let's add `GetBy`.
 
@@ -153,7 +153,7 @@ func GetBy(key int) int {
 Golang `GetBy` does the following -
 - Creates a C int by using `C.int` on key
 - Invokes `get` by using `C.get`
-- Convert the return value from `C.get(C.int(key))` to `Golang's int`
+- Convert the return value received from `C.get(C.int(key))` to `Golang's int`
 
 *Putting it all together* -
 
@@ -213,10 +213,10 @@ void close() {
 {% endhighlight %}
 
 `close` does the following -
-- Make a temporary variable `node` 
-- Iterate while `head` is not NULL 
-- Make `node` point to head and move head ahead
-- free the memory pointed to by `node`
+- Makes a temporary variable `node` 
+- Iterates while `head` is not NULL 
+- Makes `node` point to head and moves `head` ahead
+- Frees the memory pointed to by `node`
 
 Let's invoke `C's close` from Golang
 
@@ -252,7 +252,7 @@ func TestPutsMultipleKeyValues(t *testing.T) {
 }
 {% endhighlight %}
 
-As a part of these tests, we are now closing the linked list `defer linkedlist.Close()` which will internally free all the nodes.
+As a part of these tests, we are now closing the linked list by invoking `defer linkedlist.Close()` which will internally free all the nodes.
 
 ### Let's get all the values
 We would like to return all the values from linked list. As a first step, we would like to return a pointer to an integer from C code to Golang.
@@ -276,11 +276,11 @@ int* getAllValues() {
 
 `getAllValues` does the following -
 - Invokes `length` to get the total number of nodes in the linked list
-- Allocate memory to hold `len` integer values in a variable called `values`
-- Create a pointer called `node` to point to `head`
-- Iterate while `node` is not NULL
-- Collect the value pointed to by `node` in `values`
-- Return `values` which is a pointer to an integer
+- Allocates memory to hold `len` integer values in a variable called `values`
+- Creates a pointer called `node` to point to `head`
+- Iterates while `node` is not NULL
+- Collects the value pointed to by `node` in `values`
+- Returns `values` which is a pointer to an integer
 
 Let's also add `length` function -
 
@@ -296,10 +296,10 @@ int length() {
 }
 {% endhighlight %}
 `length` does the following -
-- Create a pointer called `node` to point to `head`
-- Iterate while `node` is not NULL
-- Increment count for each node
-- Return count
+- Creates a pointer called `node` to point to `head`
+- Iterates while `node` is not NULL
+- Increments count for each node
+- Returns count
 
 Time to invoke `getAllValues` from Golang.
 
@@ -322,9 +322,9 @@ func GetsAllValues() []int {
 `GetAllValues` does the following -
 - Invokes `C.length` to get the total number of linked list nodes
 - Invokes `C.getAllValues()` to get a pointer to an integer
-- We would like to free the memory held by the pointer to an integer returned from `C.getAllValues()`. In order to do that, we need to invoke `C.free` and
+- We would like to free the memory held by the pointer returned from `C.getAllValues()`. In order to do that, we need to invoke `C.free` and
   we use `unsafe.Pointer` which allows creating a pointer to any arbitrary type
-- In order to be able to invoke `C.free` or `C.malloc` we need to import `stdlib.h` in Golang code
+- In order to be able to invoke `C.free` or `C.malloc`, we need to import `stdlib.h` in Golang code
 - So far we have a pointer or let's say a C pointer. We need a way to convert that to Go slice. 
   
 The expression `slice := (*[1 << 28]C.int)(unsafe.Pointer(intPointer))[:length:length]` is made up of 3 parts -
@@ -358,6 +358,8 @@ func TestGetAllValues(t *testing.T) {
     }
 }
 {% endhighlight %}
+
+That is it, run the test and get all the values from linked list.   
 
 ### Code
 The code for this article is available [here](https://github.com/SarthakMakhija/CGO-learning)
