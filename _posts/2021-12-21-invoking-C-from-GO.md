@@ -328,14 +328,16 @@ func GetsAllValues() []int {
 - So far we have a pointer or let's say a C pointer. We need a way to convert that to Go slice. 
   
 The expression `slice := (*[1 << 28]C.int)(unsafe.Pointer(intPointer))[:length:length]` is made up of 3 parts -
+
 {% highlight golang %}
-    1. unsafePointer := unsafe.Pointer(intPointer) creates an unsafe pointer
+1. unsafePointer := unsafe.Pointer(intPointer) creates an unsafe pointer
 
-    2. arrayPtr := (*[1 << 28]C.int)(unsafePointer).`*[1 << 28]C.YourType` doesn't do anything itself, it is a type. 
-    Specifically, it is a pointer to an array of size 1 << 28, of C.YourType values. 
-    Statement 2) converts unsafePointer to a pointer of the type *[1 << 28]C.int
+2. `https://stackoverflow.com/questions/64852226/how-to-iterate-through-a-c-array` 
+   arrayPtr := (*[1 << 28]C.int)(unsafePointer).`*[1 << 28]C.YourType` doesn't do anything itself, it is a type. 
+   Specifically, it is a pointer to an array of size 1 << 28, of C.YourType values. 
+   Statement 2) converts unsafePointer to a pointer of the type *[1 << 28]C.int
 
-    3. slice := arrayPtr[:length:length], slices the array into a Go slice
+3. slice := arrayPtr[:length:length], slices the array into a Go slice
 {% endhighlight %}
 
 - We now have a Golang slice of type `C.int` but we need to return a Golang slice of `Go int`. So we iterate through the `slice`, convert `C.int` to `Golang int`,
