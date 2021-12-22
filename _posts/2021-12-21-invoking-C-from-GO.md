@@ -332,7 +332,7 @@ The expression `slice := (*[1 << 28]C.int)(unsafe.Pointer(intPointer))[:length:l
 {% highlight golang %}
 1. unsafePointer := unsafe.Pointer(intPointer) creates an unsafe pointer
 
-2. `https://stackoverflow.com/questions/64852226/how-to-iterate-through-a-c-array` 
+2. `https://stackoverflow.com/questions/48756732/what-does-1-30c-yourtype-do-exactly-in-cgo` 
    arrayPtr := (*[1 << 28]C.int)(unsafePointer).`*[1 << 28]C.YourType` doesn't do anything itself, it is a type. 
    Specifically, it is a pointer to an array of size 1 << 28, of C.YourType values. 
    Statement 2) converts unsafePointer to a pointer of the type *[1 << 28]C.int
@@ -369,4 +369,5 @@ The code for this article is available [here](https://github.com/SarthakMakhija/
 ### References
 - [Calling C code from go](https://karthikkaranth.me/blog/calling-c-code-from-go/)
 - [Golang slices and C pointers](https://stackoverflow.com/questions/64852226/how-to-iterate-through-a-c-array)
+- [What does 1-30c-yourtype do exactly in cgo](https://stackoverflow.com/questions/48756732/what-does-1-30c-yourtype-do-exactly-in-cgo)  
 - [ld: symbol(s) not found for architecture x86_64](https://github.com/golang/go/issues/31409)
