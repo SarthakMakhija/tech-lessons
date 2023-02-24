@@ -16,10 +16,11 @@ author: sarthakmakhija
 permalink: "/count-min-sketch/"
 feature-img: "assets/img/pexels/carbon.png"
 thumbnail: "assets/img/pexels/carbon.png"
-excerpt: Count-min Sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data. It uses hash functions to map events to frequencies, but unlike a hash table, it uses only sublinear space, at the expense of over-counting some events due to hash collisions.
+caption: "Photo by Alessio Soggetti on Unsplash"
+excerpt: Count-min sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data. It uses hash functions to map events to frequencies, but unlike a hash table, it uses only sublinear space, at the expense of over-counting some events due to hash collisions.
 ---
 
-Count-min Sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data.
+Count-min sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data.
 
 It uses hash functions to map events to frequencies, but unlike a hash table, it uses only sublinear space, at the expense of over-counting some events due to hash collisions. The count–min sketch was invented in 2003 by Graham Cormode and S. Muthu Muthukrishnan.
 
@@ -38,8 +39,6 @@ This is where Count-min sketch comes into the picture. The count-min sketch is a
 </div>
 
 Count-min sketch is represented as a D*W matrix, where D is the total number of hash functions (or depth) and W is the width or the number of counters per hash function. The matrix is initialized with zero at the beginning. Count-min sketch can be represented with the following structure:
-
-// Photo by Alessio Soggetti on Unsplash
 
 ```golang
 const depth = 4

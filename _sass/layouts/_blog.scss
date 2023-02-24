@@ -35,6 +35,11 @@ h5 {
 	font-family: $font-family-logo;
 }
 
+figcaption {
+  font-style: italic;
+  font-size: 0.6em;
+}
+
 p:last-child {
 	margin-bottom: 0;
 }

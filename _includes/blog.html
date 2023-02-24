@@ -4,9 +4,14 @@
         {% if post.thumbnail %}
         <div class="post-img">
             <a aria-label="{{ post.title }}" href="{{ post.url | relative_url }}">
-                <img alt="{{ post.title }}" src="{{ post.thumbnail | relative_url }}">
+                <img  alt="{{ post.title }}" src="{{ post.thumbnail | relative_url }}">
             </a>
         </div>
+        {% if post.caption %}
+        <div>
+            <figcaption >{{post.caption}}</figcaption>
+        </div>
+        {% endif %}
         {% endif %}
         <span>
           <header>
