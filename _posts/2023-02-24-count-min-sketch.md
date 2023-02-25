@@ -26,10 +26,10 @@ It uses hash functions to map events to frequencies, but unlike a hash table, it
 
 ### Understanding Count-min Sketch
 
-Let's say we want to build a solution to count the frequency of elements in a data stream. One of the ideas would be to use a `hashmap` with the data element as the key and count as the value. The approach works but does not scale in the case of a data stream with billions of elements and most of which are unique.
+Let’s say we want to build a solution to count the frequency of elements in a data stream. One idea would be to use a `hashmap` with the data element as the key and count as the value. The approach works but does not scale with a data stream comprising billions of elements and most of which are unique.
 
 We will have two challenges with `hashmap` in this case:
-1. The number of elements in the hashmap will tend towards billion(s). The overall space complexity would be nearly O(N)[^1]
+1. The number of elements in the hashmap will tend towards billion(s). The overall space complexity would be O(N)[^1]
 2. Rehashing can place significant CPU pressure
 
 This is where the Count-min sketch comes into the picture. The count-min sketch is a probabilistic data structure that can **estimate** the frequency of elements by using sublinear space at the expense of over-counting some elements due to hash collisions.
@@ -129,10 +129,10 @@ Let's quickly understand the test:
 
 ### 4-bit counter
 
-The idea behind four bit counter deserves its own mention.
+The idea behind the four-bit counter deserves its mention.
 
 - With four bits we can represent a maximum value of 15 `(00001111)`. This implies that the counter should freeze the moment it reaches 15.
-- We need a way to use both the lower and the upper four bits to represent counters for 2 different keys.
+- We need to use both the lower and the upper four bits to represent counters for 2 different keys.
 - Let's use the *lower four bits to store the counter for even positions of the matrix* and *higher four bits for odd positions of the matrix*.
 
 <div class="align-center">
