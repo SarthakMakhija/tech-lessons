@@ -18,6 +18,7 @@ author: sarthakmakhija
 permalink: "/diving-into-java-bytecode/"
 feature-img: "assets/img/pexels/diving-into-java-bytecode.png"
 thumbnail: "assets/img/pexels/diving-into-java-bytecode.png"
+caption: "Photo by Kalle Kortelainen on Unsplash"
 excerpt: Java code is compiled into an intermediate representation called "bytecode". It is this bytecode which gets executed by JVM and is later converted into machine specific instructions by JIT compiler. With this article, we attempt to dive into bytecode and understand the internals of various bytecode operations.
 ---
 
