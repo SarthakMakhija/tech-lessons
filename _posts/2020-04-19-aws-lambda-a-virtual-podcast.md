@@ -14,8 +14,9 @@ tags:
 - Serverless
 author: sarthakmakhija
 permalink: "/aws-lambda-a-virtual-podcast/"
-feature-img: "assets/img/pexels/aws-lambda-virtual-podcast.png"
-thumbnail: "assets/img/pexels/aws-lambda-virtual-podcast.png"
+feature-img: "assets/img/pexels/aws-lambda-virtual-podcast.jpg"
+thumbnail: "assets/img/pexels/aws-lambda-virtual-podcast.jpg"
+caption: "Photo by Gezer Amorim on Pexels"
 excerpt: AWS Lambda is a serverless compute service and after having worked with it for sometime, I felt it is a good time for me to share my learning and experiences. I have been thinking of writing an article in a "Virtual Podcast format" and felt this could be the one.        
 ---
 
