@@ -18,6 +18,7 @@ author: sarthakmakhija
 permalink: "/code-without-automated-tests/"
 feature-img: "assets/img/pexels/code-without-tests.png"
 thumbnail: "assets/img/pexels/code-without-tests.png"
+caption: "Photo by Ana Arantes on Pexels"
 excerpt: What would it really mean to write code without automated tests, to deliver software without automated tests. Why would someone even think of writing code today and adding tests later?
 ---
 
