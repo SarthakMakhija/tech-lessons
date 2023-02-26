@@ -20,32 +20,32 @@ thumbnail: "assets/img/pexels/carbon.png"
 caption: "Photo by Richard Horvath on Unsplash"
 excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
 ---
-A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set". 
+A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
 
 A bloom filter can have false positives, but false negatives are not possible.
 
 Elements can only be added to the set, *but not removed* (though this can be addressed with the counting bloom filter variant).
 
-The idea of bloom filter was conceived by Burton Howard Bloom in 1970.
+Bloom filter was conceived by Burton Howard Bloom in 1970.
 
 ### A basic filter
 
-Let's try to build a basic filter for a huge persistent dictionary consisting of lowercase english words. Here are some requirements for this filter: 
+Let's try to build a basic filter for a huge persistent dictionary consisting of lowercase English words. Here are some requirements for this filter:
 
 1. It should not take more than 26 bytes of memory
 2. It should return either **possibly in the set** or **definitely not in the set**
 3. Our application will query the filter first and only if the filter returns "possibly in the set", the application will query the persistent dictionary
 
-One idea to design such a filter would be to maintain a `boolean` array of size 26 (26 lowercase english letters), to **indicate the presence** of a word beginning with a character. 
+One idea to design such a filter would be to maintain a `boolean` array of size 26 (26 lowercase English letters), to **indicate the presence** of a word beginning with a character.
 
 The filter does not store the actual word, it only indicates the presence of a word. To do that, we set the value at the array index corresponding to the first letter to `true`. The word gets added to the persistent dictionary after it is added to the basic filter.
 
 In order to check if the dictionary contains a given word, the application queries the filter first. The filter checks the value at the index corresponding to the first letter [`firstLetterOfTheWord-asciiCodeOf('a')`] and returns `true` if the value at the index is set, `false` otherwise.
 
 Let's understand the returned values from the filter:
-- If the returned value is `false`, we can conclude that the word is definitely not present in the persistent dictionary 
+- If the returned value is `false`, we can conclude that the word is definitely not present in the persistent dictionary
 - If the returned value is `true`, we can not be sure if the word is present because there may be multiple words starting with the same letter
- 
+
 The idea behind the basic filter is presented in the image below.
 
 <div class="align-center">
@@ -57,11 +57,11 @@ The image above also highlights a false positive case for the word "fact".
 ### Understanding bloom filter
 
 We should be able to extend the idea of the basic filter to build a bloom filter. There are 2 main issues with our basic filter:
-1. The `boolean` array of size 26 is too small. There are billions of words in english and an array of size 26 will cause too many false positives
+1. The `boolean` array of size 26 is too small. There are billions of words in English and an array of size 26 will cause too many false positives
 2. We are using a single hash function to determine the array position to set or read. This hash function is `firstLetterOfTheWord-asciiCodeOf('a')`
 
-The solution to both these problems takes us closer to bloom filter. The bloom filter is based on two main concepts:
-1. M sized bit vector
+The solution to both these problems takes us closer to the bloom filter. The bloom filter is based on two main concepts:
+1. M-sized bit vector
 2. K hash functions
 
 The bloom filter maintains a bit array of size `M` (`M` needs to be computed) and every key goes through `K` hash functions to determine the bit position to set.
@@ -70,7 +70,7 @@ Bloom filter supports two operations:
 1. `put` that puts a key in the bloom filter
 2. `has` that returns either **possibly in the bloom filter** or **definitely not in the bloom filter**
 
-Let's summarize the working of `put` operation. In order to put a key in the bloom filter, following steps need to pe performed:
+Let's summarize the working of the `put` operation. In order to put a key in the bloom filter, the following steps need to be performed:
 
 1. The input key goes through K hash functions.
 2. The output of every hash function is reduced to a value between `0 and M-1` to set the appropriate bit in the bit vector.
@@ -78,20 +78,20 @@ Let's summarize the working of `put` operation. In order to put a key in the blo
 
 Every input goes through `K` hash functions, thereby setting at most `K` bits in the bit vector.
 
-The idea behind `put` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size).
+The idea behind the `put` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size).
 
 <div class="align-center">
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/bloomfilterput.png" class="wp-image-878"/>
 </div>
 
-Let's summarize the working of `has` operation. In order to determine if a key **may be** present in the bloom filter, following steps need to pe performed:
+Let's summarize the working of the `has` operation. In order to determine if a key **maybe** present in the bloom filter, the following steps need to be performed:
 
 1. The input key goes through K hash functions.
 2. The output of every hash function is reduced to a value between `0 and M-1` to get the appropriate bit in the bit vector.
 3. The corresponding bit is checked to see if it is set. If the bit is not set, we return `false`.
-4. We return `true` if all the bits determined from step 1 and 2 are set.
+4. We return `true` if all the bits determined from steps 1 and 2 are set.
 
-The idea behind `has` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size).
+The idea behind the `has` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size).
 
 <div class="align-center">
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/bloomfilterhas.png" class="wp-image-878"/>
@@ -119,8 +119,8 @@ func TestAddsAKeyAndChecksForItsPositiveExistence(t *testing.T) {
 As a part of this test, we do the following:
 1. Create a new bloom filter with `capacity=20` and `falsePositiveRate=0.001`
 2. Create a new key of type `model.Slice`. Keys are represented by `Slice` abstraction which is a wrapper over a byte slice.
-3. Put the key.
-4. Assert that the key is present in bloom filter
+3. Put the key in.
+4. Assert that the key is present in the bloom filter
 
 ```golang
 func TestAddsAKeyAndChecksForTheExistenceOfANonExistingKey(t *testing.T) {
@@ -137,13 +137,13 @@ func TestAddsAKeyAndChecksForTheExistenceOfANonExistingKey(t *testing.T) {
 
 This test is very much similar to the previous one. As a part of this test, we want to assert that the given key should not be present in the bloom filter.
 
->A test of this nature can fail in the case of false positive.
+>A test of this nature can fail in the case of a false positive.
 
-Now is the right time to build bloom filter.
+Now is the right time to build a bloom filter.
 
 ### Building bloom filter
 
-Let's understand the structure of  `BloomFilter` before we get in to the functions.
+Let's understand the structure of  `BloomFilter` before we get into the functions.
 
 ```golang
 type BloomFilter struct {
@@ -155,11 +155,11 @@ type BloomFilter struct {
 }
 
 func newBloomFilter(capacity int, falsePositiveRate float64) *BloomFilter {
-	
-    //determine the numbe of hash functions
+   
+    //determine the number of hash functions
     numberOfHashFunctions := numberOfHashFunctions(falsePositiveRate)
     
-    //determing the bit vector size
+    //determine the bit vector size
     bitVectorSize := bitVectorSize(capacity, falsePositiveRate)
     
     //create a new instance of BloomFilter with a bit vector of determined size
@@ -179,7 +179,7 @@ The idea behind `newBloomFilter` function can be summarized as:
 3. Create a new instance of `BitSet` using `bitset.New(...)`
 4. Return a new instance of `BloomFilter`
 
->The field `bitVector` inside `BloomFilter` struct is a pointer to `bitset.BitSet`. We are using the `bitset` package offered by the library [bits-and-blooms](https://github.com/bits-and-blooms/).
+>The field `bitVector` inside the `BloomFilter` struct is a pointer to `bitset.BitSet`. We are using the `bitset` package offered by the library [bits-and-blooms](https://github.com/bits-and-blooms/).
 
 The values of K and M are calculated using the below functions.
 
@@ -202,7 +202,7 @@ Now that we have determined the values of `K` and `M`, let's implement `Put`. Th
 2. Reduce the hashed value between `0 and M-1` to set the appropriate bit in the bit vector.
 3. Set the bit in the bit vector at the identified position.
 
-This is how the above approached can be implemented:
+This is how the above approach can be implemented:
 
 ```golang
 func (bloomFilter *BloomFilter) Put(key model.Slice) {
@@ -240,7 +240,7 @@ Let's implement `Has`. The idea can be summarized as:
 3. Check the bit in the bit vector at the identified position. If the bit is not set, return `false` to indicate that the input is definitely not present.
 4. If the bits at all the identified positions are set, return `true` to indicate that the input **may be present**.
 
-This is how the above approached can be implemented:
+This is how the above approach can be implemented:
 
 ```golang
 func (bloomFilter *BloomFilter) Has(key model.Slice) bool {
@@ -257,9 +257,9 @@ func (bloomFilter *BloomFilter) Has(key model.Slice) bool {
 }
 ```
 
-### Space optimized data structure
+### Space-optimized data structure
 
-Bloom filter is a space optimized data structure that does not store the actual keys. Let's see the total space that we will need to store `half million keys` in the bloom filter.
+Bloom filter is a space-optimized data structure that does not store the actual keys. Let's see the total space that we will need to store `half a million keys` in the bloom filter.
 
 The values of K and M were calculated using the following functions.
 
@@ -277,15 +277,15 @@ func bitVectorSize(capacity int, falsePositiveRate float64) int {
 }
 ```
 
-Let's run these functions for `500000` keys and `0.001` as the false positive rate.
+Let's run these functions for the `500000` keys and `0.001` as the false positive rate.
 
 ```golang
 func main() {
-	numberOfHashFunctions := numberOfHashFunctions(0.001)
-	bitVectorSize := bitVectorSize(500000, 0.001)
-	
-	println("numberOfHashFunctions::", numberOfHashFunctions)
-	println("bitVectorSize::", bitVectorSize)
+   numberOfHashFunctions := numberOfHashFunctions(0.001)
+   bitVectorSize := bitVectorSize(500000, 0.001)
+   
+   println("numberOfHashFunctions::", numberOfHashFunctions)
+   println("bitVectorSize::", bitVectorSize)
 }
 ```
 
@@ -295,13 +295,13 @@ Let's understand BadgerDB makes use of the bloom filter concept.
 
 ### BadgerDB
 
-Bloom filter is used in a lot of projects including [BadgerDB](https://github.com/dgraph-io/badger) and [Apache Spark](https://github.com/apache/spark). This article explains the way bloom filter is used in BadgerDB.
+Bloom filter is used in a lot of projects including [BadgerDB](https://github.com/dgraph-io/badger) and [Apache Spark](https://github.com/apache/spark). This article explains the way the bloom filter is used in BadgerDB.
 
-> BadgerDB is an embeddable, persistent and fast key-value (KV) database written in pure Go. Badger’s design is a combination of LSM tree[^2] with value log and is based on a paper titled [WiscKey: Separating Keys from Values in SSD-conscious Storage](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)
+> BadgerDB is an embeddable, persistent and fast key-value (KV) database written in pure Go. Badger’s design is a combination of an LSM tree[^2] with a value log and is based on a paper titled [WiscKey: Separating Keys from Values in SSD-conscious Storage](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)
 
-A log-structured merge-tree (LSM tree) is a storage engine data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes on disk. In order to perform sequential writes on disk, LSM tree buffers the data in-memory and then flushes to disk once the in-memory buffer is full. In order to ensure durability of the data, every write is first added to a WAL (write-ahead log) file before updating the in-memory buffer. The in-memory buffer is called the memtable. After the memtable is full, it is converted to SSTable and flushed to disk.
+A log-structured merge tree (LSM tree) is a storage engine data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes on disk. In order to perform sequential writes on disk, the LSM tree buffers the data in memory and then flushes to disk once the in-memory buffer is full. In order to ensure the durability of the data, every write is first added to a WAL (write-ahead log) file before updating the in-memory buffer. The in-memory buffer is called the memtable. After the memtable is full, it is converted to SSTable and flushed to disk.
 
-Every `get(key)` operation first queries the in-memory memtable(s) to see if the value for the given key exists in memory. If not, the `get(key)` operation attempts to retrieve the value from SSTables (disk based structures).
+Every `get(key)` operation first queries the in-memory memtable(s) to see if the value for the given key exists in memory. If not, the `get(key)` operation attempts to retrieve the value from SSTables (disk-based structures).
 
 SSTables are organized into levels. Below is the organization of SSTables in [LevelDB](https://github.com/google/leveldb)
 
@@ -309,23 +309,23 @@ SSTables are organized into levels. Below is the organization of SSTables in [Le
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/sstable.png" class="wp-image-878"/>
 </div>
 
-The size of the SSTables (or the files) increase as we go down the levels.
+The size of the SSTables (or the files) increases as we go down the levels.
 
-One way to perform a `get(key)` operation on SSTables is to scan all the SSTables starting from `level=0 to level=N` and return the value as soon as it is found. This approach is brute-force, and it means a lot of IO cost.
+One way to perform a `get(key)` operation on SSTables is to scan all the SSTables starting from `level=0 to level=N` and return the value as soon as it is found. This approach is brute-force, and it means a lot of IO costs.
 
-This approach can be optimized by using bloom filter. Let's see how:
+This approach can be optimized by using a bloom filter. Let's see how:
 1. Every SSTable can be associated with its own filter.
 2. All the keys of an SSTable will be added to its bloom filter.
 
->SSTable (sorted string table) contains all the key value pairs in sorted order by key. SSTable file is organized into multiple sections including index block, bloom filter block, data block and footer block etc. BadgerDB puts the bloom filter (the byte array of the bloom filter) inside the SSTable. 
+>SSTable (sorted string table) contains all the key-value pairs in sorted order by key. SSTable file is organized into multiple sections including index block, bloom filter block, data block and footer block etc. BadgerDB puts the bloom filter (the byte array of the bloom filter) inside the SSTable.
 
-In order perform a `get(key)` operation on an SSTable, the application will query the bloom filter associated with it. 
+In order to perform a `get(key)` operation on an SSTable, the application will query the bloom filter associated with it.
 
->In order to query the bloom filter associated with an SSTable, the bloom filter block (byte array) needs to be read in memory. The information about the begin and the end offsets of the bloom filter is encoded in the footer block of the SSTable. 
+>In order to query the bloom filter associated with an SSTable, the bloom filter block (byte array) needs to be read in memory. The information about the begin and the end offsets of the bloom filter is encoded in the footer block of the SSTable.
 
-Only if the bloom filter returns `true`, the application will scan the data block of the SSTable to get the value of the given key. This also means, that an SSTable will be scanned even in the case of false-positives by bloom filter.
+Only if the bloom filter returns `true`, the application will scan the data block of the SSTable to get the value of the given key. This also means that an SSTable will be scanned even in the case of false positives by the bloom filter.
 
-Let's now look at BadgerDB's code to understand the use of bloom filter.
+Let's now look at BadgerDB's code to understand the use of the bloom filter.
 
 ```golang
 //some fields omitted
@@ -335,7 +335,7 @@ type levelsController struct {
 
 //get searches for a given key in all the levels of the LSM tree starting with startLevel
 //code omitted
-func (s *levelsController) get(key []byte, maxVs y.ValueStruct, startLevel int) (y.ValueStruct, error) {	
+func (s *levelsController) get(key []byte, maxVs y.ValueStruct, startLevel int) (y.ValueStruct, error) {   
     version := y.ParseTs(key)
     for _, level := range s.levels {
         // Ignore all levels below startLevel. This is useful for GC when L0 is kept in memory.
@@ -343,16 +343,16 @@ func (s *levelsController) get(key []byte, maxVs y.ValueStruct, startLevel int) 
             continue
         }
         //invoke levelHandler to get the value for the given key
-        valueStruct, err := level.get(key) 		
+        valueStruct, err := level.get(key)        
         if valueStruct.Version == version {
             return valueStruct, nil
-        }		
+        }     
     }
     return maxVs, nil
 }
 ```
 
-SSTables are organized into multiple levels and `levelsController` is an abstraction to represents these levels. Each level is represented by another abstraction called `levelHandler`. `levelsController` maintains an array of levels or `levelHandler`. The `get` method does the following:
+SSTables are organized into multiple levels and `levelsController` is an abstraction to represent these levels. Each level is represented by another abstraction called `levelHandler`. `levelsController` maintains an array of levels or `levelHandler`. The `get` method does the following:
 1. Scan through all the levels greater than or equal to the `startLevel`.
 2. For each level, ask the `levelHandler` to get the value for the key by invoking `level.get(key)`.
 3. Match the version of the key and if it matches return the received value.
@@ -370,7 +370,7 @@ type levelHandler struct {
 func (lHandler *levelHandler) get(key []byte) (y.ValueStruct, error) {
     tables, decr := lHandler.getTableForKey(key)
     
-    //get the key without timestamp
+    //get the key without a timestamp
     keyNoTs := y.ParseKey(key)
     
     //get the hash of the key
@@ -378,12 +378,12 @@ func (lHandler *levelHandler) get(key []byte) (y.ValueStruct, error) {
     
     var maxVs y.ValueStruct
     for _, table := range tables {
-        //if the table does not have the hash of the key, there is no point scanning the table
+        //if the table does not have the hash of the key, there is no point in scanning the table
         if table.DoesNotHave(hash) {
             continue
         }
     
-        //create an iterator over table
+        //create an iterator over the table
         iterator := table.NewIterator(0)
         defer iterator.Close()
     
@@ -396,7 +396,7 @@ func (lHandler *levelHandler) get(key []byte) (y.ValueStruct, error) {
         //store the value with the maximum version
         if y.SameKey(key, iterator.Key()) {
             if version := y.ParseTs(iterator.Key()); maxVs.Version < version {
-                maxVs 		  = iterator.ValueCopy()
+                maxVs       = iterator.ValueCopy()
                 maxVs.Version = version
             }
         }
@@ -405,7 +405,7 @@ func (lHandler *levelHandler) get(key []byte) (y.ValueStruct, error) {
 }
 ```
 The working of the `get` method of `levelHandler` can be summarized as:
-1. Get the hash of the key without timestamp.
+1. Get the hash of the key without a timestamp.
 2. Iterate through the tables (SSTables) and if the current table does not contain the given key, skip it and move to the next table.
 3. If the table **can contain** the given key, create an iterator over the table.
 4. Use `iterator.Seek` to seek to the given key.
@@ -416,7 +416,7 @@ The working of the `get` method of `levelHandler` can be summarized as:
 
 ### Code
 
-Code for this article is available [here](https://github.com/SarthakMakhija/probabilistic-data-structures/tree/main/membership).
+The code for this article is available [here](https://github.com/SarthakMakhija/probabilistic-data-structures/tree/main/membership).
 
 ### References
 
@@ -426,4 +426,4 @@ Code for this article is available [here](https://github.com/SarthakMakhija/prob
 - [LSM tree](https://segmentfault.com/a/1190000041198407/en)
 
 [^1]: [Probabilistic Data Structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset, rather than exact answers. These data structures are designed to handle large amounts of data in real-time, by making trade-offs between accuracy and time and space efficiency.
-[^2]: [LSM Tree](https://yetanotherdevblog.com/lsm/) A log-structured merge-tree (LSM tree) is a data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes.
+[^2]: [LSM Tree](https://yetanotherdevblog.com/lsm/) A log-structured merge tree (LSM tree) is a data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes.
