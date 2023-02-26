@@ -14,8 +14,12 @@ layout: default
         {% if page.subtitle %}
         <h2 class="subtitle">{{ page.subtitle }}</h2>
         {% endif %}
-
     </header>
+    {% if page.caption %}
+    <div>
+        <figcaption >{{page.caption}}</figcaption>
+    </div>
+    {% endif %}
     <section class="post-content">
         {% if page.bootstrap %}
         <div class="bootstrap-iso">
