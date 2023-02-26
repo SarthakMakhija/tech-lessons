@@ -15,8 +15,8 @@ tags:
 - Storage engine
 author: sarthakmakhija
 permalink: "/bloom-filter/"
-feature-img: "assets/img/pexels/carbon.png"
-thumbnail: "assets/img/pexels/carbon.png"
+feature-img: "assets/img/pexels/bloomfilter_title.png"
+thumbnail: "assets/img/pexels/bloomfilter_title.png"
 caption: "Photo by Richard Horvath on Unsplash"
 excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
 ---
