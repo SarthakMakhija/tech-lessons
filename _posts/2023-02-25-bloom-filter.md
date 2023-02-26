@@ -12,11 +12,12 @@ categories:
 tags:
 - Probabilistic data structures
 - Bloom filter
+- Storage engine
 author: sarthakmakhija
 permalink: "/bloom-filter/"
 feature-img: "assets/img/pexels/carbon.png"
 thumbnail: "assets/img/pexels/carbon.png"
-caption: "Photo by Alessio Soggetti on Unsplash"
+caption: "Photo by Richard Horvath on Unsplash"
 excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
 ---
 A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set". 
