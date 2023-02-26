@@ -16,7 +16,7 @@ I am an application developer at ThoughtWorks. I had worked with Citigroup and T
 
 I love working on my personal projects in free time. Some of my projects include –
 
-- [goselect](https://github.com/SarthakMakhija/goselect) : goselect provides SQL like 'select' interface for files. With goselect, one can execute `select name, path, size from . where or(like(name, result.*), eq(isdir, true)) order by 3 desc`
+- [goselect](https://github.com/SarthakMakhija/goselect) : SQL like 'select' interface for files. Execute `select name, path, size from . where or(like(name, result.*), eq(isdir, true)) order by 3 desc`
   to get the file name, file path and size of all the files that are either directories or their names begin with result. The result will be ordered by size in descending order.
 - [Gamifying Refactoring](http://gamifying-refactoring.github.io/) : Identify code smells and understand or justify WHY is something really a smell
 - [Serverless article series](https://github.com/aws-articles/serverless-order-service) : Article series on AWS Serverless
