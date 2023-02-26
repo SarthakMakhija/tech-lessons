@@ -20,7 +20,7 @@ caption: "Photo by Alessio Soggetti on Unsplash"
 excerpt: Count-min sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data. It uses hash functions to map events to frequencies, but unlike a hash table, it uses only sublinear space, at the expense of over-counting some events due to hash collisions.
 ---
 
-Count-min sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data.
+Count-min sketch (CM sketch) is a probabilistic data structure[^1] that serves as a frequency table of events in a stream of data.
 
 It uses hash functions to map events to frequencies, but unlike a hash table, it uses only sublinear space, at the expense of over-counting some events due to hash collisions. The count–min sketch was invented in 2003 by Graham Cormode and S. Muthu Muthukrishnan.
 
@@ -29,7 +29,7 @@ It uses hash functions to map events to frequencies, but unlike a hash table, it
 Let’s say we want to build a solution to count the frequency of elements in a data stream. One idea would be to use a `hashmap` with the data element as the key and count as the value. The approach works but does not scale with a data stream comprising billions of elements and most of which are unique.
 
 We will have two challenges with `hashmap` in this case:
-1. The number of elements in the hashmap will tend towards billion(s). The overall space complexity would be O(N)[^1]
+1. The number of elements in the hashmap will tend towards billion(s). The overall space complexity would be O(N)[^2]
 2. Rehashing can place significant CPU pressure
 
 This is where the Count-min sketch comes into the picture. The count-min sketch is a probabilistic data structure that can **estimate** the frequency of elements by using sublinear space at the expense of over-counting some elements due to hash collisions.
@@ -341,4 +341,5 @@ The code for this article is available [here](https://github.com/SarthakMakhija/
 - [Ristretto](https://github.com/dgraph-io/ristretto)
 - [Ristretto design](https://blog.dgraph.io/post/introducing-ristretto-high-perf-go-cache/)
 
-[^1]: [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) In computer science, big O notation is used to classify algorithms according to how their run time or space requirements grow as the input size grows.
+[^1]: [Probabilistic Data Structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset, rather than exact answers. These data structures are designed to handle large amounts of data in real-time, by making trade-offs between accuracy and time and space efficiency. 
+[^2]: [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) In computer science, big O notation is used to classify algorithms according to how their run time or space requirements grow as the input size grows.

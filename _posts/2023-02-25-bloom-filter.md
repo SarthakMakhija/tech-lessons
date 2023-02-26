@@ -19,7 +19,7 @@ thumbnail: "assets/img/pexels/carbon.png"
 caption: "Photo by Alessio Soggetti on Unsplash"
 excerpt: A Bloom filter is a space-efficient probabilistic data structure, conceived by Burton Howard Bloom in 1970. Bloom filter is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either "possibly in the set" or "definitely not in the set".
 ---
-A Bloom filter is a space-efficient probabilistic data structure, conceived by Burton Howard Bloom in 1970. Bloom filter is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either "possibly in the set" or "definitely not in the set".
+A Bloom filter is a space-efficient probabilistic data structure[^1], conceived by Burton Howard Bloom in 1970. Bloom filter is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either "possibly in the set" or "definitely not in the set".
 
 Elements can be added to the set, *but not removed* (though this can be addressed with the counting bloom filter variant).
 
@@ -292,7 +292,7 @@ Let's understand BadgerDB makes use of the bloom filter concept.
 
 Bloom filter is used in a lot of projects including [BadgerDB](https://github.com/dgraph-io/badger) and [Apache Spark](https://github.com/apache/spark). This article explains the way bloom filter is used in BadgerDB.
 
-> BadgerDB is an embeddable, persistent and fast key-value (KV) database written in pure Go. Badger’s design is a combination of LSM tree[^1] with value log and is based on a paper titled [WiscKey: Separating Keys from Values in SSD-conscious Storage](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)
+> BadgerDB is an embeddable, persistent and fast key-value (KV) database written in pure Go. Badger’s design is a combination of LSM tree[^2] with value log and is based on a paper titled [WiscKey: Separating Keys from Values in SSD-conscious Storage](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)
 
 A log-structured merge-tree (LSM tree) is a storage engine data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes on disk. In order to perform sequential writes on disk, LSM tree buffers the data in-memory and then flushes to disk once the in-memory buffer is full. In order to ensure durability of the data, every write is first added to a WAL (write-ahead log) file before updating the in-memory buffer. The in-memory buffer is called the memtable. After the memtable is full, it is converted to SSTable and flushed to disk.
 
@@ -420,4 +420,5 @@ Code for this article is available [here](https://github.com/SarthakMakhija/prob
 - [BadgerDB](https://github.com/dgraph-io/badger)
 - [LSM tree](https://segmentfault.com/a/1190000041198407/en)
 
-[^1]: [LSM Tree](https://yetanotherdevblog.com/lsm/) A log-structured merge-tree (LSM tree) is a data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes.
+[^1]: [Probabilistic Data Structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset, rather than exact answers. These data structures are designed to handle large amounts of data in real-time, by making trade-offs between accuracy and time and space efficiency.
+[^2]: [LSM Tree](https://yetanotherdevblog.com/lsm/) A log-structured merge-tree (LSM tree) is a data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes.
