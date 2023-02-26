@@ -17,11 +17,15 @@ permalink: "/bloom-filter/"
 feature-img: "assets/img/pexels/carbon.png"
 thumbnail: "assets/img/pexels/carbon.png"
 caption: "Photo by Alessio Soggetti on Unsplash"
-excerpt: A Bloom filter is a space-efficient probabilistic data structure, conceived by Burton Howard Bloom in 1970. Bloom filter is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either "possibly in the set" or "definitely not in the set".
+excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
 ---
-A Bloom filter is a space-efficient probabilistic data structure[^1], conceived by Burton Howard Bloom in 1970. Bloom filter is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either "possibly in the set" or "definitely not in the set".
+A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set". 
 
-Elements can be added to the set, *but not removed* (though this can be addressed with the counting bloom filter variant).
+A bloom filter can have false positives, but false negatives are not possible.
+
+Elements can only be added to the set, *but not removed* (though this can be addressed with the counting bloom filter variant).
+
+The idea of bloom filter was conceived by Burton Howard Bloom in 1970.
 
 ### A basic filter
 
