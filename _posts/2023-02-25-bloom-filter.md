@@ -86,7 +86,7 @@ The idea behind the `put` operation is presented in the image below. In the belo
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/bloomfilterput.png" class="wp-image-878"/>
 </div>
 
->Remember, a bloom filter does not store the actual key; it only indicates the presence of a key by using K bits in an M-sized bit vector.
+>Remember, a bloom filter does not store the actual key; it only indicates the presence of a key by using at most K bits in an M-sized bit vector.
 
 Let's summarize the working of the `has` operation. To determine if a key **maybe** present in the bloom filter, the following steps need to be performed:
 
@@ -432,5 +432,5 @@ The code for this article is available [here](https://github.com/SarthakMakhija/
 - [BadgerDB](https://github.com/dgraph-io/badger)
 - [LSM tree](https://segmentfault.com/a/1190000041198407/en)
 
-[^1]: [Probabilistic Data Structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset rather than exact answers. These data structures are designed to handle large amounts of data in real-time by making trade-offs between accuracy and time and space efficiency.
+[^1]: [Probabilistic data structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset rather than exact answers. These data structures are designed to handle large amounts of data in real-time by making trade-offs between accuracy and time and space efficiency.
 [^2]: [LSM Tree](https://yetanotherdevblog.com/lsm/) A log-structured merge tree (LSM tree) is a data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes.
