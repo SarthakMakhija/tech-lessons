@@ -18,9 +18,9 @@ permalink: "/bloom-filter/"
 feature-img: "assets/img/pexels/bloomfilter_title.png"
 thumbnail: "assets/img/pexels/bloomfilter_title.png"
 caption: "Photo by Richard Horvath on Unsplash"
-excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
+excerpt: A Bloom filter is a probabilistic data structure that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and return either "possibly in the set" or "definitely not in the set".
 ---
-A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and returns either "possibly in the set" or "definitely not in the set".
+A Bloom filter is a probabilistic data structure[^1] that is used to test whether an element is a member of a set. A bloom filter can query against large amounts of data and return either "possibly in the set" or "definitely not in the set".
 
 A bloom filter can have false positives, but false negatives are not possible.
 
@@ -38,9 +38,9 @@ Let's try to build a basic filter for a huge persistent dictionary consisting of
 
 One idea to design such a filter would be to maintain a `boolean` array of size 26 (26 lowercase English letters), to **indicate the presence** of a word beginning with a character.
 
-The filter does not store the actual word, it only indicates the presence of a word. To do that, we set the value at the array index corresponding to the first letter to `true`. The word gets added to the persistent dictionary after it is added to the basic filter.
+The filter does not store the actual word, it only indicates the presence of a word. To do that, we set the value at the *array index corresponding to the first letter* to `true`. The word gets added to the persistent dictionary after it is added to the basic filter.
 
-In order to check if the dictionary contains a given word, the application queries the filter first. The filter checks the value at the index corresponding to the first letter [`firstLetterOfTheWord-asciiCodeOf('a')`] and returns `true` if the value at the index is set, `false` otherwise.
+In order to check if the dictionary contains a given word, the application queries the filter first. The filter checks the value at the *index corresponding to the first letter* [`firstLetterOfTheWord-asciiCodeOf('a')`] and returns `true` if the value at the index is set, `false` otherwise.
 
 Let's understand the returned values from the filter:
 - If the returned value is `false`, we can conclude that the word is definitely not present in the persistent dictionary
@@ -64,7 +64,9 @@ The solution to both these problems takes us closer to the bloom filter. The blo
 1. M-sized bit vector
 2. K hash functions
 
-The bloom filter maintains a bit array of size `M` (`M` needs to be computed) and every key goes through `K` hash functions to determine the bit position to set.
+The bloom filter maintains a bit array of size `M` and every key goes through `K` hash functions to determine the bit position to set.
+
+> `M` and `K` need to be computed.
 
 Bloom filter supports two operations:
 1. `put` that puts a key in the bloom filter
@@ -84,6 +86,8 @@ The idea behind the `put` operation is presented in the image below. In the belo
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/bloomfilterput.png" class="wp-image-878"/>
 </div>
 
+>Remember, a bloom filter does not store the actual key, it only indicates the presence of a key by using K bits in an M-sized bit vector.  
+
 Let's summarize the working of the `has` operation. In order to determine if a key **maybe** present in the bloom filter, the following steps need to be performed:
 
 1. The input key goes through K hash functions.
@@ -91,7 +95,7 @@ Let's summarize the working of the `has` operation. In order to determine if a k
 3. The corresponding bit is checked to see if it is set. If the bit is not set, we return `false`.
 4. We return `true` if all the bits determined from steps 1 and 2 are set.
 
-The idea behind the `has` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size).
+The idea behind the `has` operation is presented in the image below. In the below image, we have K=2 (total hash functions) and M=8 (bit vector size). We are using the same bit vector that was generated after the `put` operations were done.
 
 <div class="align-center">
     <img style="padding-left: 0; max-width: 90%" src="{{ site.baseurl }}/assets/img/pexels/bloomfilterhas.png" class="wp-image-878"/>
@@ -121,6 +125,8 @@ As a part of this test, we do the following:
 2. Create a new key of type `model.Slice`. Keys are represented by `Slice` abstraction which is a wrapper over a byte slice.
 3. Put the key in.
 4. Assert that the key is present in the bloom filter
+
+>A bloom filter can never have false negatives. So, we can be sure that the above assertion will never fail.
 
 ```golang
 func TestAddsAKeyAndChecksForTheExistenceOfANonExistingKey(t *testing.T) {
@@ -236,7 +242,7 @@ func (bloomFilter *BloomFilter) keyIndices(key model.Slice) []uint64 {
 ```
 Let's implement `Has`. The idea can be summarized as:
 1. Run `K` hash functions or a single hash function with different seed values, `K` times over an input.
-2. Reduce the hashed value between `0 and M-1` to set the appropriate bit in the bit vector.
+2. Reduce the hashed value between `0 and M-1` to get the appropriate bit in the bit vector.
 3. Check the bit in the bit vector at the identified position. If the bit is not set, return `false` to indicate that the input is definitely not present.
 4. If the bits at all the identified positions are set, return `true` to indicate that the input **may be present**.
 
@@ -291,7 +297,7 @@ func main() {
 
 The above code prints `numberOfHashFunctions:: 10 bitVectorSize:: 7188793`. This means a total space of 878KB `((7188793/8)/1024)` for storing `500000` keys.
 
-Let's understand BadgerDB makes use of the bloom filter concept.
+Now is the right time to understand how BadgerDB makes use of bloom filters
 
 ### BadgerDB
 
@@ -299,7 +305,7 @@ Bloom filter is used in a lot of projects including [BadgerDB](https://github.co
 
 > BadgerDB is an embeddable, persistent and fast key-value (KV) database written in pure Go. Badger’s design is a combination of an LSM tree[^2] with a value log and is based on a paper titled [WiscKey: Separating Keys from Values in SSD-conscious Storage](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)
 
-A log-structured merge tree (LSM tree) is a storage engine data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes on disk. In order to perform sequential writes on disk, the LSM tree buffers the data in memory and then flushes to disk once the in-memory buffer is full. In order to ensure the durability of the data, every write is first added to a WAL (write-ahead log) file before updating the in-memory buffer. The in-memory buffer is called the memtable. After the memtable is full, it is converted to SSTable and flushed to disk.
+A log-structured merge tree (LSM tree) is a storage engine data structure typically used when dealing with write-heavy workloads. The write path is optimized by performing sequential writes on disk. In order to perform sequential writes on disk, the LSM tree buffers the data in memory and then flushes to disk once the in-memory buffer is full. In order to ensure the durability of the data, every write is first added to a WAL (write-ahead log) file before updating the in-memory buffer. The in-memory buffer is called the memtable. After the memtable is full, it is converted to SSTable (sorted string table) and flushed to disk.
 
 Every `get(key)` operation first queries the in-memory memtable(s) to see if the value for the given key exists in memory. If not, the `get(key)` operation attempts to retrieve the value from SSTables (disk-based structures).
 
@@ -317,7 +323,7 @@ This approach can be optimized by using a bloom filter. Let's see how:
 1. Every SSTable can be associated with its own filter.
 2. All the keys of an SSTable will be added to its bloom filter.
 
->SSTable (sorted string table) contains all the key-value pairs in sorted order by key. SSTable file is organized into multiple sections including index block, bloom filter block, data block and footer block etc. BadgerDB puts the bloom filter (the byte array of the bloom filter) inside the SSTable.
+>SSTable (sorted string table) contains all the key-value pairs in sorted order by key. SSTable file is organized into multiple sections (or blocks) including index block, bloom filter block, data block and footer block etc. BadgerDB puts the bloom filter (the byte array of the bloom filter) inside the SSTable.
 
 In order to perform a `get(key)` operation on an SSTable, the application will query the bloom filter associated with it.
 
@@ -379,6 +385,7 @@ func (lHandler *levelHandler) get(key []byte) (y.ValueStruct, error) {
     var maxVs y.ValueStruct
     for _, table := range tables {
         //if the table does not have the hash of the key, there is no point in scanning the table
+        //(*) bloom filter lookup
         if table.DoesNotHave(hash) {
             continue
         }
