@@ -23,7 +23,7 @@ goselect provides SQL-like ‘select’ interface for files. This means one can 
 `select name, path, size from . where or(like(name, result.*), eq(isdir, true)) order by 3 desc`
 to get the filename, file path and size of all the files that are directories or their names begin with the term result. This query orders the results by size in descending order.
 
-I created to understand the following:
+I created goselect to understand the following:
 - **Parsing**: The parsing pipeline typically involves a lexer, a parser and an AST.
 - **Recursive descent parser**
 - **Representation of functions in the code**. Functions like `lower`, `upper` and `trim` take a single parameter, functions like `now` and `currentDate` take zero parameters, whereas functions like `concat` take a variable number of parameters.
