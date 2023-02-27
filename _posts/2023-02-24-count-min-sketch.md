@@ -17,7 +17,7 @@ permalink: "/count-min-sketch/"
 feature-img: "assets/img/pexels/countminsketch-title.png"
 thumbnail: "assets/img/pexels/countminsketch-title.png"
 caption: "Background by Alessio Soggetti on Unsplash"
-excerpt: Count-min sketch (CM sketch) is a probabilistic data structure[^1] that is used to estimate the frequency of events in a stream of data.
+excerpt: Count-min sketch (CM sketch) is a probabilistic data structure that is used to estimate the frequency of events in a stream of data. The count–min sketch was invented in 2003 by Graham Cormode and S. Muthu Muthukrishnan.
 ---
 Count-min sketch (CM sketch) is a probabilistic data structure[^1] that is used to estimate the frequency of events in a stream of data.
 
@@ -28,7 +28,7 @@ It relies on hash functions to map events to frequencies, but unlike a hash tabl
 Let’s say we want to build a solution to count the frequency of elements in a data stream. One idea would be to use a `hashmap` with the data element as the key and count as the value. The approach works but does not scale with a data stream comprising billions of elements and most of which are unique.
 
 We will have two challenges with `hashmap` in this case:
-1. The number of elements in the hashmap will tend towards billion(s). The overall space complexity would be O(N)[^2]
+1. The number of elements in the hashmap will tend towards a billion. The overall space complexity would be O(N)[^2]
 2. Rehashing can place significant CPU pressure
 
 This is where the Count-min sketch comes into the picture. The count-min sketch is a probabilistic data structure that can **estimate** the frequency of elements by using sublinear space at the expense of over-counting some elements due to hash collisions.
@@ -51,9 +51,10 @@ type CountMinSketch struct {
 type row []byte
 ```
 `CountMinSketch` contains the following:
-1. A matrix of a byte array to store the counters. The total number of rows (or the total number of hash functions) is limited to four in the above code. So, D here is 4.
-2. An array of seed values of type `uint64` will be used to generate the hash of the data element.
-3. Total number of counters
+1. A matrix of a byte array to store the counters. Each row will contain `W` cells and each cell containing a byte.  
+2. The total number of rows (or the total number of hash functions) is limited to four in the above code. So, D here is 4.
+3. An array of seed values of type `uint64` will be used to generate the hash of the data element.
+4. Total number of counters
 
 >We plan to use an approach called "four-bit counter", with the lower four bits of a byte to store the counter for a key *K1* and the upper four bits to store the counter for another key *K2*. That means a byte will store the counts for two values.
 
@@ -62,7 +63,7 @@ type row []byte
 The idea behind the `increment` operation can be summarized as:
 
 1. Run D hash functions on the given key (hash0, hash1 and hash2 in the image above).
-2. Find a column index in the matrix (D*W) by performing `hashValue % totalCounters`.
+2. Find a column index in the matrix by performing `hashValue % totalCounters`.
 3. Increment the value at the identified matrix cell using [four-bit counter approach](#4-bit-counter).
 
 The idea behind the `estimate` operation is very similar to the `increment` operation.
@@ -119,12 +120,12 @@ func TestGetsTheEstimateForKeysInAStream(t *testing.T) {
 ```
 
 Let's quickly understand the test:
-1. Create a `stream` of `model.Slice`. Keys are represented by `Slice` abstraction which is a wrapper over a byte slice.
+1. Create a `stream` of keys. Keys are represented by the `Slice` abstraction which is a wrapper over a byte slice.
 2. Create a count-min sketch with 10 counters (width as 10)
 - We will see in the code that the counters are in the power of 2.
 3. Increment the count for all the keys in the stream.
 4. Assert the estimate of count for all the keys
-- As a part of the assertion we want to ensure that the estimated count is "at least" equal to the expected count. In the case of hash collisions between two keys, an estimate of the count might be higher than the expected count. Hence, we expect that the estimated count is "at least" equal to the expected count.
+>As a part of the assertion we want to ensure that the estimated count is "at least" equal to the expected count. In the case of hash collisions between two keys, an estimate of the count might be higher than the expected count. Hence, we expect that the estimated count is "at least" equal to the expected count.
 
 ### 4-bit counter
 
@@ -179,7 +180,7 @@ func newCountMinSketch(counters int) *CountMinSketch {
     }
 
     //initialize the source to generate seed values and set the total counters to be a power of 2
-    //if the user-specified counter is 10, we maintain a total of 16 counters
+    //if the user-specified counter is 10, we get a total of 16 counters
     source, updatedCounters := rand.New(rand.NewSource(time.Now().UnixNano())), nextPowerOf2(int64(counters))
 
     //instantiate CountMinSketch
@@ -187,8 +188,8 @@ func newCountMinSketch(counters int) *CountMinSketch {
 
     for index := 0; index < depth; index++ {
         //generate a new seed
-   countMinSketch.seeds[index] = source.Uint64()
-   //create a new byte array using the make function and set the newly created byte array at the current index of the matrix
+        countMinSketch.seeds[index] = source.Uint64()
+        //create a new byte array using the make function and set the newly created byte array at the current index of the matrix
         countMinSketch.matrix[index] = make(row, updatedCounters/2) 
     }
     return countMinSketch
@@ -196,13 +197,13 @@ func newCountMinSketch(counters int) *CountMinSketch {
 ```
 The idea behind `newCountMinSketch` can be summarized as:
 1. Create a new source for generating seed values and set the counter to be a power of 2.
-2. Iterate from index = 0 to depth-1 and do the following:
+2. Set `totalCounters` inside `CountMinSketch`
+3. Iterate from index = 0 to depth-1 and do the following:
 - Generate a new seed value of type `uint64`
-- Create a new byte array of size `updatedCounters/2`
+- Create a new byte array of size `updatedCounters/2` using the `make` function
 - Set the newly created byte array in the matrix at `index`
-3. Set `totalCounters` inside `CountMinSketch`
 
->Every row in the matrix has a byte array of size `updatedCounters/2`. If we are using the four-bit counter approach, then each byte stores the counters for 2 keys. This means that we can reduce the total number of counters by 2. With the input counter as 18, we get the value of `updatedCounters` as 32. Using the four-bit counter approach, we end up with 16 cells for each row with each cell containing a byte.
+>Every row in the matrix has a byte array of size `updatedCounters/2`. If we are using the four-bit counter approach, then each byte stores the counters for 2 keys. This means that we can reduce the total number of counters by 2. With the input counter as 18, we get the value of `updatedCounters` as 32. Using the four-bit counter approach, we end up with 16 cells (32/2) for each row with each cell containing a byte.
 
 The idea behind `Increment` can be summarized as:
 
@@ -210,6 +211,7 @@ The idea behind `Increment` can be summarized as:
 - Run the hash function for the given key and get the hashed value.
 - Identify the `columnIndex` using the hashed value by executing `hashedValue % totalCounters`.
 - Increment the value in the matrix cell at the position identified by a pair of `(index, columnIndex)`.
+> Increment operation will increment either the upper four bits or the lower four bits of the byte depending on the matrix cell position.
 
 This is how the above approach can be implemented in golang:
 
@@ -280,11 +282,11 @@ Let's understand the use of count-min sketch in [Ristretto](https://github.com/d
 
 Ristretto is a fast, concurrent golang cache library built with a focus on performance and correctness. Ristretto development team set the following requirements for the cache:
 
-1. Supports concurrency
-2. Maintains a high cache-hit ratio
-3. Memory-bounded (limit to configurable max memory usage)
-4. Scales well as the number of cores and goroutines increases
-5. Scales well under non-random key access distribution (e.g. Zipf)
+1. It should support concurrency
+2. It should maintain a high cache-hit ratio
+3. It should be memory-bounded (limit to configurable max memory usage)
+4. It should scale well as the number of cores and goroutines increases
+5. It should scale well under non-random key access distribution (e.g. Zipf)
 
 One of the interesting requirements was "maintaining a high cache-hit ratio". To achieve this goal, the development team implemented an LFU (least frequently used) based eviction policy called [TinyLFU](https://blog.dgraph.io/refs/TinyLFU%20-%20A%20Highly%20Efficient%20Cache%20Admission%20Policy.pdf).
 
