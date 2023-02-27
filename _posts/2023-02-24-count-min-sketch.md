@@ -51,7 +51,7 @@ type CountMinSketch struct {
 type row []byte
 ```
 `CountMinSketch` contains the following:
-1. A matrix of a byte array to store the counters. Each row will have `W` cells, and each cell containing a byte.
+1. A matrix of a byte array to store the counters. Each row will have `W` cells, and each cell will contain a byte.
 2. The total number of rows (or the total number of hash functions) is limited to four in the above code. So, D here is 4.
 3. An array of seed values of type `uint64` will be used to generate the hash of the data element.
 4. Total number of counters
@@ -342,5 +342,5 @@ The code for this article is available [here](https://github.com/SarthakMakhija/
 - [Ristretto](https://github.com/dgraph-io/ristretto)
 - [Ristretto design](https://blog.dgraph.io/post/introducing-ristretto-high-perf-go-cache/)
 
-[^1]: [Probabilistic Data Structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset rather than exact answers. These data structures are designed to handle large amounts of data in real-time by making trade-offs between accuracy and time and space efficiency.
+[^1]: [Probabilistic data structures](https://www.geeksforgeeks.org/introduction-to-the-probabilistic-data-structure/) provide approximate answers to queries about a large dataset rather than exact answers. These data structures are designed to handle large amounts of data in real-time by making trade-offs between accuracy and time and space efficiency.
 [^2]: [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) In computer science, big O notation is used to classify algorithms according to how their run time or space requirements grow as the input size grows.
