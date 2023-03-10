@@ -1,5 +1,7 @@
 ## Introduction
 
+[tech-lessons.in](https://tech-lessons.in/) is now a [hugo](https://github.com/SarthakMakhija/tech-lessons-hugo-theme) theme. This repository is now a readonly repository.
+
 [tech-lessons.in](https://tech-lessons.in/) is a [Jekyll](https://jekyllrb.com/) based blog and this repository is a Jekyll theme forked from [https://github.com/sylhare/Type-on-Strap](https://github.com/sylhare/Type-on-Strap).
 
 ## Installation & Usage
